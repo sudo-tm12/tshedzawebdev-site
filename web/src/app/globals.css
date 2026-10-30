@@ -42,9 +42,14 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
-    scroll-padding-top: 88px;
+    /* No global scroll-padding-top: every hero sits at y=0 under the transparent header,
+       and Next.js treats anything above the padding as "out of view" and scrolls past
+       the hero after navigation. Anchor targets carry their own scroll-mt-* instead. */
   }
+  /* Smooth scrolling only after a click inside the page (the clicked link holds focus).
+     A global "smooth" animates the browser's own jumps (Back restoring your place, a
+     #section on page load) and hydration interrupts them, leaving you at the top. */
+  html:focus-within { scroll-behavior: smooth; }
   body {
     /* A faint fixed colour wash so glass panes on any page have something to refract. */
     background:
@@ -77,7 +82,7 @@
     border-radius: 4px;
   }
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
+    html, html:focus-within { scroll-behavior: auto; }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
@@ -264,6 +269,7 @@
   .prose-legal table { width: 100%; margin-top: 1rem; border-collapse: collapse; font-size: 0.9375rem; }
   .prose-legal th, .prose-legal td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-line); vertical-align: top; }
   .prose-legal th { color: var(--color-ink); font-weight: 600; }
+  .prose-legal [id] { scroll-margin-top: 96px; }
 
   .grain {
     background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);

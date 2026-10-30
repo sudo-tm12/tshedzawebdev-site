@@ -54,8 +54,11 @@ const ORG_JSONLD = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-ZA" className={`${geist.variable} ${geistMono.variable} ${instrument.variable}`}>
+    <html lang="en-ZA" data-scroll-behavior="smooth" className={`${geist.variable} ${geistMono.variable} ${instrument.variable}`}>
       <head>
+        {/* A reload starts at the top (on the hero) instead of where you last were; the
+            Back/Forward buttons keep restoring your place. Runs before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: "try{var n=performance.getEntriesByType('navigation')[0];if(n&&n.type==='reload'){history.scrollRestoration='manual';addEventListener('load',function(){scrollTo(0,0);setTimeout(function(){history.scrollRestoration='auto'},0)})}}catch(e){}" }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }} />
       </head>
       <body>
