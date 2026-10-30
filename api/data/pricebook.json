@@ -1,0 +1,159 @@
+{
+  "version": "2026-10-29-draft",
+  "status": "DRAFT, awaiting owner approval. Not live until approved.",
+  "currency": "ZAR",
+  "vat": "Not VAT registered. No VAT is ever added.",
+  "rules": {
+    "rangeLow": 0.9,
+    "rangeHigh": 1.15,
+    "roundTo": 50,
+    "depositThreshold": 3000,
+    "depositRate": 0.5,
+    "rush": { "label": "Priority delivery (about 40% faster)", "multiplier": 1.2 },
+    "estimateValidDays": 30
+  },
+  "services": [
+    {
+      "id": "website",
+      "name": "Website",
+      "blurb": "Fast, mobile-first business websites.",
+      "unit": { "name": "page", "plural": "pages", "min": 1, "max": 30, "default": 5 },
+      "tiers": [
+        { "id": "landing", "name": "Landing page", "base": 2500, "includedUnits": 1, "perUnit": 0, "weeks": 1, "note": "One focused page: offer, proof, contact." },
+        { "id": "business", "name": "Business site", "base": 4500, "includedUnits": 5, "perUnit": 450, "weeks": 2, "note": "Up to 5 pages; extra pages priced per page." },
+        { "id": "custom", "name": "Custom design site", "base": 8500, "includedUnits": 6, "perUnit": 650, "weeks": 4, "note": "Bespoke design system, motion and content strategy." }
+      ],
+      "addons": [
+        { "id": "blog", "name": "Blog / news section with CMS", "price": 1500, "weeks": 0.5 },
+        { "id": "booking", "name": "Online bookings", "price": 2000, "weeks": 0.5 },
+        { "id": "whatsapp", "name": "WhatsApp click-to-chat + catalogue links", "price": 400, "weeks": 0 },
+        { "id": "payments", "name": "Online payments (PayFast / Yoco)", "price": 1200, "weeks": 0.5 },
+        { "id": "seo-setup", "name": "SEO foundation (schema, sitemap, Search Console)", "price": 900, "weeks": 0 },
+        { "id": "copy", "name": "Copywriting", "price": 350, "per": "page", "weeks": 0.5 },
+        { "id": "multilingual", "name": "Second language", "priceRate": 0.25, "weeks": 1 },
+        { "id": "logo", "name": "Logo + mini brand kit", "price": 1500, "weeks": 1 }
+      ],
+      "monthly": [
+        { "id": "care", "name": "Care plan: hosting help, updates, backups, small edits", "price": 350 }
+      ]
+    },
+    {
+      "id": "ecommerce",
+      "name": "Online store",
+      "blurb": "Sell online with local payments and delivery.",
+      "unit": { "name": "product", "plural": "products", "min": 1, "max": 1000, "default": 30 },
+      "tiers": [
+        { "id": "starter-store", "name": "Starter store", "base": 4500, "includedUnits": 20, "perUnit": 0, "weeks": 2, "note": "Up to 20 products, one payment gateway." },
+        { "id": "growth-store", "name": "Growth store", "base": 6500, "includedUnits": 100, "perUnit": 0, "weeks": 3, "note": "Up to 100 products, discounts, order emails." },
+        { "id": "premium-store", "name": "Premium store", "base": 12500, "includedUnits": 1000, "perUnit": 0, "weeks": 5, "note": "Custom design, variants, inventory and reporting." }
+      ],
+      "addons": [
+        { "id": "product-upload", "name": "We load your products", "price": 25, "per": "product", "weeks": 0.5 },
+        { "id": "delivery", "name": "Courier / delivery-zone rules", "price": 1200, "weeks": 0.5 },
+        { "id": "whatsapp", "name": "WhatsApp order notifications", "price": 600, "weeks": 0 },
+        { "id": "seo-setup", "name": "SEO foundation for products", "price": 1200, "weeks": 0 },
+        { "id": "logo", "name": "Logo + mini brand kit", "price": 1500, "weeks": 1 }
+      ],
+      "monthly": [
+        { "id": "care", "name": "Store care plan: updates, backups, product edits", "price": 550 }
+      ]
+    },
+    {
+      "id": "webapp",
+      "name": "Web app / system",
+      "blurb": "Custom MERN apps, portals and dashboards.",
+      "unit": { "name": "core screen", "plural": "core screens", "min": 3, "max": 60, "default": 8 },
+      "tiers": [
+        { "id": "mvp", "name": "MVP", "base": 15000, "includedUnits": 8, "perUnit": 900, "weeks": 5, "note": "Login, database and the core workflow, live." },
+        { "id": "platform", "name": "Platform", "base": 30000, "includedUnits": 15, "perUnit": 1100, "weeks": 9, "note": "Roles, admin, integrations, reporting." }
+      ],
+      "addons": [
+        { "id": "payments", "name": "Payments / subscriptions", "price": 3500, "weeks": 1 },
+        { "id": "integrations", "name": "Third-party API integration", "price": 2500, "per": "integration", "weeks": 1 },
+        { "id": "ai", "name": "AI feature (assistant, document generation)", "price": 4500, "weeks": 1.5 },
+        { "id": "mobile", "name": "Installable mobile app (PWA)", "price": 3500, "weeks": 1 }
+      ],
+      "monthly": [
+        { "id": "care", "name": "App care plan: monitoring, fixes, updates", "price": 1200 }
+      ]
+    },
+    {
+      "id": "automation",
+      "name": "Automation",
+      "blurb": "Python and AI workflows that save hours every week.",
+      "unit": { "name": "workflow", "plural": "workflows", "min": 1, "max": 20, "default": 1 },
+      "tiers": [
+        { "id": "simple", "name": "Simple automation", "base": 2500, "includedUnits": 1, "perUnit": 2000, "weeks": 1, "note": "e.g. forms → sheets → email, reminders, reports." },
+        { "id": "advanced", "name": "Data / scraping pipeline", "base": 6500, "includedUnits": 1, "perUnit": 4500, "weeks": 2, "note": "Scraping, cleaning, scheduled reporting." },
+        { "id": "ai", "name": "AI-augmented workflow", "base": 8500, "includedUnits": 1, "perUnit": 5500, "weeks": 3, "note": "AI drafting, classification or document generation with human review." }
+      ],
+      "addons": [
+        { "id": "dashboard", "name": "Results dashboard", "price": 2500, "weeks": 1 },
+        { "id": "training", "name": "Team hand-over + training session", "price": 800, "weeks": 0 }
+      ],
+      "monthly": [
+        { "id": "care", "name": "Monitoring + fixes", "price": 600 }
+      ]
+    },
+    {
+      "id": "seo",
+      "name": "SEO & Google Ads",
+      "blurb": "Get found on Google, and measure what it brings in.",
+      "unit": null,
+      "tiers": [
+        { "id": "audit", "name": "SEO audit + action plan", "base": 1500, "weeks": 1, "note": "A written audit with prioritised fixes." },
+        { "id": "technical", "name": "Technical SEO fixes", "base": 3500, "weeks": 2, "note": "Speed, schema, sitemaps, metadata, Search Console." },
+        { "id": "ads-setup", "name": "Google Ads setup", "base": 2500, "weeks": 1, "note": "Account, conversion tracking, first campaigns. Ad spend is paid to Google." }
+      ],
+      "addons": [
+        { "id": "gbp", "name": "Google Business Profile optimisation", "price": 900, "weeks": 0 }
+      ],
+      "monthly": [
+        { "id": "ads-management", "name": "Google Ads management (excludes ad spend)", "price": 1800 },
+        { "id": "seo-retainer", "name": "Monthly SEO content + reporting", "price": 2500 }
+      ]
+    },
+    {
+      "id": "social",
+      "name": "Social media",
+      "blurb": "Design + management packages, done for you.",
+      "unit": null,
+      "billing": "monthly",
+      "tiers": [
+        { "id": "tier-1", "name": "Essential", "monthlyBase": 5500, "weeks": 1, "note": "Two platforms, content calendar, designed posts." },
+        { "id": "tier-2", "name": "Growth", "monthlyBase": 9500, "weeks": 1, "note": "Three platforms, more posts, short-form video, community replies." },
+        { "id": "tier-3", "name": "Premium", "monthlyBase": 16500, "weeks": 2, "note": "Full management, campaigns, monthly strategy + reporting." }
+      ],
+      "addons": [
+        { "id": "setup", "name": "Profile setup / refresh (once-off)", "price": 1200, "weeks": 0 }
+      ],
+      "monthly": []
+    },
+    {
+      "id": "trading",
+      "name": "MQL5 trading bot",
+      "blurb": "Expert Advisors for MetaTrader 5, built from your rules.",
+      "unit": null,
+      "tiers": [
+        { "id": "indicator", "name": "Custom indicator", "base": 2000, "weeks": 1, "note": "Your signals, drawn and alerted." },
+        { "id": "ea-simple", "name": "Expert Advisor: rules-based", "base": 3500, "weeks": 2, "note": "Entries, exits, risk management." },
+        { "id": "ea-advanced", "name": "Expert Advisor: advanced", "base": 7500, "weeks": 3, "note": "Multi-timeframe, filters, trailing logic." }
+      ],
+      "addons": [
+        { "id": "backtest", "name": "Backtest + optimisation report", "price": 1500, "weeks": 0.5 },
+        { "id": "alerts", "name": "Phone / Telegram alerts", "price": 800, "weeks": 0 }
+      ],
+      "monthly": [],
+      "disclaimer": "We build software from your strategy. We don't give financial advice or promise trading results."
+    }
+  ],
+  "coaching": {
+    "name": "AI Agency Builder coaching",
+    "tiers": [
+      { "id": "entry", "name": "Entry", "monthly": 500 },
+      { "id": "mid", "name": "Mid", "monthly": 650 },
+      { "id": "premium", "name": "Premium", "monthly": 800 }
+    ],
+    "note": "Booked through the Learn page, not the project quote engine."
+  }
+}

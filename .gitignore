@@ -1,0 +1,15 @@
+*.zip
+# Old live site copy (contains live credentials) and local tooling
+public_html/
+.tools/
+qa/
+assets-src/work/*.png
+api/storage/*
+!api/storage/.gitkeep
+api/config.php
+
+# Private: audit of the old live site and internal planning. Never in the public repo.
+FINDINGS.md
+audit-frontend.md
+server-manifest.json
+REBUILD_PLAN.md
