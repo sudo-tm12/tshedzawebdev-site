@@ -118,9 +118,11 @@ export const WORK: Project[] = [
       'Delivered a production build, ready to deploy.',
     ],
     delivered: ['Company website (Next.js)', 'Animated hero + sections', 'Production build'],
-    status: 'Delivered',
+    live: 'https://ewallinnovations.co.za',
+    status: 'Live',
     desktop: { src: asset('/work/ewall-desktop.webp'), width: 1200, height: 750, alt: 'E-Wall Innovations homepage: “We Are The Change.” on a dark starfield' },
     mobile: { src: asset('/work/ewall-mobile.webp'), width: 390, height: 844, alt: 'E-Wall Innovations homepage on a phone' },
+    mobileTall: { src: asset('/work/ewall-mobile-tall.webp'), width: 390, height: 2800, alt: 'E-Wall Innovations on a phone: the “We Are The Change” hero and the sections below it' },
     accent: '#0A1530',
   },
   {

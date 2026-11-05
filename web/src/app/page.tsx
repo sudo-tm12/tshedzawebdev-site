@@ -176,7 +176,7 @@ export default function HomePage() {
             </div>
             <Link href="/work/" className="btn btn-on-dark flex-none max-md:hidden">All projects <Icon name="arrowRight" size={16} /></Link>
           </div>
-          <SwipeRail label="Selected projects" grid="md" itemWidth="78%" className="mt-8 md:mt-14 md:grid-cols-2 md:gap-6">
+          <SwipeRail label="Selected projects" grid="md" itemWidth="86%" className="mt-8 md:mt-14 md:grid-cols-2 md:gap-6">
             {featured.map((p, i) => (
               <li key={p.slug} className={`reveal ${i === 0 ? 'md:col-span-2' : ''}`}>
                 <Link href={`/work/${p.slug}/`} className="device-rise glass group block h-full rounded-[24px] p-2.5 transition-colors hover:border-teal-500/50 md:p-3">

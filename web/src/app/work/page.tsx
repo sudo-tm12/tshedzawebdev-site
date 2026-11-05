@@ -24,7 +24,7 @@ export default function WorkPage() {
       />
 
       <section className="container-site pb-12 pt-10 sm:pb-16 sm:pt-0">
-        <ul className="grid gap-10 sm:gap-14 md:grid-cols-2 md:gap-x-10">
+        <ul className="grid grid-cols-1 gap-12 sm:gap-14 md:grid-cols-2 md:gap-x-10 [&>li]:min-w-0">
           {withShots.map((p, i) => (
             <li key={p.slug} className={`reveal ${i === 0 ? 'md:col-span-2' : ''}`}>
               <Link href={`/work/${p.slug}/`} className="group block">

@@ -16,8 +16,9 @@ export function HeroPhone({ className = '' }: { className?: string }) {
   const word = useWordIndex() ?? 0
   return (
     <div aria-hidden="true" className={`relative w-[244px] select-none ${className}`}>
-      <div className="relative aspect-[9/18.6] rounded-[40px] bg-[linear-gradient(145deg,#2a4766,#0a1b2e_40%,#13283f)] p-[7px] shadow-[0_50px_90px_-30px_rgba(29,161,194,0.55),0_30px_60px_-30px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.25)]">
-        <div className="relative h-full overflow-hidden rounded-[33px] bg-paper text-ink">
+      {/* Same proportions as <PhoneFrame>: 430×884 body, 20 px bezel, 56 px corners (11 px at this width). */}
+      <div className="relative aspect-[430/884] rounded-[32px] bg-[linear-gradient(145deg,#3a5a7c,#13283f_35%,#1c3a57)] p-[11px] shadow-[0_50px_90px_-30px_rgba(29,161,194,0.55),0_30px_60px_-30px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-1px_0_rgba(0,0,0,0.5)] before:absolute before:-left-[3px] before:top-[22%] before:h-[9%] before:w-[3px] before:rounded-l-[2px] before:bg-[#1c3a57] after:absolute after:-right-[3px] after:top-[26%] after:h-[11%] after:w-[3px] after:rounded-r-[2px] after:bg-[#1c3a57]">
+        <div className="relative h-full overflow-hidden rounded-[21px] bg-paper text-ink shadow-[0_0_0_1.5px_rgba(0,0,0,0.6)]">
           {/* Status bar + island */}
           <div className="absolute inset-x-0 top-0 z-20 flex h-8 items-center justify-between px-5 text-[0.625rem] font-semibold">
             <span>9:41</span>
