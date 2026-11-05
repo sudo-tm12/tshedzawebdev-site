@@ -842,6 +842,9 @@
       @media (max-width: 1023px) {
         .reveal, .stagger > .reveal { animation-range: entry 0% entry 16% !important; }
         .reveal-h { animation-range: entry 0% entry 20% !important; }
+        /* Chat bubbles (CommunityChat) set staggered ranges inline; on a phone the later ones
+           were still half-faded while being read, so they all finish as they enter. */
+        .scroll-in { animation-range: entry 0% entry 40% !important; }
       }
     }
   }

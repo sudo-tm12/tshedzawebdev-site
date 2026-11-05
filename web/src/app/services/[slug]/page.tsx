@@ -13,9 +13,8 @@ import { SITE, whatsappLink } from '@/lib/site'
 
 // Which real projects to show on each service page (explicit, never guessed).
 const RELATED: Record<string, string[]> = {
-  websites: ['blr-tutoring', 'chavistos-travel', 'e-wall-innovations'],
+  websites: ['blr-tutoring', 'tnb-environmental', 'homeco-property-services', 'e-wall-innovations'],
   'web-apps': ['blr-tutoring'],
-  'social-media': ['the-gourmet-chariot'],
 }
 
 export function generateStaticParams() {

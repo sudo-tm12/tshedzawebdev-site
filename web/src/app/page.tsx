@@ -36,6 +36,15 @@ const STANDARDS: { art: 'speed' | 'secure' | 'access' | 'docs'; title: string; b
   { art: 'docs', title: 'Documented & yours', body: 'Written scope, hand-over notes, and you own everything.' },
 ]
 
+// Knowledge Hub on the home page: what's inside, one line each. Coaching shows its
+// starting price from the price book; the tiers themselves live on /learn.
+const COACHING_FROM = Math.min(...PRICEBOOK_COACHING.tiers.map((t) => t.monthly))
+const LEARN: { icon: IconName; tag: string; t: string; d: string; href: string }[] = [
+  { icon: 'monitor', tag: 'Free · 9 lessons', t: 'Build & Launch Challenge', d: 'From an empty laptop to your own live website.', href: '/learn/' },
+  { icon: 'zap', tag: 'Free · 12 lessons', t: 'Automate & Earn Challenge', d: 'WhatsApp-first automation local businesses pay for.', href: '/learn/' },
+  { icon: 'users', tag: `Coaching · from ${rand(COACHING_FROM)}/month`, t: 'AI Agency Builder', d: 'Find clients, price, deliver and grow a service business.', href: '/learn/#coaching' },
+]
+
 // Payment terms exactly as the FAQ and written quotes promise them (nothing invented).
 const PAY: { icon: IconName; title: string; body: string }[] = [
   { icon: 'file', title: 'A fixed price in writing', body: 'After a short chat you get a written quote with the scope, price and timeline. Nothing to pay until you accept it.' },
@@ -305,46 +314,34 @@ export default function HomePage() {
             <Link href="/learn/" className="btn btn-on-dark flex-none max-md:hidden">Everything on Learn <Icon name="arrowRight" size={16} /></Link>
           </div>
 
-          <div className="mt-8 grid gap-6 sm:mt-14 lg:grid-cols-12">
-            <div className="min-w-0 lg:col-span-7">
-            <SwipeRail label="Knowledge Hub programmes" grid="sm" className="sm:grid-cols-2 sm:gap-4">
-              {[
-                { t: 'Build & Launch Challenge', d: 'From an empty laptop to your own live website.', n: '9 lessons', icon: 'monitor' as IconName },
-                { t: 'Automate & Earn Challenge', d: 'WhatsApp-first automation local businesses actually pay for.', n: '12 lessons', icon: 'zap' as IconName },
-              ].map((c) => (
-                <Spotlight as="li" key={c.t} className="glass reveal flex flex-col rounded-[24px] p-6 sm:p-7">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="glass-inset inline-flex h-12 w-12 flex-none items-center justify-center rounded-[14px] text-teal-500"><Icon name={c.icon} size={22} /></span>
-                    <span className="rounded-full bg-teal-500/15 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-teal-500">Free · {c.n}</span>
-                  </div>
-                  <h3 className="mt-5 text-[1.25rem] font-semibold tracking-tight sm:mt-6 sm:text-[1.375rem]">{c.t}</h3>
-                  <p className="mt-2 text-white/65">{c.d}</p>
-                </Spotlight>
-              ))}
-              <Spotlight as="li" className="glass reveal flex flex-col gap-5 rounded-[24px] p-6 sm:col-span-2 sm:p-7 md:flex-row md:items-center md:gap-6">
-                <div className="flex-1">
-                  <span className="rounded-full bg-white/10 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white/75">Coaching</span>
-                  <h3 className="mt-4 text-[1.375rem] font-semibold tracking-tight">AI Agency Builder</h3>
-                  <p className="mt-2 text-white/65">Monthly coaching to find clients, price, deliver and grow an AI-augmented service business.</p>
-                </div>
-                <ul className="grid flex-none gap-2 md:w-[240px]">
-                  {PRICEBOOK_COACHING.tiers.map((t) => (
-                    <li key={t.id} className="glass-inset flex items-center justify-between rounded-[14px] px-4 py-2.5 text-[0.9375rem]">
-                      <span>{t.name}</span><span className="font-mono tabular-nums text-teal-500">{rand(t.monthly)}/mo</span>
-                    </li>
-                  ))}
-                </ul>
-              </Spotlight>
-            </SwipeRail>
-              <div className="mt-6 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:gap-3">
-                <a href={SITE.knowledgeHub.whatsappCommunity} className="btn btn-accent glow-border px-4" rel="noopener"><Icon name="whatsapp" size={18} /> Join<span className="max-sm:hidden"> the community</span></a>
-                <Link href="/learn/" className="btn btn-on-dark px-4"><span className="max-sm:hidden">Coaching &amp; </span>details</Link>
-              </div>
-            </div>
-            <div className="relative hidden md:block lg:col-span-5">
-              <div className="glass rounded-[30px] p-3"><CommunityChat /></div>
+          {/* Phones: the real group chat first (it shows what joining is like), then a compact
+              list of what's inside, then two clear actions. No stretched cards. */}
+          <div className="mt-8 grid gap-8 sm:mt-14 lg:grid-cols-12 lg:gap-12">
+            <div className="relative min-w-0 lg:order-2 lg:col-span-5">
+              <div className="glass rounded-[26px] p-2.5 sm:rounded-[30px] sm:p-3"><CommunityChat /></div>
               <span className="glass float-slow absolute -top-5 left-6 hidden rounded-full px-4 py-2 text-[0.8125rem] font-medium text-white/85 sm:inline-flex">Made for phones &amp; mobile data</span>
               <span className="glass float-slower absolute -bottom-5 right-6 hidden rounded-full px-4 py-2 text-[0.8125rem] font-medium text-white/85 sm:inline-flex">Real tasks, reviewed together</span>
+            </div>
+            <div className="min-w-0 lg:order-1 lg:col-span-7">
+              <ul className="stagger grid gap-2.5 sm:gap-3">
+                {LEARN.map((c) => (
+                  <li key={c.t} className="reveal">
+                    <Link href={c.href} className="group flex items-center gap-4 rounded-[18px] border border-white/10 bg-white/[0.06] p-4 transition-colors hover:border-teal-500/50 hover:bg-white/[0.09] sm:gap-5 sm:p-5">
+                      <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-[14px] bg-teal-500/15 text-teal-500"><Icon name={c.icon} size={22} /></span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-teal-500">{c.tag}</span>
+                        <span className="mt-1 block text-[1.0625rem] font-semibold leading-snug tracking-tight sm:text-[1.1875rem]">{c.t}</span>
+                        <span className="mt-0.5 block text-[0.9375rem] leading-snug text-white/65">{c.d}</span>
+                      </span>
+                      <Icon name="arrowRight" size={18} className="flex-none text-white/40 transition-transform group-hover:translate-x-1 group-hover:text-white" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6 grid gap-2.5 sm:flex sm:flex-wrap sm:gap-3">
+                <a href={SITE.knowledgeHub.whatsappCommunity} className="btn btn-accent glow-border h-[52px] px-6" rel="noopener"><Icon name="whatsapp" size={18} /> Join free on WhatsApp</a>
+                <Link href="/learn/" className="btn btn-on-dark h-[52px] px-6">See the programmes <Icon name="arrowRight" size={16} /></Link>
+              </div>
             </div>
           </div>
         </div>

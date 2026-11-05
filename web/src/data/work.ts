@@ -1,6 +1,6 @@
 // Portfolio. Only projects the owner approved on 29 Oct 2026 (TNB and HomeCo added on 5 Nov 2026). Facts come from the
 // project docs and VAULT client notes. One project is excluded entirely (NDA).
-// The Gourmet Chariot company profile is confidential: nothing from it is published.
+// The Gourmet Chariot was removed on 5 Nov 2026 at the owner's request; do not re-add it.
 import { asset } from '@/lib/site'
 
 export interface Shot { src: string; width: number; height: number; alt: string }
@@ -124,21 +124,6 @@ export const WORK: Project[] = [
     mobile: { src: asset('/work/ewall-mobile.webp'), width: 390, height: 844, alt: 'E-Wall Innovations homepage on a phone' },
     mobileTall: { src: asset('/work/ewall-mobile-tall.webp'), width: 390, height: 2800, alt: 'E-Wall Innovations on a phone: the “We Are The Change” hero and the sections below it' },
     accent: '#0A1530',
-  },
-  {
-    slug: 'the-gourmet-chariot',
-    client: 'The Gourmet Chariot',
-    sector: 'Food & catering',
-    services: ['Website', 'Social media', 'Service agreement'],
-    summary: 'A website and social media set-up for a food truck, backed by a clear service agreement.',
-    challenge: 'A mobile food business needed a simple way for customers to find it and book it for events.',
-    approach: [
-      'Set up a straightforward web presence and social channels.',
-      'Agreed scope and terms in writing upfront, so both sides knew exactly what was being delivered.',
-    ],
-    delivered: ['Website', 'Social media set-up', 'Service agreement'],
-    status: 'Completed',
-    accent: '#7A2E1F',
   },
   {
     slug: 'the-light-express',
