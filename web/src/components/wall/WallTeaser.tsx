@@ -35,7 +35,8 @@ export function WallTeaser() {
         <p className="lede mt-5">Thank someone who helped you, cheer on a beginner, or share the tip you wish you had on day one. Open to everyone, read by a real person before it goes up.</p>
         <div className="glass-light mt-7 inline-flex items-center gap-4 rounded-full px-5 py-2.5 text-[0.9375rem] text-ink-2">
           <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" />
-          {notes ? <span><strong className="tabular-nums text-ink">{list.length}</strong> notes · <strong className="tabular-nums text-ink">{hearts}</strong> hearts</span> : <span>Loading the wall…</span>}
+          {/* "0 notes · 0 hearts" reads as an empty room, so an empty wall invites instead. */}
+          {!notes ? <span>Loading the wall…</span> : list.length ? <span><strong className="tabular-nums text-ink">{list.length}</strong> notes · <strong className="tabular-nums text-ink">{hearts}</strong> hearts</span> : <span>New wall · be the first to write on it</span>}
         </div>
         <ul className="mt-6 hidden flex-wrap gap-2 sm:flex" aria-label="Kinds of note">
           {KINDS.map((k) => <li key={k.id} className="glass-light inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.875rem] font-medium text-ink-2"><span aria-hidden="true">{k.emoji}</span>{k.label}</li>)}

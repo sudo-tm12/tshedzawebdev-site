@@ -42,7 +42,7 @@ export function Packages() {
       </div>
 
       <div id="pkg-panel" role="tabpanel" aria-labelledby={`pkg-tab-${tab}`} className="mt-6 sm:mt-8">
-        <SwipeRail key={t.pricebookId} label={`${t.label} packages`} grid="md" itemWidth="86%" className={`md:gap-4 ${tiers.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+        <SwipeRail key={t.pricebookId} label={`${t.label} packages`} grid="md" itemWidth="86%" initial={Math.max(0, tiers.findIndex((x) => x.id === t.pick))} className={`md:gap-4 ${tiers.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
           {tiers.map((tier, i) => {
             const picked = tier.id === t.pick
             const scope = unitLine(tier.includedUnits, book.unit)

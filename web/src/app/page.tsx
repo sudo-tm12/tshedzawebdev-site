@@ -198,6 +198,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── How it works: a scroll story ─────────────────────────────────── */}
+      {/* overflow-x-clip, not hidden: a hidden overflow would break the pinned device. */}
+      <section aria-labelledby="how-h" className="section overflow-x-clip border-t border-line/60 bg-paper">
+        <div className="container-site">
+          <div className="max-w-2xl">
+            <p className="eyebrow">How it works</p>
+            <h2 id="how-h" className={`mt-4 ${H2}`}>From first message to <span className="accent-serif text-teal-700">live</span>, in four steps.</h2>
+          </div>
+          <div className="mt-8 sm:mt-12"><BuildStory steps={STEPS} /></div>
+        </div>
+      </section>
+
       {/* ── Packages: real prices, then exactly how paying works ─────────── */}
       {/* Proof first (the work above), then the offer. Clear prices and the payment
           terms answer "what does it cost, what am I committing to?" before anyone asks. */}
@@ -237,7 +249,49 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Learn (Knowledge Hub + coaching) ─────────────────────────────── */}
+      {/* ── Standards ────────────────────────────────────────────────────── */}
+      <section className="section canvas-tint">
+        <LiquidField blobs={[{ tone: 'teal', top: '30%', left: '-12%', size: 500 }, { tone: 'mint', top: '65%', left: '70%', size: 460 }]} />
+        <div className="container-site">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Our standard</p>
+            <h2 className={`mt-4 ${H2}`}>The details most people <span className="accent-serif text-teal-700">never see</span>, done properly.</h2>
+          </div>
+          <ul className="stagger mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
+            {STANDARDS.map((s) => (
+              <Spotlight as="li" key={s.title} className="reveal glass-light rounded-[20px] p-4 sm:rounded-[24px] sm:p-7">
+                <StandardArt kind={s.art} />
+                <h3 className="mt-3 text-[0.9375rem] font-semibold leading-snug sm:mt-5 sm:text-[1.125rem]">{s.title}</h3>
+                <p className="mt-1.5 text-[0.8125rem] leading-snug text-ink-2 sm:mt-2 sm:text-[0.9375rem] sm:leading-normal">{s.body}</p>
+              </Spotlight>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── Founder + final CTA ──────────────────────────────────────────── */}
+      <section className="container-site pb-16 sm:pb-24">
+        <div className="hero-dark noise relative overflow-hidden rounded-[24px] px-6 py-12 sm:rounded-[28px] sm:px-14 sm:py-16 lg:py-24">
+          <div className="aurora aurora-1" aria-hidden="true" />
+          <div className="grid items-center gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <p className="eyebrow">Who you will work with</p>
+              <blockquote className="mt-4 sm:mt-5"><p className="quote-in accent-serif text-[clamp(1.875rem,2.8vw+1rem,3rem)] leading-[1.1]">“I build every project as if my name is on it, because it is.”</p></blockquote>
+              <p className="mt-6 max-w-2xl text-white/70">{SITE.founder}, founder. A small studio by design: you speak to the person who writes your code. Grateful for every client, and determined to earn that trust in the details.</p>
+              <div className="mt-8 flex flex-wrap gap-3 sm:mt-9">
+                <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-7 max-sm:w-full">Start with an instant quote <Icon name="arrowRight" size={18} /></Link>
+                <a href={whatsappLink('Hi Tshedza, I found you on your website and would like to chat about a project.')} className="btn btn-on-dark h-[52px] px-7 max-sm:w-full" rel="noopener"><Icon name="whatsapp" size={18} /> Chat on WhatsApp</a>
+              </div>
+            </div>
+            <div className="hidden lg:col-span-4 lg:block">
+              <div className="glass float-slow ml-auto flex aspect-square max-w-[300px] flex-col justify-end rounded-[28px] p-8">
+                <span className="text-[6rem] font-semibold leading-none tracking-[-0.06em]">TD<span className="text-teal-500">.</span></span>
+                <p className="mt-3 text-white/60">Data analyst · Developer · Builder</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>      {/* ── Learn (Knowledge Hub + coaching) ─────────────────────────────── */}
       <section id="learn" className="section on-dark relative scroll-mt-16 overflow-hidden bg-[linear-gradient(160deg,#06111f_0%,#0a2a3a_60%,#0f7590_130%)] text-white">
         <div className="aurora aurora-1 opacity-60" aria-hidden="true" />
         <div className="aurora aurora-2" aria-hidden="true" />
@@ -302,61 +356,7 @@ export default function HomePage() {
         <div className="container-site"><WallTeaser /></div>
       </section>
 
-      {/* ── Standards ────────────────────────────────────────────────────── */}
-      <section className="section canvas-tint">
-        <LiquidField blobs={[{ tone: 'teal', top: '30%', left: '-12%', size: 500 }, { tone: 'mint', top: '65%', left: '70%', size: 460 }]} />
-        <div className="container-site">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Our standard</p>
-            <h2 className={`mt-4 ${H2}`}>The details most people <span className="accent-serif text-teal-700">never see</span>, done properly.</h2>
-          </div>
-          <ul className="stagger mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
-            {STANDARDS.map((s) => (
-              <Spotlight as="li" key={s.title} className="reveal glass-light rounded-[20px] p-4 sm:rounded-[24px] sm:p-7">
-                <StandardArt kind={s.art} />
-                <h3 className="mt-3 text-[0.9375rem] font-semibold leading-snug sm:mt-5 sm:text-[1.125rem]">{s.title}</h3>
-                <p className="mt-1.5 text-[0.8125rem] leading-snug text-ink-2 sm:mt-2 sm:text-[0.9375rem] sm:leading-normal">{s.body}</p>
-              </Spotlight>
-            ))}
-          </ul>
-        </div>
-      </section>
 
-      {/* ── How it works: a scroll story ─────────────────────────────────── */}
-      {/* overflow-x-clip, not hidden: a hidden overflow would break the pinned device. */}
-      <section aria-labelledby="how-h" className="section overflow-x-clip border-t border-line/60 bg-paper">
-        <div className="container-site">
-          <div className="max-w-2xl">
-            <p className="eyebrow">How it works</p>
-            <h2 id="how-h" className={`mt-4 ${H2}`}>From first message to <span className="accent-serif text-teal-700">live</span>, in four steps.</h2>
-          </div>
-          <div className="mt-8 sm:mt-12"><BuildStory steps={STEPS} /></div>
-        </div>
-      </section>
-
-      {/* ── Founder + final CTA ──────────────────────────────────────────── */}
-      <section className="container-site pb-16 sm:pb-24">
-        <div className="hero-dark noise relative overflow-hidden rounded-[24px] px-6 py-12 sm:rounded-[28px] sm:px-14 sm:py-16 lg:py-24">
-          <div className="aurora aurora-1" aria-hidden="true" />
-          <div className="grid items-center gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <p className="eyebrow">Who you will work with</p>
-              <blockquote className="mt-4 sm:mt-5"><p className="quote-in accent-serif text-[clamp(1.875rem,2.8vw+1rem,3rem)] leading-[1.1]">“I build every project as if my name is on it, because it is.”</p></blockquote>
-              <p className="mt-6 max-w-2xl text-white/70">{SITE.founder}, founder. A small studio by design: you speak to the person who writes your code. Grateful for every client, and determined to earn that trust in the details.</p>
-              <div className="mt-8 flex flex-wrap gap-3 sm:mt-9">
-                <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-7 max-sm:w-full">Start with an instant quote <Icon name="arrowRight" size={18} /></Link>
-                <a href={whatsappLink('Hi Tshedza, I found you on your website and would like to chat about a project.')} className="btn btn-on-dark h-[52px] px-7 max-sm:w-full" rel="noopener"><Icon name="whatsapp" size={18} /> Chat on WhatsApp</a>
-              </div>
-            </div>
-            <div className="hidden lg:col-span-4 lg:block">
-              <div className="glass float-slow ml-auto flex aspect-square max-w-[300px] flex-col justify-end rounded-[28px] p-8">
-                <span className="text-[6rem] font-semibold leading-none tracking-[-0.06em]">TD<span className="text-teal-500">.</span></span>
-                <p className="mt-3 text-white/60">Data analyst · Developer · Builder</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   )
 }

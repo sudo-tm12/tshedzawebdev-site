@@ -871,7 +871,9 @@
   .float-slow, .float-slower { box-shadow: 0 1px 1px rgba(0,0,0,0.2), 0 12px 24px -12px rgba(0,0,0,0.55); }
   /* Dark sections: a faint vignette so the edges fall away. */
   .on-dark.section::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,0.28)); }
-  .on-dark.section > * { position: relative; z-index: 1; }
+  /* :not(.aurora): the auroras are absolutely positioned decoration; making them relative
+     would pull them into the flow as 600 px blank blocks (that happened on 5 Nov). */
+  .on-dark.section > :not(.aurora) { position: relative; z-index: 1; }
 }
 
 /* ───────────── Phones and tablets: smooth over pretty ─────────────

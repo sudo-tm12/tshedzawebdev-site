@@ -1,6 +1,6 @@
 'use client'
 
-import { Children, useRef, useState } from 'react'
+import { Children, useEffect, useRef, useState } from 'react'
 
 // Phones: a snapping horizontal row of cards with progress dots (the next card peeks in).
 // From `grid` breakpoint up: a normal grid, using the grid classes passed in `className`.
@@ -15,14 +15,24 @@ interface SwipeRailProps {
   className?: string
   /** Card width on phones (CSS length), default 84%. */
   itemWidth?: string
+  /** On phones, open the rail on this card (e.g. the recommended package) instead of the first. */
+  initial?: number
 }
 
 const HIDE_DOTS = { sm: 'sm:hidden', md: 'md:hidden', lg: 'lg:hidden' }
 
-export function SwipeRail({ children, label, grid = 'md', className = '', itemWidth }: SwipeRailProps) {
+export function SwipeRail({ children, label, grid = 'md', className = '', itemWidth, initial = 0 }: SwipeRailProps) {
   const ref = useRef<HTMLUListElement>(null)
-  const [active, setActive] = useState(0)
+  const [active, setActive] = useState(initial)
   const count = Children.count(children)
+
+  // Phones only (the rail scrolls); from the grid breakpoint up there is nothing to scroll.
+  useEffect(() => {
+    const el = ref.current
+    const item = el?.children[initial] as HTMLElement | undefined
+    if (!el || !item || initial === 0 || el.scrollWidth <= el.clientWidth) return
+    el.scrollTo({ left: item.offsetLeft - el.offsetLeft - 20, behavior: 'instant' as ScrollBehavior })
+  }, [initial])
 
   const onScroll = () => {
     const el = ref.current
