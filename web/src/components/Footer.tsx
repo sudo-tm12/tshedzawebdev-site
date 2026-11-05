@@ -66,7 +66,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-site flex flex-col gap-3 py-6 text-[0.8125rem] text-white/55 md:flex-row md:items-center md:justify-between">
-          <p>© {year} {SITE.legalName} · {SITE.vatNote}</p>
+          <p>© {year} {SITE.legalName} · {SITE.priceNote}</p>
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             <li><Link href="/privacy/" className="hover:text-white">Privacy (POPIA)</Link></li>
             <li><Link href="/terms/" className="hover:text-white">Terms</Link></li>

@@ -91,7 +91,7 @@ function build_estimate_pdf(string $ref, array $contact, array $service, array $
     foreach ($steps as $s) $pdf->MultiCell(174, 5.5, pdf_txt($s));
     $pdf->Ln(4);
     $pdf->SetFont('Helvetica', 'I', 8.5);
-    $pdf->MultiCell(174, 4.6, pdf_txt('This is an estimate based on the options you selected, not a binding quote. TshedzaWebDev is not VAT registered: no VAT is added. All amounts are in South African rand. Price book ' . $est['pricebookVersion'] . '.'));
+    $pdf->MultiCell(174, 4.6, pdf_txt('This is an estimate based on the options you selected, not a binding quote. All amounts are in South African rand. Price book ' . $est['pricebookVersion'] . '.'));
 
     // Footer (pinned to the bottom of page 1; no auto page break while drawing it)
     $pdf->SetAutoPageBreak(false);

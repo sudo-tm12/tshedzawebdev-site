@@ -59,6 +59,6 @@ function email_layout(string $title, string $inner): string
         . '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#fff;border:1px solid #e4e7ec;border-radius:14px">'
         . '<tr><td style="background:#0a1b2e;border-radius:14px 14px 0 0;padding:20px 28px;color:#fff;font-weight:600;font-size:16px">Tshedza<span style="color:#1da1c2">WebDev</span></td></tr>'
         . '<tr><td style="padding:28px"><h1 style="margin:0 0 12px;font-size:22px;line-height:1.25">' . h($title) . '</h1>' . $inner . '</td></tr>'
-        . '<tr><td style="padding:18px 28px;border-top:1px solid #e4e7ec;color:#5f6b7a;font-size:12px">TshedzaWebDev · Pretoria · info@tshedzawebdev.co.za · WhatsApp 069 951 3836<br>Not VAT registered · All prices in South African rand</td></tr>'
+        . '<tr><td style="padding:18px 28px;border-top:1px solid #e4e7ec;color:#5f6b7a;font-size:12px">TshedzaWebDev · Pretoria · info@tshedzawebdev.co.za · WhatsApp 069 951 3836<br>All prices in South African rand</td></tr>'
         . '</table></td></tr></table></body></html>';
 }

@@ -15,7 +15,7 @@ export default function TermsPage() {
 
           <h2>Estimates are not quotes</h2>
           <p>The instant quote gives an indicative price range based on the options you select. It is not an offer or a binding quote. Every project is confirmed in a written quote with a defined scope, price and timeline, and a written agreement where needed. Estimates are valid for 30 days.</p>
-          <p>{SITE.name} is not VAT registered, so no VAT is added to any price. All prices are in South African rand.</p>
+          <p>All prices are in South African rand.</p>
 
           <h2>Our work and content</h2>
           <p>The text, design and code of this website belong to {SITE.name} unless stated otherwise. Client project screenshots are shown with permission and remain the property of their owners. Ownership of work we build for clients is set out in each client’s quote or agreement.</p>

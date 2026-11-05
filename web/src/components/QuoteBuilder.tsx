@@ -212,7 +212,7 @@ export function QuoteBuilder() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between text-[0.75rem] text-white/55">
               <span className="font-mono uppercase tracking-[0.12em]">{sent ? 'Done' : step === 'service' ? 'Instant quote' : `Step ${position} of ${flowSteps.length}`}</span>
-              <span className="hidden sm:inline">No sign-up · {SITE.vatNote.split(' · ')[0]}</span>
+              <span className="hidden sm:inline">No sign-up · Prices in rand</span>
             </div>
             <div className="mt-2 flex gap-1.5" aria-hidden="true">
               {(service ? flowSteps : stepsFor(PRICEBOOK.services[0]).filter((x) => x !== 'details')).map((s, i) => (
@@ -418,7 +418,7 @@ export function QuoteBuilder() {
                 <li key={l.label} className="flex justify-between gap-4"><span className="text-white/90">{l.label}</span><span className="font-mono tabular-nums">{rand(l.amount)}/mo</span></li>
               ))}
             </ul>
-            {estimate.oneOff > 0 ? <p className="mt-5 text-[0.8125rem] leading-relaxed text-white/55">Your range ({rand(estimate.low)} – {rand(estimate.high)}) allows for details we confirm together. Estimates are valid {PRICEBOOK.rules.estimateValidDays} days. {SITE.vatNote}.</p> : null}
+            {estimate.oneOff > 0 ? <p className="mt-5 text-[0.8125rem] leading-relaxed text-white/55">Your range ({rand(estimate.low)} – {rand(estimate.high)}) allows for details we confirm together. Estimates are valid {PRICEBOOK.rules.estimateValidDays} days. {SITE.priceNote}.</p> : null}
           </div>
         ) : null}
       </dialog>
@@ -525,7 +525,6 @@ function Result({ refEl, sel, service, tierName, estimate, steps, onEdit, onEmai
         <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[0.875rem] sm:mt-6 sm:gap-x-8 sm:text-[0.9375rem]">
           <div><dt className="text-white/50">Timeline</dt><dd className="font-medium text-white">About {estimate.weeks} week{estimate.weeks === 1 ? '' : 's'}</dd></div>
           <div><dt className="text-white/50">Deposit to start</dt><dd className="font-medium tabular-nums text-white">{estimate.deposit ? rand(estimate.deposit) : 'None'}</dd></div>
-          <div><dt className="text-white/50">VAT</dt><dd className="font-medium text-white">None added</dd></div>
         </dl>
         <div className="mt-4 flex flex-wrap gap-1.5 sm:mt-7 sm:gap-2" aria-label="Your choices: tap one to change it">
           {chips.map((c) => (

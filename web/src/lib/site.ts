@@ -16,7 +16,7 @@ export const SITE = {
   phoneIntl: '+27699513836',
   whatsapp: '27699513836',
   apiBase: process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.tshedzawebdev.co.za',
-  vatNote: 'Not VAT registered · All prices in South African rand',
+  priceNote: 'All prices in South African rand',
   // Business channels only. The personal Facebook/Instagram links from the old
   // site are left out until the owner confirms business accounts .
   social: {

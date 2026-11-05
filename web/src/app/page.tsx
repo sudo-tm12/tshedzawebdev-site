@@ -3,7 +3,7 @@ import { Icon, type IconName } from '@/components/Icon'
 import { BuildStory } from '@/components/motion/BuildStory'
 import { CommunityChat } from '@/components/motion/CommunityChat'
 import { HeroPhone } from '@/components/motion/HeroPhone'
-import { MiniQuote } from '@/components/motion/MiniQuote'
+import { Packages } from '@/components/Packages'
 import { StudioConsole } from '@/components/motion/StudioConsole'
 import { Spotlight, WordCycle, WordSwap } from '@/components/motion/basics'
 import { SwipeRail } from '@/components/SwipeRail'
@@ -34,6 +34,13 @@ const STANDARDS: { art: 'speed' | 'secure' | 'access' | 'docs'; title: string; b
   { art: 'secure', title: 'Secure & POPIA-aware', body: 'Protected forms, written privacy pages, consent before tracking.' },
   { art: 'access', title: 'Accessible', body: 'Contrast, keyboard and screen-reader support, built in.' },
   { art: 'docs', title: 'Documented & yours', body: 'Written scope, hand-over notes, and you own everything.' },
+]
+
+// Payment terms exactly as the FAQ and written quotes promise them (nothing invented).
+const PAY: { icon: IconName; title: string; body: string }[] = [
+  { icon: 'file', title: 'A fixed price in writing', body: 'After a short chat you get a written quote with the scope, price and timeline. Nothing to pay until you accept it.' },
+  { icon: 'calendar', title: '50% to start', body: 'On projects over R3 000, a deposit secures your slot and the work begins.' },
+  { icon: 'check', title: 'The rest at hand-over', body: 'You approve the design before any code. The balance is due when your site is handed over.' },
 ]
 
 const STEPS = [
@@ -86,7 +93,7 @@ export default function HomePage() {
                 <Link href="/work/" className="btn btn-on-dark h-[52px] px-5 text-[1rem] sm:px-7"><span className="max-sm:hidden">See our </span><span className="sm:hidden">Our </span>work</Link>
               </div>
               <dl style={d(700)} className="enter glass mt-10 grid max-w-lg grid-cols-3 gap-4 rounded-[20px] px-5 py-4 max-lg:order-2 sm:gap-6 sm:px-6 sm:py-5 lg:mt-12">
-                {[['7', 'services, one studio'], ['R0', 'VAT, ever'], ['100%', 'yours to own']].map(([k, v]) => (
+                {[['7', 'services, one studio'], ['1', 'person, start to finish'], ['100%', 'yours to own']].map(([k, v]) => (
                   <div key={v}><dt className="sr-only">{v}</dt><dd><span className="block text-[1.5rem] font-semibold tracking-tight sm:text-[1.75rem]">{k}</span><span className="block text-[0.75rem] leading-snug text-white/55 sm:text-[0.8125rem]">{v}</span></dd></div>
                 ))}
               </dl>
@@ -157,24 +164,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Live price ───────────────────────────────────────────────────── */}
-      <section className="section canvas-tint border-y border-line/60">
-        <LiquidField blobs={[{ tone: 'teal', top: '20%', left: '55%', size: 560 }, { tone: 'sun', top: '-20%', left: '5%', size: 380 }]} />
-        <div className="container-site grid gap-6 lg:grid-cols-12 lg:gap-x-12 lg:gap-y-0">
-          <div className="lg:col-span-5 lg:self-end">
-            <p className="eyebrow">Instant pricing</p>
-            <h2 className={`mt-4 ${H2}`}>Know your price <span className="accent-serif text-teal-700">in seconds.</span></h2>
-          </div>
-          <div className="lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:self-center"><MiniQuote /></div>
-          <div className="lg:col-span-5 lg:self-start">
-            <p className="lede lg:mt-5">No “contact us for pricing”. Pick what you are building, drag the size, and see an honest range in rand. The full quote adds extras and emails you a PDF.</p>
-            <ul className="mt-5 grid gap-2.5 text-[0.9375rem] text-ink-2 lg:mt-7">
-              {['Same price book as our written quotes', 'No VAT added, ever', '50% deposit only on projects over R3 000'].map((t) => <li key={t} className="flex gap-2.5"><Icon name="check" size={18} className="mt-0.5 text-teal-700" />{t}</li>)}
-            </ul>
-          </div>
-        </div>
-      </section>
-
       {/* ── Work ─────────────────────────────────────────────────────────── */}
       <section className="section on-dark relative overflow-hidden bg-navy-950 text-white">
         <div className="aurora aurora-1 opacity-30" aria-hidden="true" />
@@ -212,6 +201,45 @@ export default function HomePage() {
             ))}
           </SwipeRail>
           <Link href="/work/" className="btn btn-on-dark mt-6 w-full md:hidden">All projects <Icon name="arrowRight" size={16} /></Link>
+        </div>
+      </section>
+
+      {/* ── Packages: real prices, then exactly how paying works ─────────── */}
+      {/* Proof first (the work above), then the offer. Clear prices and the payment
+          terms answer "what does it cost, what am I committing to?" before anyone asks. */}
+      <section id="packages" aria-labelledby="packages-h" className="section canvas-tint scroll-mt-16 border-b border-line/60">
+        <LiquidField blobs={[{ tone: 'teal', top: '10%', left: '60%', size: 560 }, { tone: 'sun', top: '-15%', left: '0%', size: 380 }, { tone: 'mint', top: '70%', left: '15%', size: 420 }]} />
+        <div className="container-site">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div className="max-w-2xl">
+              <p className="eyebrow">Packages &amp; pricing</p>
+              <h2 id="packages-h" className={`mt-4 ${H2}`}>Clear packages. <span className="accent-serif text-teal-700">Real prices.</span></h2>
+              <p className="lede mt-4 sm:mt-5">Straight from our price book, the same numbers we put in writing. Pick one and message us, or build a custom quote with extras.</p>
+            </div>
+            <Link href="/quote/" className="btn btn-secondary flex-none max-md:hidden">Build a custom quote <Icon name="arrowRight" size={16} /></Link>
+          </div>
+          <div className="mt-8 sm:mt-12"><Packages /></div>
+
+          <div className="mt-14 sm:mt-20">
+            <p className="eyebrow">No surprises</p>
+            <h3 className="mt-3 text-[1.5rem] font-semibold leading-tight tracking-[-0.025em] sm:text-[2rem]">How paying works</h3>
+            <ol className="stagger mt-6 grid gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4">
+              {PAY.map((s, i) => (
+                <Spotlight as="li" key={s.title} className="reveal glass-light flex gap-4 rounded-[20px] p-5 sm:flex-col sm:gap-0 sm:rounded-[24px] sm:p-7">
+                  <span className="relative inline-flex h-11 w-11 flex-none items-center justify-center rounded-full bg-navy-900 text-teal-500">
+                    <Icon name={s.icon} size={20} />
+                    <span className="absolute -right-1 -top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-teal-500 font-mono text-[0.625rem] font-semibold text-navy-950">{i + 1}</span>
+                  </span>
+                  <div className="sm:mt-5">
+                    <h4 className="text-[1.0625rem] font-semibold leading-snug sm:text-[1.125rem]">{s.title}</h4>
+                    <p className="mt-1.5 text-[0.9375rem] leading-snug text-ink-2 sm:mt-2 sm:leading-normal">{s.body}</p>
+                  </div>
+                </Spotlight>
+              ))}
+            </ol>
+            <p className="mt-5 flex items-start gap-2.5 text-[0.9375rem] text-ink-2 sm:mt-6"><Icon name="shield" size={18} className="mt-0.5 flex-none text-teal-700" />You own your domain, content and code. Every login and the documentation are handed over at launch.</p>
+            <Link href="/quote/" className="btn btn-secondary mt-6 w-full md:hidden">Build a custom quote <Icon name="arrowRight" size={16} /></Link>
+          </div>
         </div>
       </section>
 

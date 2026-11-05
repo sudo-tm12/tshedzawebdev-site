@@ -54,7 +54,7 @@ export function MiniQuote() {
         <div aria-live="polite">
           <p className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-teal-500">Estimated price</p>
           <p className="mt-1 text-[clamp(1.875rem,3vw+1rem,2.75rem)] font-semibold leading-none tracking-tight tabular-nums">{rand(low)} <span className="text-white/40">–</span> {rand(high)}</p>
-          <p className="mt-2 text-[0.875rem] text-white/60">{svc.tiers.find((t) => t.id === o.tier)?.name} · about {e.weeks} week{e.weeks === 1 ? '' : 's'} · no VAT</p>
+          <p className="mt-2 text-[0.875rem] text-white/60">{svc.tiers.find((t) => t.id === o.tier)?.name} · about {e.weeks} week{e.weeks === 1 ? '' : 's'}</p>
         </div>
         <Link href={`/quote/#s=${o.service}&t=${o.tier}&u=${value}`} className="btn btn-accent glow-border">Get my full quote <Icon name="arrowRight" size={18} /></Link>
       </div>

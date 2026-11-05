@@ -90,7 +90,7 @@ export function BuildStory({ steps }: { steps: Step[] }) {
                   </div>
                   <div style={seq(2)} className="mt-3 border-t border-line pt-3">
                     <p className="text-[1.5rem] font-semibold leading-none tracking-tight tabular-nums sm:text-[1.75rem]">{rand(EST.low)} <span className="text-ink-3">–</span> {rand(EST.high)}</p>
-                    <p className="mt-1.5 text-[0.75rem] text-ink-3">In rand · no VAT · a deposit secures your slot</p>
+                    <p className="mt-1.5 text-[0.75rem] text-ink-3">In rand · fixed in writing · a deposit secures your slot</p>
                   </div>
                 </div>
               </div>

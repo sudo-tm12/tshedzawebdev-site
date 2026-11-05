@@ -29,7 +29,7 @@ low      = roundTo(oneOff × rangeLow, 50);  high = roundTo(oneOff × rangeHigh,
 deposit  = oneOff > depositThreshold ? roundTo(low × depositRate, 50) : 0
 weeks    = max(1, ceil((tier.weeks + Σ addon.weeks) × (priority ? 0.6 : 1)))
 ```
-Rounding: to the nearest R50. Display: `R 6 500` (en-ZA, no cents). **No VAT, ever** (the footer note on every PDF and page).
+Rounding: to the nearest R50. Display: `R 6 500` (en-ZA, no cents). VAT is never mentioned on the site, PDFs or emails (owner decision, 5 Nov 2026).
 
 **Acceptance examples (pinned in tests):**
 | Selection | One-off | Range | Deposit | Weeks |
@@ -64,7 +64,7 @@ Rounding: to the nearest R50. Display: `R 6 500` (en-ZA, no cents). **No VAT, ev
 Retention: 24 months, then purged (documented in the Privacy Policy). Data-subject requests go to info@tshedzawebdev.co.za.
 
 ## 6. PDF estimate (A4, our brand)
-Header: logo, "Project estimate", ref, date, valid for 30 days. Client block. A line-item table (description · qty · amount). Range box. Monthly items. Timeline. Deposit and payment terms ("50% deposit for projects over R3 000 · Not VAT registered · Banking details on the formal quote"). "What happens next" (a discovery call → a formal quote → the deposit → kickoff). Footer: contact, address region (Pretoria), POPIA line.
+Header: logo, "Project estimate", ref, date, valid for 30 days. Client block. A line-item table (description · qty · amount). Range box. Monthly items. Timeline. Deposit and payment terms ("50% deposit for projects over R3 000 · Banking details on the formal quote"). "What happens next" (a discovery call → a formal quote → the deposit → kickoff). Footer: contact, address region (Pretoria), POPIA line.
 
 ## 7. Done when
 - [ ] The engine's TS and PHP outputs match for every acceptance example and 500 random selections (a parity test)

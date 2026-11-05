@@ -8,7 +8,7 @@ import { SITE } from '@/lib/site'
 export const metadata = pageMeta(
   '/faq/',
   'FAQ',
-  'Straight answers about pricing, deposits, VAT, timelines, ownership, hosting and how we work at TshedzaWebDev.',
+  'Straight answers about pricing, deposits, timelines, ownership, hosting and how we work at TshedzaWebDev.',
 )
 
 const GROUPS: { title: string; items: { q: string; a: string }[] }[] = [
@@ -16,9 +16,8 @@ const GROUPS: { title: string; items: { q: string; a: string }[] }[] = [
     title: 'Pricing & payment',
     items: [
       { q: 'How much does a website cost?', a: 'A landing page starts from R2 500 and a five-page business site from R4 500. Online stores start from R4 500. The instant quote gives you a range based on exactly what you need.' },
-      { q: 'Do you charge VAT?', a: 'No. TshedzaWebDev is not VAT registered, so we never add VAT. The price on your quote is the price you pay.' },
       { q: 'Do I need to pay a deposit?', a: 'Yes, for projects over R3 000 a 50% deposit secures your slot and starts the work. The balance is due on hand-over, as agreed in your quote.' },
-      { q: 'Is the instant quote the final price?', a: 'It is an honest estimate range. After a short chat about your project we send a written quote with a fixed price.' },
+      { q: 'Is the instant quote the final price?', a: 'It is an honest estimate range. After a short chat about your project we send a written quote with a fixed price, and that is the price you pay.' },
     ],
   },
   {

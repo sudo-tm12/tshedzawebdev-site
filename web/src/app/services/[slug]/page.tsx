@@ -89,7 +89,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {book ? (
         <section className="section">
           <div className="container-site">
-            <SectionHeading eyebrow="Pricing" title={<>Clear starting prices. <span className="accent-serif">No VAT.</span></>} lede="Your exact price depends on scope. The instant quote adds up your options and shows a range in seconds." />
+            <SectionHeading eyebrow="Pricing" title={<>Clear starting prices. <span className="accent-serif">No surprises.</span></>} lede="Your exact price depends on scope. The instant quote adds up your options and shows a range in seconds." />
             <SwipeRail label="Packages" grid="md" itemWidth="82%" className="mt-8 sm:mt-12 md:grid-cols-3 md:gap-4">
               {book.tiers.map((t, i) => (
                 <li key={t.id} className={`reveal flex flex-col rounded-[22px] border p-6 sm:p-7 ${i === 1 ? 'on-dark border-navy-900 bg-navy-900 text-white' : 'border-line bg-card'}`}>
@@ -101,7 +101,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                 </li>
               ))}
             </SwipeRail>
-            <p className="mt-6 text-[0.875rem] text-ink-3">{SITE.vatNote}. A 50% deposit secures your slot on projects over R3 000.</p>
+            <p className="mt-6 text-[0.875rem] text-ink-3">{SITE.priceNote}. A 50% deposit secures your slot on projects over R3 000.</p>
           </div>
         </section>
       ) : null}

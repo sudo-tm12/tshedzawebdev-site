@@ -62,7 +62,20 @@ function SiteScreen() {
         <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-success-tint text-success"><Icon name="clock" size={12} /></span>
         <span className="text-[0.625rem] font-medium text-ink-2">Open today · 08:00–17:00</span>
       </div>
-      <div style={i(4)} className="flex-1 rounded-[12px] bg-[repeating-linear-gradient(135deg,#eef0f3_0_6px,#e4e7ec_6px_12px)]" />
+      {/* Online booking: a slot gets picked, then confirmed. */}
+      <div style={i(4)} className="flex flex-1 flex-col rounded-[12px] border border-line bg-card p-2.5">
+        <div className="flex items-center justify-between">
+          <p className="flex items-center gap-1 text-[0.625rem] font-semibold"><Icon name="calendar" size={11} className="text-teal-700" />Book online</p>
+          <span className="rounded-full bg-line-2 px-1.5 py-0.5 font-mono text-[0.5rem] text-ink-2">Sat 14</span>
+        </div>
+        <div className="mt-2 grid grid-cols-3 gap-1.5">
+          {['09:00', '10:00', '11:30', '13:00', '14:30', '16:00'].map((t, k) => (
+            <span key={t} style={k === 1 ? d(1150) : undefined}
+              className={`rounded-[7px] py-1.5 text-center font-mono text-[0.5625rem] tabular-nums ${k === 1 ? 'slot-pick bg-teal-500 font-semibold text-navy-950' : k === 3 ? 'bg-line-2 text-ink-3/60 line-through' : 'border border-line text-ink-2'}`}>{t}</span>
+          ))}
+        </div>
+        <span style={d(1450)} className="pop mt-auto inline-flex items-center gap-1 self-start rounded-full bg-navy-900 px-2.5 py-1.5 text-[0.5625rem] font-semibold text-white"><Icon name="check" size={10} className="text-teal-500" />Booked · Sat 10:00</span>
+      </div>
       <span style={d(1100)} className="pop absolute bottom-4 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-navy-900 text-teal-500 shadow-[0_10px_20px_-8px_rgba(10,27,46,0.6)]"><Icon name="whatsapp" size={18} /></span>
     </div>
   )

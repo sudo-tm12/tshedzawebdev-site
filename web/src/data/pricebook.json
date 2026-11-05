@@ -2,7 +2,6 @@
   "version": "2026-10-29-draft",
   "status": "DRAFT, awaiting owner approval. Not live until approved.",
   "currency": "ZAR",
-  "vat": "Not VAT registered. No VAT is ever added.",
   "rules": {
     "rangeLow": 0.9,
     "rangeHigh": 1.15,

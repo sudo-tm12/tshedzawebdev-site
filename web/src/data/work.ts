@@ -1,4 +1,4 @@
-// Portfolio. Only projects the owner approved on 29 Oct 2026. Facts come from the
+// Portfolio. Only projects the owner approved on 29 Oct 2026 (TNB and HomeCo added on 5 Nov 2026). Facts come from the
 // project docs and VAULT client notes. One project is excluded entirely (NDA).
 // The Gourmet Chariot company profile is confidential: nothing from it is published.
 import { asset } from '@/lib/site'
@@ -42,6 +42,45 @@ export const WORK: Project[] = [
     desktop: { src: asset('/work/blr-desktop.webp'), width: 1200, height: 750, alt: 'BLR Tutoring homepage: a large STUDY headline over a classroom chalkboard full of equations' },
     mobile: { src: asset('/work/blr-mobile.webp'), width: 390, height: 844, alt: 'BLR Tutoring homepage on a phone' },
     accent: '#0E2238',
+  },
+  {
+    slug: 'tnb-environmental',
+    client: 'TNB Environmental Solutions',
+    sector: 'Geotechnical & environmental',
+    location: 'Cape Town',
+    services: ['Website', 'Company profile'],
+    summary: 'A one-page website and company profile for a geotechnical and environmental consultancy in the Western Cape.',
+    challenge: 'Developers, mining and finance clients have to trust a consultant with ground risk before they ever pick up the phone. The site had to explain three technical disciplines simply and look as precise as the work itself.',
+    approach: [
+      'Built the page around the ground itself: soil layers and a depth gauge that move as you scroll.',
+      'Turned three disciplines (geotechnical, contamination and environmental authorisation) into one clear set of tabs, with a step-by-step process from first question to sign-off.',
+      'Designed the phone layout separately, with call and enquiry buttons always in thumb reach.',
+    ],
+    delivered: ['One-page website', 'Company profile (PDF and editable Word)', 'Phone quick-contact bar'],
+    live: 'https://sudo-tm12.github.io/tnb-environmental/',
+    status: 'Delivered',
+    desktop: { src: asset('/work/tnb-desktop.webp'), width: 1200, height: 750, alt: 'TNB Environmental Solutions homepage: “Understanding what lies beneath” on deep green, with a borehole log of soil layers' },
+    mobile: { src: asset('/work/tnb-mobile.webp'), width: 390, height: 844, alt: 'TNB Environmental Solutions homepage on a phone, with soil layers along the bottom' },
+    accent: '#10281A',
+  },
+  {
+    slug: 'homeco-property-services',
+    client: 'HomeCo Property Services',
+    sector: 'Property care',
+    services: ['Website', 'Company profile'],
+    summary: 'A website and company profile for a short-term rental turnover service that inspects, cleans and restocks between every stay.',
+    challenge: 'Holiday-rental owners juggle cleaners, laundry, stock and booking changes across scattered chats. HomeCo needed to show, not just say, how it keeps a property guest-ready, without inventing stats or prices before launch.',
+    approach: [
+      'Opened with a sample turnover that ticks through each check until the property is released as ready.',
+      'Told the turnover as a scroll story: a clock runs from checkout to check-in while the five steps play.',
+      'Let owners tap through the three readiness outcomes to see exactly what they would be told.',
+    ],
+    delivered: ['One-page website', 'Company profile (PDF and editable Word)', 'Interactive owner-report preview'],
+    live: 'https://sudo-tm12.github.io/homeco-property-services/',
+    status: 'In review',
+    desktop: { src: asset('/work/homeco-desktop.webp'), width: 1200, height: 750, alt: 'HomeCo homepage: “Every guest walks into a home that’s ready”, beside a sample turnover checklist' },
+    mobile: { src: asset('/work/homeco-mobile.webp'), width: 390, height: 844, alt: 'HomeCo homepage on a phone' },
+    accent: '#0A2A4A',
   },
   {
     slug: 'chavistos-travel',

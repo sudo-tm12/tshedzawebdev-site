@@ -121,7 +121,7 @@ Forbidden: parallax, 3D, bouncy easing, auto-rotating carousels, animated stat c
 - **Stepper** (quote builder): numbered mono steps, the current one in navy, a progress bar with `aria-valuenow`.
 - **Accordion:** native `<details>`, first item open.
 - **Header:** sticky, 64 px, translucent paper with a backdrop blur only after scroll; wordmark left (text only: there is no icon mark, so do not invent one), nav centre, "Get a quote" accent right; on mobile a full-screen sheet menu (focus-trapped, Esc closes).
-- **Footer:** navy-950. Brand block, services, company, contact (WhatsApp, email, Pretoria), legal, "Not VAT registered · All prices in ZAR".
+- **Footer:** navy-950. Brand block, services, company, contact (WhatsApp, email, Pretoria), legal, "All prices in South African rand".
 - **Consent banner:** bottom sheet, equal-weight "Accept" / "Reject" buttons, a "Settings" link; nothing tracks until Accept; the choice is remembered for 12 months and can be changed from the footer.
 
 ## 5. Accessibility (WCAG 2.2 AA, verified before launch)

@@ -76,14 +76,20 @@ export function Header() {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-navy-900 focus:px-4 focus:py-3 focus:text-white">
         Skip to content
       </a>
-      <header className={`sticky top-0 z-50 h-16 transition-colors duration-300 ${!scrolled && !open ? 'border-b border-white/10' : ''} ${open ? 'bg-navy-950' : ''}`}>
+      {/* Phones and tablets: ONE header, a dark glass pill, identical before and after scroll
+          and over every section (no transitions, no colour switching). Desktop (lg+): a
+          transparent bar over the hero that becomes a pill matching the section under it. */}
+      {/* flow-root: stops the pill's top margin collapsing out of the header, which made the
+          pill jump 8px up the moment the sticky header engaged. */}
+      <header className={`sticky top-0 z-50 flow-root h-16 ${!scrolled && !open ? 'lg:border-b lg:border-white/10' : ''} ${open ? 'bg-navy-950' : ''}`}>
         <div
-          className={`mx-auto flex items-center justify-between gap-3 transition-[margin,height,max-width,padding,border-radius,box-shadow,background-color] duration-500 ease-[var(--ease-out-soft)] sm:gap-6 ${
-            pill ? `${overDark ? 'glass-nav-dark' : 'glass-nav'} mt-2 h-12 w-[calc(100%-16px)] max-w-[1160px] rounded-full pl-4 pr-1.5 sm:pl-5` : 'h-16 w-full max-w-[1200px] px-5 md:px-8'
+          className={`nav-shell mx-auto mt-2 flex h-12 w-[calc(100%-16px)] max-w-[1160px] items-center justify-between gap-3 rounded-full pl-4 pr-1.5 sm:gap-6 sm:pl-5 lg:transition-[margin,height,max-width,padding,border-radius,box-shadow,background-color] lg:duration-500 lg:ease-[var(--ease-out-soft)] ${
+            pill ? `${overDark ? 'glass-nav-dark' : 'glass-nav'} lg:mt-2 lg:h-12 lg:w-[calc(100%-16px)] lg:max-w-[1160px] lg:rounded-full lg:pl-5 lg:pr-1.5` : 'lg:mt-0 lg:h-16 lg:w-full lg:max-w-[1200px] lg:rounded-none lg:pl-8 lg:pr-8'
           }`}
         >
           <Link href="/" aria-label={`${SITE.name}: home`} className="rounded-lg">
-            <Logo inverted={dark} />
+            <Logo inverted className="lg:hidden" />
+            <Logo inverted={dark} className="max-lg:hidden" />
           </Link>
 
           <nav aria-label="Main" className="hidden lg:block">
@@ -105,14 +111,15 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Link href="/contact/" className={`btn btn-sm hidden md:inline-flex ${dark ? 'btn-on-dark' : 'btn-secondary'}`}>Contact</Link>
+            <Link href="/contact/" className="btn btn-sm btn-on-dark hidden md:inline-flex lg:hidden">Contact</Link>
+            <Link href="/contact/" className={`btn btn-sm hidden lg:inline-flex ${dark ? 'btn-on-dark' : 'btn-secondary'}`}>Contact</Link>
             <Link href="/quote/" className="btn btn-accent btn-sm px-3.5 max-md:hidden sm:px-4">
               Get a quote <Icon name="arrowRight" size={16} className="hidden sm:block" />
             </Link>
             <button
               ref={toggleRef}
               type="button"
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border lg:hidden ${dark ? 'border-white/20 bg-white/10 text-white backdrop-blur' : 'border-line bg-white/80'}`}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white lg:hidden"
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? 'Close menu' : 'Open menu'}
