@@ -28,6 +28,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <PageHero
+        asideOnMobile
         crumbs={[{ href: '/', label: 'Home' }, { href: '/work/', label: 'Work' }, { label: p.client }]}
         eyebrow={`${p.sector}${p.location ? ` · ${p.location}` : ''}`}
         title={p.client}

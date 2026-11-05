@@ -23,13 +23,20 @@ export default function WorkPage() {
         actions={<><Link href="/quote/" className="btn btn-accent glow-border">Start your project <Icon name="arrowRight" size={18} /></Link><Link href="/services/" className="btn btn-on-dark">Our services</Link></>}
       />
 
-      <section className="container-site pb-16">
-        <ul className="grid gap-14 md:grid-cols-2 md:gap-x-10">
+      <section className="container-site pb-12 pt-10 sm:pb-16 sm:pt-0">
+        <ul className="grid gap-10 sm:gap-14 md:grid-cols-2 md:gap-x-10">
           {withShots.map((p, i) => (
             <li key={p.slug} className={`reveal ${i === 0 ? 'md:col-span-2' : ''}`}>
               <Link href={`/work/${p.slug}/`} className="group block">
-                <BrowserFrame src={p.desktop!.src} alt={p.desktop!.alt} width={p.desktop!.width} height={p.desktop!.height} url={p.live} priority={i === 0} />
-                <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
+                {/* Phones: the site's own phone screen (or the top of its desktop page), big enough to read. */}
+                <div className="aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-navy-900 shadow-[var(--shadow-md)] md:hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-optimised WebP */}
+                  <img src={(p.mobile ?? p.desktop)!.src} alt={(p.mobile ?? p.desktop)!.alt} width={(p.mobile ?? p.desktop)!.width} height={(p.mobile ?? p.desktop)!.height} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" className={`${i === 0 ? '' : 'settle'} h-full w-full object-cover object-left-top`} />
+                </div>
+                <div className="hidden md:block">
+                  <BrowserFrame src={p.desktop!.src} alt={p.desktop!.alt} width={p.desktop!.width} height={p.desktop!.height} url={p.live} priority={i === 0} rise={i !== 0} />
+                </div>
+                <div className="mt-4 flex flex-wrap items-start justify-between gap-3 sm:mt-5 sm:gap-4">
                   <div>
                     <h2 className="h3 group-hover:text-teal-700">{p.client}</h2>
                     <p className="mt-1.5 max-w-xl text-ink-2">{p.summary}</p>
@@ -45,11 +52,11 @@ export default function WorkPage() {
         </ul>
       </section>
 
-      <section className="container-site pb-20 lg:pb-28">
-        <ul className="grid gap-4 md:grid-cols-2">
+      <section className="container-site pb-16 sm:pb-20 lg:pb-28">
+        <ul className="grid gap-3 sm:gap-4 md:grid-cols-2">
           {textOnly.map((p) => (
             <li key={p.slug} className="reveal">
-              <Link href={`/work/${p.slug}/`} className="on-dark group flex h-full flex-col justify-between gap-10 rounded-[var(--radius-md)] p-8 text-white transition-transform hover:-translate-y-0.5" style={{ backgroundColor: p.accent }}>
+              <Link href={`/work/${p.slug}/`} className="on-dark group flex h-full flex-col justify-between gap-8 rounded-[22px] p-6 text-white sm:gap-10 sm:p-8 transition-transform hover:-translate-y-0.5" style={{ backgroundColor: p.accent }}>
                 <div>
                   <span className="eyebrow">{p.sector}</span>
                   <h2 className="h2 mt-3">{p.client}</h2>

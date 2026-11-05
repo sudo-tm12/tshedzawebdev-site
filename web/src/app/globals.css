@@ -505,17 +505,17 @@
 
   /* Morphing colour blobs behind light glass (the "liquid"). Decorative only. */
   .liquid-field { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  /* Transform-only drift: animating border-radius under a blur repaints every frame,
+     which drops frames on mid-range phones. The shapes stay organic, just static. */
   .blob { position: absolute; width: 460px; height: 460px; filter: blur(60px); opacity: 0.45; border-radius: 42% 58% 63% 37% / 45% 39% 61% 55%;
-    animation: blob-morph 18s ease-in-out infinite alternate, blob-drift 26s ease-in-out infinite alternate; will-change: transform, border-radius; }
+    animation: blob-drift 26s ease-in-out infinite alternate; will-change: transform; }
+  .blob:nth-child(2) { border-radius: 63% 37% 41% 59% / 58% 62% 38% 42%; }
+  .blob:nth-child(3) { border-radius: 38% 62% 55% 45% / 36% 55% 45% 64%; }
+  @media (max-width: 767px) { .blob { filter: blur(44px); } }
   .blob-teal { background: radial-gradient(circle at 30% 30%, #7fd8ec, #1da1c2 60%); }
   .blob-lilac { background: radial-gradient(circle at 30% 30%, #e2d9f7, #b9a6ea 60%); animation-delay: -6s, -9s; }
   .blob-sun { background: radial-gradient(circle at 30% 30%, #fff1c4, #f2cf63 60%); animation-delay: -12s, -4s; opacity: 0.35; }
   .blob-mint { background: radial-gradient(circle at 30% 30%, #e2f7ea, #8fd6aa 60%); animation-delay: -3s, -14s; opacity: 0.4; }
-  @keyframes blob-morph {
-    0% { border-radius: 42% 58% 63% 37% / 45% 39% 61% 55%; }
-    50% { border-radius: 63% 37% 41% 59% / 58% 62% 38% 42%; }
-    100% { border-radius: 38% 62% 55% 45% / 36% 55% 45% 64%; }
-  }
   @keyframes blob-drift { to { transform: translate(60px, -40px) rotate(40deg) scale(1.1); } }
   .liquid-field + * { position: relative; z-index: 1; }
 
@@ -593,4 +593,204 @@
   .q-sheet[open] { animation: q-in-fwd 360ms var(--ease-out-soft) both; }
 
   .range-teal-dark { width: 100%; }
+}
+
+/* ───────────── Mobile-first system (docs/DESIGN.md §3.8) ─────────────
+   Phones get their own patterns, not the desktop layout stacked into one column. */
+@layer components {
+  /* Swipe rail: a horizontal, snapping row of cards on phones; a grid from its breakpoint.
+     The next card peeks in so the swipe is obvious. <SwipeRail> adds the progress dots. */
+  .rail {
+    display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: -20px; padding-inline: 20px; scroll-padding-inline: 20px; padding-block: 4px 8px;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail > * { flex: 0 0 var(--rail-w, 84%); scroll-snap-align: start; min-width: 0; }
+  @media (min-width: 768px) and (max-width: 1023px) { .rail { margin-inline: -32px; padding-inline: 32px; scroll-padding-inline: 32px; } .rail > * { flex-basis: var(--rail-w-md, 46%); } }
+  /* Scroll-driven reveals would read the rail's (horizontal) axis and stay hidden.
+     The cards themselves get a horizontal depth effect instead (Motion v3, below). */
+  @media (max-width: 639px) { .rail-grid-sm .reveal { animation: none !important; } }
+  @media (max-width: 767px) { .rail-grid-md .reveal { animation: none !important; } }
+  @media (max-width: 1023px) { .rail-grid-lg .reveal { animation: none !important; } }
+  @media (min-width: 640px) { .rail-grid-sm { display: grid; overflow: visible; margin-inline: 0; padding-inline: 0; padding-block: 0; } .rail-grid-sm > * { flex: none; } }
+  @media (min-width: 768px) { .rail-grid-md { display: grid; overflow: visible; margin-inline: 0; padding-inline: 0; padding-block: 0; } .rail-grid-md > * { flex: none; } }
+  @media (min-width: 1024px) { .rail-grid-lg { display: grid; overflow: visible; margin-inline: 0; padding-inline: 0; padding-block: 0; } .rail-grid-lg > * { flex: none; } }
+
+  .rail-dots { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+  .rail-dot { height: 6px; width: 6px; border-radius: 999px; background: rgba(10,27,46,0.18); transition: width 300ms var(--ease-out-soft), background 300ms ease; }
+  .rail-dot[aria-current='true'] { width: 22px; background: var(--color-teal-600); }
+  .on-dark .rail-dot { background: rgba(255,255,255,0.22); }
+  .on-dark .rail-dot[aria-current='true'] { background: var(--color-teal-500); }
+
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Bottom action dock (phones and tablets). */
+  .dock { transition: transform 420ms var(--ease-out-soft), opacity 300ms ease; }
+  .dock[data-show='false'] { transform: translateY(140%); opacity: 0; pointer-events: none; }
+
+  /* Mobile menu sheet: items rise in one after another. */
+  @keyframes menu-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .menu-rise > * { animation: menu-rise 480ms var(--ease-out-soft) both; }
+  .menu-rise > *:nth-child(2) { animation-delay: 40ms; } .menu-rise > *:nth-child(3) { animation-delay: 80ms; }
+  .menu-rise > *:nth-child(4) { animation-delay: 120ms; } .menu-rise > *:nth-child(5) { animation-delay: 160ms; }
+  .menu-rise > *:nth-child(6) { animation-delay: 200ms; } .menu-rise > *:nth-child(7) { animation-delay: 240ms; }
+  .menu-rise > *:nth-child(8) { animation-delay: 280ms; }
+
+  /* Footer accordions on phones. */
+  .foot-acc > summary { list-style: none; }
+  .foot-acc > summary::-webkit-details-marker { display: none; }
+  .foot-acc[open] .foot-acc-icon { transform: rotate(45deg); }
+
+  /* Phones: tighter rhythm and type than desktop, not just narrower. */
+  @media (max-width: 639px) {
+    .section { padding-block: 56px; }
+    .lede { font-size: 1.0625rem; }
+    .h2 { font-size: 1.875rem; line-height: 1.08; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu-rise > * { animation: none !important; }
+    .dock { transition: none; }
+  }
+}
+
+/* ───────────── Motion v3: landing + scroll (docs/DESIGN.md §3.9) ─────────────
+   Everything here animates transform, opacity or clip-path only (compositor-friendly
+   on mid-range Android phones). Scroll effects are CSS scroll-driven animations: no
+   scroll listeners, no scroll-jacking, and browsers without support show the final
+   state. Reduced motion renders every element in its final state. */
+@layer components {
+  /* ── Landing choreography: hero pieces arrive once, in order (--d = delay). ── */
+  @keyframes enter-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @keyframes enter-up-soft { from { opacity: 0; transform: translateY(22px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+  .enter { animation: enter-up 850ms var(--ease-out-soft) both; animation-delay: var(--d, 0ms); }
+  @media (min-width: 1024px) { .enter { animation-name: enter-up-soft; } }
+
+  /* Headline lines slide up out of a mask, one after another. */
+  .line-mask { display: block; overflow: hidden; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+  .line-mask > span { display: inline-block; animation: line-up 1100ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0ms); }
+  @keyframes line-up { from { transform: translateY(110%) rotate(2deg); } to { transform: none; } }
+
+  /* The hero "powers on": the grid floor swings up from the horizon, the aurora blooms
+     and a scan line sweeps down the screen once. */
+  .hero-dark > .hero-grid { animation: grid-pan 6s linear infinite, grid-on 1700ms var(--ease-out-soft) both; }
+  @keyframes grid-on { from { opacity: 0; transform: perspective(700px) rotateX(84deg) scaleY(0.5); } }
+  .hero-dark > .aurora-1 { animation: drift-1 16s ease-in-out infinite alternate, bloom 1800ms ease-out both; }
+  .hero-dark > .aurora-2 { animation: drift-2 20s ease-in-out infinite alternate, bloom 2200ms ease-out 200ms both; }
+  @keyframes bloom { from { opacity: 0; } }
+  .hero-dark::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 140px; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(29,161,194,0.10) 70%, rgba(159,227,242,0.55) 99%, transparent);
+    transform: translateY(-140px); opacity: 0;
+    animation: scan 1900ms cubic-bezier(0.45, 0, 0.2, 1) 150ms both;
+  }
+  @keyframes scan { 0% { opacity: 0; transform: translateY(-140px); } 12% { opacity: 1; } 85% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(min(100svh, 900px)); } }
+
+  /* Thin reading-progress line along the very top of the screen (enabled below). */
+  .scroll-progress { display: none; }
+
+  /* Adaptive header: the floating pill turns dark over dark sections. */
+  .glass-nav-dark {
+    background: linear-gradient(180deg, rgba(19,40,63,0.72), rgba(6,17,31,0.66));
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 12px 32px -14px rgba(0,0,0,0.65);
+  }
+
+  /* Cookie sheet arrives after the landing choreography instead of covering it. */
+  @keyframes sheet-up { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  .consent-in { animation: sheet-up 600ms var(--ease-out-soft) 1600ms both; }
+
+  /* Hero phone: the screen content builds itself (children rise in turn, --i = order). */
+  .build-in > * { animation: rise-in 520ms var(--ease-out-soft) both; animation-delay: calc(var(--i, 0) * 110ms + 80ms); }
+  @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .pop { animation: pop 420ms var(--ease-out-soft) both; animation-delay: var(--d, 0ms); }
+  @keyframes press { 0%, 100% { transform: none; } 50% { transform: scale(0.94); } }
+  .press { animation: press 300ms ease both; animation-delay: var(--d, 0ms); }
+  @keyframes typing { 0%, 80%, 100% { opacity: 0.25; transform: none; } 40% { opacity: 1; transform: translateY(-2px); } }
+  .typing > span { animation: typing 1s ease-in-out infinite; }
+  .typing > span:nth-child(2) { animation-delay: 150ms; }
+  .typing > span:nth-child(3) { animation-delay: 300ms; }
+
+  /* Build story: blueprint paper behind the wireframe stage. */
+  .blueprint {
+    background-color: #0b2340;
+    background-image: linear-gradient(rgba(159,227,242,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(159,227,242,0.14) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+  .wire { border: 1.5px dashed rgba(159,227,242,0.6); border-radius: 6px; }
+  /* A step's pieces arrive one after another when its layer turns on (--i = order). */
+  .seq > * { opacity: 0; transform: translateY(10px); transition: opacity 450ms var(--ease-out-soft), transform 450ms var(--ease-out-soft); }
+  [data-on='true'] .seq > * { opacity: 1; transform: none; transition-delay: calc(var(--i, 0) * 170ms + 120ms); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enter, .line-mask > span, .hero-dark > .hero-grid, .hero-dark > .aurora-1, .hero-dark > .aurora-2, .consent-in,
+    .build-in > *, .pop, .press, .typing > span { animation: none !important; }
+    .hero-dark::before { display: none; }
+    .seq > *, [data-on='true'] .seq > * { opacity: 1; transform: none; transition: none; }
+  }
+}
+
+/* Scroll-driven effects (Chrome/Edge on Android and desktop, Safari 26+). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @layer components {
+      .scroll-progress {
+        display: block; position: fixed; inset: 0 0 auto; z-index: 70; height: 2px; pointer-events: none;
+        background: linear-gradient(90deg, #1da1c2, #9fe3f2); transform-origin: 0 50%;
+        animation: progress-grow linear both; animation-timeline: scroll(root);
+      }
+      @keyframes progress-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+      /* Hero content drifts up and dims as it leaves, so the next section slides over it. */
+      .hero-exit { animation: hero-exit linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+      @keyframes hero-exit { to { opacity: 0.1; transform: translateY(-14%) scale(0.96); } }
+
+      /* Section headings wipe up into view. */
+      .reveal-h { animation: heading-in linear both; animation-timeline: view(); animation-range: entry 5% cover 32%; }
+      @keyframes heading-in {
+        from { opacity: 0; transform: translateY(0.5em); clip-path: inset(0 0 100% 0); }
+        to { opacity: 1; transform: none; clip-path: inset(-0.2em -0.2em -0.35em -0.2em); }
+      }
+
+      /* Grids reveal in a wave: each card's range starts a little later than the last. */
+      .stagger > .reveal:nth-child(4n + 2) { animation-range: entry 6% entry 42%; }
+      .stagger > .reveal:nth-child(4n + 3) { animation-range: entry 12% entry 48%; }
+      .stagger > .reveal:nth-child(4n + 4) { animation-range: entry 18% entry 54%; }
+
+      /* Real screens tilt up into place, like a laptop lid opening. */
+      @media (min-width: 768px) {
+        .device-rise { transform-origin: 50% 100%; animation: device-rise linear both; animation-timeline: view(); animation-range: entry 0% cover 42%; }
+      }
+      @keyframes device-rise { from { opacity: 0.35; transform: perspective(1400px) rotateX(26deg) translateY(48px) scale(0.93); } to { opacity: 1; transform: none; } }
+      /* Phones: a screenshot settles into its frame (a slow zoom-out) as it scrolls in. */
+      .settle { animation: settle linear both; animation-timeline: view(); animation-range: entry 0% cover 55%; }
+      @keyframes settle { from { transform: scale(1.18) translateY(4%); } to { transform: none; } }
+
+      /* Phone swipe rails: the card in the middle is full size, its neighbours recede. */
+      @keyframes rail-depth { 0%, 100% { transform: scale(0.9); opacity: 0.55; } 38%, 62% { transform: none; opacity: 1; } }
+      @media (max-width: 639px) { .rail.rail-grid-sm > * { animation: rail-depth linear both !important; animation-timeline: view(inline) !important; } }
+      @media (max-width: 767px) { .rail.rail-grid-md > * { animation: rail-depth linear both !important; animation-timeline: view(inline) !important; } }
+      @media (max-width: 1023px) { .rail.rail-grid-lg > * { animation: rail-depth linear both !important; animation-timeline: view(inline) !important; } }
+
+      /* "Our standard" micro-visuals play as each card scrolls in. */
+      .art { animation-timeline: view(); animation-range: entry 25% cover 55%; animation-fill-mode: both; animation-timing-function: linear; animation-duration: auto; }
+      .art-needle { transform-origin: 28px 30px; animation-name: needle; }
+      @keyframes needle { from { transform: rotate(-115deg); } to { transform: rotate(52deg); } }
+      .art-draw { stroke-dasharray: 80; animation-name: draw-80; }
+      @keyframes draw-80 { from { stroke-dashoffset: 80; } to { stroke-dashoffset: 0; } }
+      .art-focus { animation-name: focus-hop; }
+      @keyframes focus-hop { 0%, 22% { transform: translateX(0); } 40%, 62% { transform: translateX(19px); } 80%, 100% { transform: translateX(38px); } }
+      .art-line { transform-origin: 0 50%; animation-name: line-grow; }
+      .art-line:nth-of-type(2) { animation-range: entry 35% cover 60%; }
+      .art-line:nth-of-type(3) { animation-range: entry 45% cover 65%; }
+      @keyframes line-grow { from { transform: scaleX(0); } to { transform: none; } }
+
+      /* The founder quote writes itself in from the left. */
+      .quote-in { animation: quote-in linear both; animation-timeline: view(); animation-range: entry 10% cover 40%; }
+      @keyframes quote-in { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(-0.2em -0.2em -0.3em -0.2em); } }
+    }
+  }
 }

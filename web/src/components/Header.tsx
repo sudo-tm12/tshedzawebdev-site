@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { SERVICES } from '@/data/services'
 import { NAV, SITE, whatsappLink } from '@/lib/site'
 import { Icon } from './Icon'
 import { Logo } from './Logo'
@@ -10,16 +11,28 @@ import { Logo } from './Logo'
 export function Header() {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
+  const [overDark, setOverDark] = useState(true)
   const [open, setOpen] = useState(false)
   const sheetRef = useRef<HTMLDivElement>(null)
   const toggleRef = useRef<HTMLButtonElement>(null)
 
+  // After scroll the header floats as a pill that matches whatever is under it: dark glass
+  // over dark sections, light glass over light ones. One probe per frame, at most.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8)
-    onScroll()
+    let raf = 0
+    const probe = () => {
+      raf = 0
+      setScrolled(window.scrollY > 8)
+      // Only page content counts (not overlays, banners or the dev-tools badge).
+      const under = document.elementsFromPoint(window.innerWidth / 2, 36).find((el) => el.closest('main, footer, #mobile-menu'))
+      setOverDark(!!under?.closest('.on-dark, .hero-dark, footer, #mobile-menu'))
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(probe) }
+    probe()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    window.addEventListener('resize', onScroll)
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll) }
+  }, [pathname])
 
   // Close the menu when the route changes (derived during render, no effect).
   const [lastPath, setLastPath] = useState(pathname)
@@ -54,18 +67,19 @@ export function Header() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href)
   // Every page opens with a dark hero: the header is transparent with light text until scroll,
   // then it floats as a liquid-glass pill. The header box itself stays 64px so nothing jumps.
-  const dark = !scrolled && !open
+  // With the phone menu open the header joins the dark sheet below it.
   const pill = scrolled && !open
+  const dark = !scrolled || open || overDark
 
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-navy-900 focus:px-4 focus:py-3 focus:text-white">
         Skip to content
       </a>
-      <header className={`sticky top-0 z-50 h-16 transition-colors duration-300 ${dark ? 'border-b border-white/10' : ''} ${open ? 'bg-paper' : ''}`}>
+      <header className={`sticky top-0 z-50 h-16 transition-colors duration-300 ${!scrolled && !open ? 'border-b border-white/10' : ''} ${open ? 'bg-navy-950' : ''}`}>
         <div
           className={`mx-auto flex items-center justify-between gap-3 transition-[margin,height,max-width,padding,border-radius,box-shadow,background-color] duration-500 ease-[var(--ease-out-soft)] sm:gap-6 ${
-            pill ? 'glass-nav mt-2 h-12 w-[calc(100%-16px)] max-w-[1160px] rounded-full pl-4 pr-1.5 sm:pl-5' : 'h-16 w-full max-w-[1200px] px-5 md:px-8'
+            pill ? `${overDark ? 'glass-nav-dark' : 'glass-nav'} mt-2 h-12 w-[calc(100%-16px)] max-w-[1160px] rounded-full pl-4 pr-1.5 sm:pl-5` : 'h-16 w-full max-w-[1200px] px-5 md:px-8'
           }`}
         >
           <Link href="/" aria-label={`${SITE.name}: home`} className="rounded-lg">
@@ -92,7 +106,7 @@ export function Header() {
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link href="/contact/" className={`btn btn-sm hidden md:inline-flex ${dark ? 'btn-on-dark' : 'btn-secondary'}`}>Contact</Link>
-            <Link href="/quote/" className="btn btn-accent btn-sm px-3.5 sm:px-4">
+            <Link href="/quote/" className="btn btn-accent btn-sm px-3.5 max-md:hidden sm:px-4">
               Get a quote <Icon name="arrowRight" size={16} className="hidden sm:block" />
             </Link>
             <button
@@ -110,6 +124,8 @@ export function Header() {
         </div>
       </header>
 
+      {/* Phone menu: a dark sheet that continues the header. Big tap targets, services one tap
+          away, and the two money actions pinned to the bottom of the screen. */}
       <div
         id="mobile-menu"
         ref={sheetRef}
@@ -117,28 +133,37 @@ export function Header() {
         aria-modal="true"
         aria-label="Menu"
         hidden={!open}
-        className="fixed inset-0 top-16 z-40 overflow-y-auto bg-paper/85 backdrop-blur-2xl backdrop-saturate-150 lg:hidden"
+        className="on-dark fixed inset-0 top-16 z-40 isolate overflow-y-auto bg-navy-950 text-white lg:hidden"
       >
-        <nav aria-label="Mobile" className="container-site flex min-h-full flex-col pb-10 pt-4">
-          <ul className="divide-y divide-line border-b border-line">
-            {[...NAV, { href: '/contact/', label: 'Contact' }].map((item) => (
+        <div className="aurora aurora-1 opacity-40" aria-hidden="true" />
+        <nav aria-label="Mobile" className="container-site relative flex min-h-full flex-col pb-[max(24px,env(safe-area-inset-bottom))] pt-3">
+          <ul className="menu-rise">
+            {[...NAV, { href: '/contact/', label: 'Contact' }].map((item, i) => (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="flex items-center justify-between py-4 text-2xl font-semibold tracking-tight"
-                  aria-current={isActive(item.href) ? 'page' : undefined}
-                >
+                <Link href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}
+                  className={`flex items-baseline gap-4 border-b border-white/10 py-3.5 text-[1.875rem] font-semibold tracking-[-0.03em] ${isActive(item.href) ? 'text-teal-500' : 'text-white'}`}>
+                  <span className="w-6 font-mono text-[0.75rem] font-normal tracking-normal text-white/40">0{i + 1}</span>
                   {item.label}
-                  <Icon name="arrowRight" className="text-ink-3" />
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="mt-auto grid gap-3 pt-10">
-            <Link href="/quote/" className="btn btn-accent w-full">Get an instant quote</Link>
-            <a href={whatsappLink('Hi Tshedza, I found you on your website.')} className="btn btn-primary w-full" rel="noopener">
-              <Icon name="whatsapp" /> WhatsApp {SITE.phoneDisplay}
-            </a>
+          <p className="eyebrow mt-8">Services</p>
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {SERVICES.map((sv) => (
+              <li key={sv.slug}>
+                <Link href={`/services/${sv.slug}/`} className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.875rem] text-white/85">
+                  <Icon name={sv.icon} size={15} className="text-teal-500" />{sv.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-auto grid gap-2.5 pt-10">
+            <Link href="/quote/" className="btn btn-accent glow-border h-[52px] w-full">Get an instant quote <Icon name="arrowRight" size={18} /></Link>
+            <div className="grid grid-cols-2 gap-2.5">
+              <a href={whatsappLink('Hi Tshedza, I found you on your website.')} className="btn btn-on-dark w-full" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+              <a href={`tel:${SITE.phoneIntl}`} className="btn btn-on-dark w-full"><Icon name="phone" size={18} /> Call</a>
+            </div>
           </div>
         </nav>
       </div>

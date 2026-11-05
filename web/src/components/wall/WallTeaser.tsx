@@ -28,7 +28,7 @@ export function WallTeaser() {
   const flowing = all.length >= 5
 
   return (
-    <div className="grid items-center gap-12 lg:grid-cols-12">
+    <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-12">
       <div className="lg:col-span-5">
         <p className="eyebrow">Community wall</p>
         <h2 className="mt-4 text-[clamp(2rem,3.4vw+1rem,3.5rem)] font-semibold leading-[1.02] tracking-[-0.035em]">Say something <span className="accent-serif text-teal-700">kind.</span></h2>
@@ -37,17 +37,17 @@ export function WallTeaser() {
           <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" />
           {notes ? <span><strong className="tabular-nums text-ink">{list.length}</strong> notes · <strong className="tabular-nums text-ink">{hearts}</strong> hearts</span> : <span>Loading the wall…</span>}
         </div>
-        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Kinds of note">
+        <ul className="mt-6 hidden flex-wrap gap-2 sm:flex" aria-label="Kinds of note">
           {KINDS.map((k) => <li key={k.id} className="glass-light inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[0.875rem] font-medium text-ink-2"><span aria-hidden="true">{k.emoji}</span>{k.label}</li>)}
         </ul>
-        <div className="mt-9 flex flex-wrap gap-3">
-          <Link href="/wall/#write" className="btn btn-primary glow-border"><Icon name="pen" size={18} /> Leave a note</Link>
-          <Link href="/wall/#board" className="btn btn-secondary">Read the wall <Icon name="arrowRight" size={16} /></Link>
+        <div className="mt-7 grid grid-cols-2 gap-2.5 sm:mt-9 sm:flex sm:flex-wrap sm:gap-3">
+          <Link href="/wall/#write" className="btn btn-primary glow-border px-4"><Icon name="pen" size={18} /> Leave a note</Link>
+          <Link href="/wall/#board" className="btn btn-secondary px-4">Read<span className="max-sm:hidden"> the wall</span> <Icon name="arrowRight" size={16} /></Link>
         </div>
       </div>
 
       <div className="min-w-0 lg:col-span-7">
-        <div className="glass-light relative overflow-hidden rounded-[28px] py-8">
+        <div className="glass-light relative overflow-hidden rounded-[24px] py-6 sm:rounded-[28px] sm:py-8">
           {flowing ? (
             <>
               <ul className="sr-only">{all.slice(0, 5).map((n) => <li key={n.id}>{n.message} ({n.name ?? 'Anonymous'})</li>)}</ul>
@@ -55,10 +55,10 @@ export function WallTeaser() {
                 const items = all.filter((_, i) => i % 2 === row)
                 const track = items.length < 5 ? [...items, ...items] : items
                 return (
-                  <div key={row} className={`marquee marquee-slow ${row ? 'marquee-reverse mt-6' : ''}`} aria-hidden="true">
+                  <div key={row} className={`marquee marquee-slow ${row ? 'marquee-reverse mt-6 max-sm:hidden' : ''}`} aria-hidden="true">
                     {[0, 1].map((k) => (
                       <div key={k} className="marquee-track items-start gap-6 pr-6 pt-3">
-                        {track.map((n, i) => <div key={`${n.id}-${i}`} className="w-[260px] flex-none"><NoteCard note={n} /></div>)}
+                        {track.map((n, i) => <div key={`${n.id}-${i}`} className="w-[240px] flex-none sm:w-[260px]"><NoteCard note={n} /></div>)}
                       </div>
                     ))}
                   </div>

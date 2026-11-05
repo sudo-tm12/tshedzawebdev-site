@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { PageHero } from '@/components/PageHero'
 import { Icon } from '@/components/Icon'
+import { SwipeRail } from '@/components/SwipeRail'
 import { CtaBand, LiquidField, SectionHeading } from '@/components/ui'
 import { pageMeta } from '@/lib/meta'
 import { SITE } from '@/lib/site'
@@ -34,7 +35,7 @@ export default function AboutPage() {
         }
       />
       <section className="container-site section grid gap-12 lg:grid-cols-12">
-        <div className="lg:col-span-7 grid gap-5 text-[1.125rem] leading-relaxed text-ink-2">
+        <div className="grid gap-5 text-[1.0625rem] leading-relaxed text-ink-2 sm:text-[1.125rem] lg:col-span-7">
           <p>Tshedza works as a data analyst, a developer and a builder. That mix shapes how we work: we start with what the numbers and the people actually need, then build the simplest thing that does the job beautifully.</p>
           <p>We are a small studio, and we like it that way. Every project gets a written scope, a fixed price in rand and hand-over documentation. You always own what we build.</p>
         </div>
@@ -44,7 +45,7 @@ export default function AboutPage() {
         <LiquidField blobs={[{ tone: 'teal', top: '10%', left: '60%', size: 520 }, { tone: 'lilac', top: '55%', left: '-8%', size: 460 }]} />
         <div className="container-site">
           <SectionHeading eyebrow="What we believe" title="Four promises we keep." />
-          <ul className="mt-12 grid gap-4 sm:grid-cols-2">
+          <SwipeRail label="Our promises" grid="sm" className="mt-8 sm:mt-12 sm:grid-cols-2 sm:gap-4">
             {VALUES.map((v, i) => (
               <li key={v.title} className="reveal glass-light rounded-[24px] p-7">
                 <span className="font-mono text-[0.8125rem] text-teal-700">0{i + 1}</span>
@@ -52,19 +53,19 @@ export default function AboutPage() {
                 <p className="mt-2 text-ink-2">{v.body}</p>
               </li>
             ))}
-          </ul>
+          </SwipeRail>
         </div>
       </section>
 
       <section className="section">
-        <div className="container-site grid gap-10 lg:grid-cols-2">
-          <div className="card rounded-[24px] p-8">
+        <div className="container-site grid gap-4 sm:gap-10 lg:grid-cols-2">
+          <div className="card rounded-[24px] p-6 sm:p-8">
             <Icon name="users" size={26} className="text-teal-700" />
             <h2 className="h3 mt-4">We teach, too</h2>
             <p className="mt-2 text-ink-2">Knowledge Hub is our community for young South Africans learning to build, launch and earn with tech. Tshedza was a speaker at Knowledge Hub Summit 2026.</p>
             <Link href="/learn/" className="link mt-5 inline-block font-medium">About Knowledge Hub</Link>
           </div>
-          <div className="card rounded-[24px] p-8">
+          <div className="card rounded-[24px] p-6 sm:p-8">
             <Icon name="code" size={26} className="text-teal-700" />
             <h2 className="h3 mt-4">See the standard</h2>
             <p className="mt-2 text-ink-2">The best way to judge a studio is its work. Every project we show is real client work, shared with permission.</p>

@@ -15,16 +15,16 @@ export function SectionHeading({ eyebrow, title, lede, align = 'left', as: Tag =
   return (
     <div className={align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}>
       <p className="eyebrow">{eyebrow}</p>
-      <Tag className={`${Tag === 'h1' ? 'display' : 'h2'} mt-4`}>{title}</Tag>
+      <Tag className={`${Tag === 'h1' ? 'display' : 'h2 reveal-h'} mt-4`}>{title}</Tag>
       {lede ? <p className="lede mt-5">{lede}</p> : null}
     </div>
   )
 }
 
 /** Browser chrome drawn in CSS around a real screenshot. */
-export function BrowserFrame({ src, alt, width, height, url, priority = false }: { src: string; alt: string; width: number; height: number; url?: string; priority?: boolean }) {
+export function BrowserFrame({ src, alt, width, height, url, priority = false, rise = false }: { src: string; alt: string; width: number; height: number; url?: string; priority?: boolean; /** Tilt up into place as it scrolls in (md and up). */ rise?: boolean }) {
   return (
-    <figure className="overflow-hidden rounded-[var(--radius-md)] border border-line bg-card shadow-[var(--shadow-md)]">
+    <figure className={`overflow-hidden rounded-[var(--radius-md)] border border-line bg-card shadow-[var(--shadow-md)] ${rise ? 'device-rise' : ''}`}>
       <div className="flex h-9 items-center gap-1.5 border-b border-line bg-line-2/70 px-3.5" aria-hidden="true">
         <span className="h-2.5 w-2.5 rounded-full bg-[#e5e7eb]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#e5e7eb]" />

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google'
 import { ConsentBanner } from '@/components/ConsentBanner'
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
+import { MobileDock } from '@/components/MobileDock'
 import { SITE, asset } from '@/lib/site'
 import './globals.css'
 
@@ -62,9 +63,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }} />
       </head>
       <body>
+        <div className="scroll-progress" aria-hidden="true" />
         <Header />
         <main id="main">{children}</main>
         <Footer />
+        <MobileDock />
         <ConsentBanner />
       </body>
     </html>

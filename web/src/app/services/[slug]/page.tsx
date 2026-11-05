@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { PageHero } from '@/components/PageHero'
 import { notFound } from 'next/navigation'
 import { Icon } from '@/components/Icon'
+import { SwipeRail } from '@/components/SwipeRail'
 import { Checklist, CtaBand, SectionHeading } from '@/components/ui'
 import { ProcessDiagram, ServiceVisual } from '@/components/visuals'
 import { SERVICES, getService } from '@/data/services'
@@ -61,8 +62,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         </>}
         aside={<ServiceVisual slug={s.slug} />}
       />
-      <section className="container-site -mt-8 relative z-10 pb-6">
-        <div className="grid gap-6 glass-light rounded-[24px] p-6 md:grid-cols-[auto_1fr] md:items-center md:gap-10 md:p-7">
+      <section className="container-site relative z-10 -mt-6 pb-6 sm:-mt-8">
+        <div className="glass-light grid gap-4 rounded-[22px] p-5 sm:gap-6 sm:rounded-[24px] sm:p-6 md:grid-cols-[auto_1fr] md:items-center md:gap-10 md:p-7">
           <p className="eyebrow">Built for</p>
           <ul className="grid gap-3 sm:grid-cols-3">
             {s.forWho.map((w) => <li key={w} className="flex gap-2.5 text-[0.9375rem]"><Icon name="check" size={18} className="mt-0.5 flex-none text-teal-700" />{w}</li>)}
@@ -74,14 +75,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       <section className="section border-t border-line bg-card">
         <div className="container-site">
           <SectionHeading eyebrow="What you get" title="What changes for your business." />
-          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <SwipeRail label="What you get" grid="sm" className="mt-8 sm:mt-12 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
             {s.outcomes.map((o) => (
               <li key={o.title} className="reveal glass-light rounded-[22px] p-6">
                 <h3 className="h3">{o.title}</h3>
                 <p className="mt-2 text-[0.9375rem] text-ink-2">{o.body}</p>
               </li>
             ))}
-          </ul>
+          </SwipeRail>
         </div>
       </section>
 
@@ -89,17 +90,17 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         <section className="section">
           <div className="container-site">
             <SectionHeading eyebrow="Pricing" title={<>Clear starting prices. <span className="accent-serif">No VAT.</span></>} lede="Your exact price depends on scope. The instant quote adds up your options and shows a range in seconds." />
-            <ul className="mt-12 grid gap-4 md:grid-cols-3">
+            <SwipeRail label="Packages" grid="md" itemWidth="82%" className="mt-8 sm:mt-12 md:grid-cols-3 md:gap-4">
               {book.tiers.map((t, i) => (
-                <li key={t.id} className={`reveal flex flex-col rounded-[var(--radius-md)] border p-7 ${i === 1 ? 'on-dark border-navy-900 bg-navy-900 text-white' : 'border-line bg-card'}`}>
+                <li key={t.id} className={`reveal flex flex-col rounded-[22px] border p-6 sm:p-7 ${i === 1 ? 'on-dark border-navy-900 bg-navy-900 text-white' : 'border-line bg-card'}`}>
                   <h3 className="h3">{t.name}</h3>
                   <p className={`mt-2 text-[0.9375rem] ${i === 1 ? 'text-white/70' : 'text-ink-2'}`}>{t.note}</p>
                   <p className="mt-6 font-mono text-[0.75rem] uppercase tracking-[0.12em] opacity-70">From</p>
-                  <p className="text-[2rem] font-semibold tracking-tight tabular-nums">{rand((t.base ?? t.monthlyBase)!)}<span className="text-base font-normal opacity-70">{t.monthlyBase !== undefined ? '/month' : ''}</span></p>
-                  <Link href={`/quote/#s=${book.id}&t=${t.id}`} className={`btn mt-6 ${i === 1 ? 'btn-accent' : 'btn-secondary'}`}>Price this option</Link>
+                  <p className="mb-6 text-[2rem] font-semibold tracking-tight tabular-nums">{rand((t.base ?? t.monthlyBase)!)}<span className="text-base font-normal opacity-70">{t.monthlyBase !== undefined ? '/month' : ''}</span></p>
+                  <Link href={`/quote/#s=${book.id}&t=${t.id}`} className={`btn mt-auto ${i === 1 ? 'btn-accent' : 'btn-secondary'}`}>Price this option</Link>
                 </li>
               ))}
-            </ul>
+            </SwipeRail>
             <p className="mt-6 text-[0.875rem] text-ink-3">{SITE.vatNote}. A 50% deposit secures your slot on projects over R3 000.</p>
           </div>
         </section>
@@ -114,7 +115,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <Checklist items={s.included} className="sm:grid-cols-2" />
           </div>
         </div>
-        <div className="container-site mt-16">
+        <div className="container-site mt-12 sm:mt-16">
           <p className="eyebrow">How it works</p>
           <div className="mt-8"><ProcessDiagram steps={s.process} /></div>
         </div>
@@ -124,7 +125,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         <section className="section">
           <div className="container-site">
             <SectionHeading eyebrow="Related work" title="Done for real clients." />
-            <ul className="mt-10 grid gap-4 md:grid-cols-2">
+            <SwipeRail label="Related work" grid="md" className="mt-8 sm:mt-10 md:grid-cols-2 md:gap-4">
               {related.map((p) => (
                 <li key={p.slug}>
                   <Link href={`/work/${p.slug}/`} className="card card-hover flex h-full flex-col p-6">
@@ -134,7 +135,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                   </Link>
                 </li>
               ))}
-            </ul>
+            </SwipeRail>
           </div>
         </section>
       ) : null}

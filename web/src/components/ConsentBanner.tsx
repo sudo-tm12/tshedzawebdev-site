@@ -80,15 +80,17 @@ export function ConsentBanner() {
   }
 
   if (status !== 'unset' && status !== 'reopened') return null
+  // Compact on phones (it shouldn't hide the page), and it slides in after the landing
+  // animation (first visit only) instead of covering it. Nothing tracks until Accept.
   return (
-    <div role="region" aria-label="Cookie consent" className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-xl glass-light rounded-[24px] p-5 sm:inset-x-6 sm:bottom-6">
-      <p className="text-[0.9375rem] leading-relaxed text-ink-2">
-        <strong className="text-ink">Your privacy, your choice.</strong> With your OK we use analytics to see which pages help people, and a chat widget on larger screens.
-        Nothing loads until you choose. <Link href="/privacy/#cookies" className="link">Read how we use data</Link>.
+    <div role="region" aria-label="Cookie consent"
+      className={`glass-light fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-[440px] rounded-[20px] p-3.5 sm:inset-x-auto sm:bottom-6 sm:left-6 sm:p-5 ${status === 'unset' ? 'consent-in' : ''}`}>
+      <p className="text-[0.8125rem] leading-snug text-ink-2 sm:text-[0.9375rem] sm:leading-relaxed">
+        <strong className="text-ink">Your privacy, your choice.</strong> Analytics<span className="max-sm:hidden"> (and a chat widget on larger screens)</span> only load if you accept. <Link href="/privacy/#cookies" className="link">How we use data</Link>
       </p>
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <button type="button" className="btn btn-secondary" onClick={() => decide('rejected')}>Reject</button>
-        <button type="button" className="btn btn-primary" onClick={() => decide('accepted')}>Accept</button>
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4">
+        <button type="button" className="btn btn-secondary min-h-[44px] sm:min-h-[48px]" onClick={() => decide('rejected')}>Reject</button>
+        <button type="button" className="btn btn-primary min-h-[44px] sm:min-h-[48px]" onClick={() => decide('accepted')}>Accept</button>
       </div>
     </div>
   )

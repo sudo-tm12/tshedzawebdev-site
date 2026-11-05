@@ -145,6 +145,47 @@ Animated number counters · auto-rotating sliders · stock photos · gradient te
 - `.glass` is for dark surfaces and `.glass-light` for light ones. The specular sheen follows the pointer when wrapped in `<Spotlight>`.
 - `.glass-nav` is the header's floating pill after scroll.
 - **Never nest a blurred pane in a blurred pane.** Chrome can't blur through a blurred parent, so inner panes use `.glass-inset`, which keeps the rim and sheen but has no backdrop-filter.
-- Glass needs colour behind it. Light sections use `canvas-tint` plus `<LiquidField>`: slowly morphing blobs, which stop under reduced motion. The page background also carries a faint fixed colour wash.
+- Glass needs colour behind it. Light sections use `canvas-tint` plus `<LiquidField>`: slowly drifting blobs (transform only since 5 Nov, see §3.9), which stop under reduced motion. The page background also carries a faint fixed colour wash.
 - Browsers without backdrop-filter fall back to near-solid panes, so text stays readable.
 - `.btn-on-dark` and `.btn-secondary` are liquid buttons with a light sweep on hover. All buttons lift 1px on hover and press to 0.97.
+- `.glass-nav-dark` is the header pill over dark sections. The header probes the content under it each frame and picks `.glass-nav` or `.glass-nav-dark`, so the pill always matches its surface.
+
+### 3.9 Motion v3: landing and scroll (added 5 Nov 2026)
+
+Owner decision: the site must have an effect on landing and scroll effects that suit a studio that builds websites, on phones as much as on desktop.
+
+**Landing (every page, once):**
+- the grid floor swings up from the horizon (`grid-on`);
+- the aurora blooms in;
+- one scan line sweeps down the hero (`.hero-dark::before`);
+- the H1 rises line by line out of `.line-mask`;
+- the rest arrives in order with `.enter` and a `--d` delay. Desktop adds a soft blur; phones skip it for frame rate.
+
+The cookie sheet slides in at 1.6 s (`.consent-in`) so it doesn't cover the landing.
+
+**Home hero:** `<WordCycle>` shares one word index between the headline `<WordSwap>` and `<HeroPhone>`. The phone builds the matching screen: website, online store, web app dashboard, or automated WhatsApp-style chat. The cycle only ticks while the hero is on screen and the tab is visible.
+
+**Scroll** (CSS scroll-driven animations only; no scroll listeners for effects, no scroll-jacking):
+
+| Class | Effect |
+|---|---|
+| `.scroll-progress` | 2 px reading line on top |
+| `.hero-exit` | hero content lifts and dims as it leaves |
+| `.reveal-h` | headings wipe up (all `SectionHeading` H2s and the home H2s) |
+| `.stagger` | grid reveals in a wave |
+| `.device-rise` | screens tilt up into place (md+); `BrowserFrame rise` |
+| `.settle` | phone screenshots zoom-settle |
+| `.rail-depth` | built into `.rail`: on phones the centred card is full size and its neighbours recede |
+| `.art-*` | the "Our standard" micro-visuals |
+| `.quote-in` | founder quote writes in |
+
+**`<BuildStory>`** ("How it works" on home) pins a device with `position: sticky` while the four steps scroll past:
+- message → quote (real price book numbers) → blueprint wiped away to the finished design (scroll-linked `--wipe`) → live;
+- its section must use `overflow-x-clip`, never `overflow-hidden`, which breaks sticky.
+
+**Rules:**
+- transform, opacity and clip-path only;
+- never animate border-radius or filters on large blurred layers;
+- everything renders final under `prefers-reduced-motion: reduce` (verified: no text left at opacity 0).
+
+Measured on the production build on a 4× CPU-throttled phone: CLS 0 and LCP under 0.7 s locally on all ten main pages.

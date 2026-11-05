@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { createContext, useContext, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 const motionQuery = '(prefers-reduced-motion: reduce)'
 function subscribeMotion(cb: () => void) {
@@ -13,15 +13,53 @@ export function useReducedMotion(): boolean {
   return useSyncExternalStore(subscribeMotion, () => window.matchMedia(motionQuery).matches, () => false)
 }
 
-/** Cycles through words in place (accessible: the full list is read once). */
-export function WordSwap({ words, interval = 2400, className, wordClassName }: { words: string[]; interval?: number; className?: string; wordClassName?: string }) {
+// A shared word index, so other pieces (the hero phone) change in step with <WordSwap>.
+const WordIndex = createContext<number | null>(null)
+/** The current index from the nearest <WordCycle>, or null outside one. */
+export function useWordIndex(): number | null {
+  return useContext(WordIndex)
+}
+
+/**
+ * Drives a word index for everything inside it. It only ticks while `watch` (a CSS
+ * selector) is on screen and the tab is visible, so an off-screen hero costs nothing.
+ */
+export function WordCycle({ count, interval = 3200, startDelay = 1400, watch, children }: { count: number; interval?: number; startDelay?: number; watch: string; children: React.ReactNode }) {
   const [i, setI] = useState(0)
   const reduced = useReducedMotion()
   useEffect(() => {
-    if (reduced) return
-    const t = setInterval(() => setI((v) => (v + 1) % words.length), interval)
+    if (reduced || count < 2) return
+    const target = document.querySelector(watch)
+    let visible = true
+    let t: ReturnType<typeof setInterval> | undefined
+    const run = () => {
+      clearInterval(t)
+      if (visible && document.visibilityState === 'visible') t = setInterval(() => setI((v) => (v + 1) % count), interval)
+    }
+    const io = target && 'IntersectionObserver' in window
+      ? new IntersectionObserver(([e]) => { visible = !!e?.isIntersecting; run() }, { threshold: 0.15 })
+      : null
+    if (target && io) io.observe(target)
+    const onVis = () => run()
+    document.addEventListener('visibilitychange', onVis)
+    // Let the landing choreography finish before the first change.
+    const start = setTimeout(run, startDelay)
+    return () => { clearTimeout(start); clearInterval(t); io?.disconnect(); document.removeEventListener('visibilitychange', onVis) }
+  }, [reduced, count, interval, startDelay, watch])
+  return <WordIndex.Provider value={i}>{children}</WordIndex.Provider>
+}
+
+/** Cycles through words in place (accessible: the full list is read once). Inside a <WordCycle> it follows that index. */
+export function WordSwap({ words, interval = 2400, className, wordClassName }: { words: string[]; interval?: number; className?: string; wordClassName?: string }) {
+  const shared = useWordIndex()
+  const [own, setOwn] = useState(0)
+  const reduced = useReducedMotion()
+  useEffect(() => {
+    if (reduced || shared !== null) return
+    const t = setInterval(() => setOwn((v) => (v + 1) % words.length), interval)
     return () => clearInterval(t)
-  }, [reduced, words.length, interval])
+  }, [reduced, shared, words.length, interval])
+  const i = (shared ?? own) % words.length
   return (
     <span className={className}>
       <span className="sr-only">{words.join(', ')}</span>

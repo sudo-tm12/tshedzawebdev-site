@@ -1,14 +1,17 @@
 import Link from 'next/link'
 import { Icon, type IconName } from '@/components/Icon'
+import { BuildStory } from '@/components/motion/BuildStory'
 import { CommunityChat } from '@/components/motion/CommunityChat'
+import { HeroPhone } from '@/components/motion/HeroPhone'
 import { MiniQuote } from '@/components/motion/MiniQuote'
 import { StudioConsole } from '@/components/motion/StudioConsole'
-import { Spotlight, WordSwap } from '@/components/motion/basics'
+import { Spotlight, WordCycle, WordSwap } from '@/components/motion/basics'
+import { SwipeRail } from '@/components/SwipeRail'
 import { BrowserFrame, LiquidField } from '@/components/ui'
 import { WallTeaser } from '@/components/wall/WallTeaser'
 import { PRICEBOOK_COACHING } from '@/lib/coaching'
 import { rand } from '@/lib/quote/engine'
-import { ProcessDiagram, ServiceVisual } from '@/components/visuals'
+import { ServiceVisual } from '@/components/visuals'
 import { SERVICES } from '@/data/services'
 import { WORK } from '@/data/work'
 import { pageMeta } from '@/lib/meta'
@@ -23,11 +26,14 @@ export const metadata = pageMeta(
 
 const STACK = ['Next.js', 'React', 'TypeScript', 'Node.js', 'MongoDB', 'PostgreSQL', 'Supabase', 'Tailwind CSS', 'Python', 'n8n', 'Google Apps Script', 'WhatsApp Business', 'PayFast', 'Yoco', 'Google Ads', 'MQL5', 'Vercel', 'Cloudflare']
 
-const STANDARDS: { icon: IconName; title: string; body: string }[] = [
-  { icon: 'gauge', title: 'Fast on mobile data', body: 'Every page has a weight budget and is tested on real phones.' },
-  { icon: 'shield', title: 'Secure & POPIA-aware', body: 'Protected forms, written privacy pages, consent before tracking.' },
-  { icon: 'users', title: 'Accessible', body: 'Contrast, keyboard and screen-reader support, built in.' },
-  { icon: 'file', title: 'Documented & yours', body: 'Written scope, hand-over notes, and you own everything.' },
+const HERO_WORDS = ['websites', 'online stores', 'web apps', 'automations']
+const d = (ms: number) => ({ '--d': `${ms}ms` }) as React.CSSProperties
+
+const STANDARDS: { art: 'speed' | 'secure' | 'access' | 'docs'; title: string; body: string }[] = [
+  { art: 'speed', title: 'Fast on mobile data', body: 'Every page has a weight budget and is tested on real phones.' },
+  { art: 'secure', title: 'Secure & POPIA-aware', body: 'Protected forms, written privacy pages, consent before tracking.' },
+  { art: 'access', title: 'Accessible', body: 'Contrast, keyboard and screen-reader support, built in.' },
+  { art: 'docs', title: 'Documented & yours', body: 'Written scope, hand-over notes, and you own everything.' },
 ]
 
 const STEPS = [
@@ -47,7 +53,7 @@ const BENTO: { slug: string; span: string; visual?: boolean }[] = [
   { slug: 'trading-bots', span: 'md:col-span-2' },
 ]
 
-const H2 = 'text-[clamp(2rem,3.4vw+1rem,3.5rem)] font-semibold leading-[1.02] tracking-[-0.035em]'
+const H2 = 'reveal-h text-[clamp(2rem,3.4vw+1rem,3.5rem)] font-semibold leading-[1.02] tracking-[-0.035em]'
 
 export default function HomePage() {
   const featured = WORK.filter((w) => w.desktop)
@@ -56,39 +62,44 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="hero-dark noise -mt-16 pt-16">
+      <section id="hero" className="hero-dark noise -mt-16 pt-16">
         <div className="aurora aurora-1" aria-hidden="true" />
         <div className="aurora aurora-2" aria-hidden="true" />
         <div className="hero-grid" aria-hidden="true" />
-        <div className="container-site grid items-center gap-14 pb-16 pt-14 lg:min-h-[calc(100svh-64px)] lg:grid-cols-12 lg:gap-10 lg:pb-24 lg:pt-10">
-          <div className="lg:col-span-6">
-            <p className="glass inline-flex items-center gap-2.5 rounded-full px-3.5 py-1.5 font-mono text-[0.75rem] tracking-[0.08em] text-white/80">
-              <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> WEB STUDIO · PRETORIA, SOUTH AFRICA
-            </p>
-            <h1 className="mt-7 text-[clamp(2.75rem,6.4vw+0.5rem,5.75rem)] font-semibold leading-[0.98] tracking-[-0.04em]">
-              We build <WordSwap words={['websites', 'online stores', 'web apps', 'automations']} wordClassName="text-gradient" />
-              <br />that grow your <span className="accent-serif text-teal-500">business.</span>
-            </h1>
-            <p className="mt-7 max-w-xl text-[1.1875rem] leading-relaxed text-white/70">
-              {SITE.tagline}: designed for the phone in your customer’s hand, engineered to load fast, and priced honestly in rand.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-7 text-[1rem]">Get an instant quote <Icon name="arrowRight" size={18} /></Link>
-              <Link href="/work/" className="btn btn-on-dark h-[52px] px-7 text-[1rem]">See our work</Link>
+        {/* Landing: the grid powers on, the headline rises line by line, then the phone
+            builds whatever the rotating word says. Phones: text → phone → facts. */}
+        <WordCycle count={HERO_WORDS.length} watch="#hero">
+          <div className="hero-exit container-site grid items-center pb-12 pt-8 sm:pb-16 sm:pt-14 lg:min-h-[calc(100svh-64px)] lg:grid-cols-12 lg:gap-x-10 lg:pb-24 lg:pt-10">
+            <div className="max-lg:contents lg:col-span-6">
+              <p style={d(80)} className="enter glass inline-flex items-center gap-2.5 justify-self-start rounded-full px-3.5 py-1.5 font-mono text-[0.75rem] tracking-[0.08em] text-white/80">
+                <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> WEB STUDIO · PRETORIA, SOUTH AFRICA
+              </p>
+              <h1 className="mt-6 text-[clamp(2.625rem,6.4vw+0.5rem,5.75rem)] font-semibold leading-[0.98] tracking-[-0.04em] sm:mt-7">
+                <span className="line-mask"><span style={d(170)}>We build <WordSwap words={HERO_WORDS} wordClassName="text-gradient" /></span></span>
+                <span className="line-mask"><span style={d(290)}>that grow your <span className="accent-serif text-teal-500">business.</span></span></span>
+              </h1>
+              <p style={d(460)} className="enter mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/70 sm:mt-7 sm:text-[1.1875rem]">
+                {SITE.tagline}<span className="max-sm:hidden">: designed for the phone in your customer’s hand, engineered to load fast, and priced honestly in rand</span><span className="sm:hidden">. Built for phones, priced honestly in rand</span>.
+              </p>
+              <div style={d(560)} className="enter mt-7 grid grid-cols-[1fr_auto] gap-2.5 sm:mt-9 sm:flex sm:flex-wrap sm:gap-3">
+                <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-5 text-[1rem] sm:px-7">Get an instant quote <Icon name="arrowRight" size={18} /></Link>
+                <Link href="/work/" className="btn btn-on-dark h-[52px] px-5 text-[1rem] sm:px-7"><span className="max-sm:hidden">See our </span><span className="sm:hidden">Our </span>work</Link>
+              </div>
+              <dl style={d(700)} className="enter glass mt-10 grid max-w-lg grid-cols-3 gap-4 rounded-[20px] px-5 py-4 max-lg:order-2 sm:gap-6 sm:px-6 sm:py-5 lg:mt-12">
+                {[['7', 'services, one studio'], ['R0', 'VAT, ever'], ['100%', 'yours to own']].map(([k, v]) => (
+                  <div key={v}><dt className="sr-only">{v}</dt><dd><span className="block text-[1.5rem] font-semibold tracking-tight sm:text-[1.75rem]">{k}</span><span className="block text-[0.75rem] leading-snug text-white/55 sm:text-[0.8125rem]">{v}</span></dd></div>
+                ))}
+              </dl>
             </div>
-            <dl className="glass mt-12 grid max-w-lg grid-cols-3 gap-6 rounded-[20px] px-6 py-5">
-              {[['7', 'services, one studio'], ['R0', 'VAT, ever'], ['100%', 'yours to own']].map(([k, v]) => (
-                <div key={v}><dt className="sr-only">{v}</dt><dd><span className="block text-[1.75rem] font-semibold tracking-tight">{k}</span><span className="text-[0.8125rem] text-white/55">{v}</span></dd></div>
-              ))}
-            </dl>
+            <div style={d(420)} className="enter relative min-w-0 max-lg:order-1 max-lg:mt-12 lg:col-span-6">
+              <div className="hidden lg:block lg:pr-16"><StudioConsole /></div>
+              <HeroPhone className="mx-auto lg:absolute lg:-bottom-24 lg:-right-4 lg:mx-0 lg:origin-bottom-right lg:scale-[0.72]" />
+            </div>
           </div>
-          <div className="min-w-0 lg:col-span-6">
-            <StudioConsole />
-          </div>
-        </div>
+        </WordCycle>
 
         {/* Tech marquee */}
-        <div className="border-t border-white/10 py-7">
+        <div className="border-t border-white/10 py-5 sm:py-7">
           <p className="sr-only">Technologies we work with: {STACK.join(', ')}</p>
           <div className="marquee" aria-hidden="true">
             {[0, 1].map((k) => (
@@ -102,9 +113,9 @@ export default function HomePage() {
 
       {/* ── Clients ──────────────────────────────────────────────────────── */}
       <section aria-label="Clients" className="border-b border-line bg-card">
-        <div className="container-site flex flex-col gap-4 py-8 md:flex-row md:items-center md:gap-12">
+        <div className="container-site flex flex-col gap-3 py-6 sm:py-8 md:flex-row md:items-center md:gap-12">
           <p className="eyebrow flex-none">Trusted by</p>
-          <ul className="flex flex-wrap gap-x-8 gap-y-2 text-[1rem] font-semibold tracking-tight text-ink/70 md:gap-x-10 md:text-[1.125rem]">
+          <ul className="no-scrollbar -mx-5 flex gap-x-7 overflow-x-auto whitespace-nowrap px-5 text-[1rem] font-semibold tracking-tight text-ink/70 md:mx-0 md:flex-wrap md:gap-x-10 md:gap-y-2 md:overflow-visible md:px-0 md:text-[1.125rem]">
             {WORK.map((w) => <li key={w.slug}>{w.client}</li>)}
           </ul>
         </div>
@@ -119,45 +130,48 @@ export default function HomePage() {
               <p className="eyebrow">What we do</p>
               <h2 className={`mt-4 ${H2}`}>One studio for the whole <span className="accent-serif text-teal-700">digital side</span> of your business.</h2>
             </div>
-            <Link href="/services/" className="btn btn-secondary flex-none">All services <Icon name="arrowRight" size={16} /></Link>
+            <Link href="/services/" className="btn btn-secondary flex-none max-md:hidden">All services <Icon name="arrowRight" size={16} /></Link>
           </div>
-          <ul className="mt-14 grid auto-rows-[minmax(240px,auto)] gap-4 md:grid-cols-4">
+          <SwipeRail label="Our services" grid="md" className="stagger mt-8 md:mt-14 md:auto-rows-[minmax(240px,auto)] md:grid-cols-4 md:gap-4">
             {BENTO.map(({ slug, span, visual }) => {
               const s = svc(slug)
               return (
                 <Spotlight as="li" key={slug} className={`reveal glass-light group overflow-hidden rounded-[24px] ${span}`}>
-                  <Link href={`/services/${slug}/`} className="flex h-full flex-col p-7">
+                  <Link href={`/services/${slug}/`} className="flex h-full flex-col p-6 md:p-7">
                     <div className="flex items-start justify-between gap-4">
                       <span className="inline-flex h-12 w-12 items-center justify-center rounded-[12px] bg-navy-900 text-teal-500 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"><Icon name={s.icon} size={24} /></span>
                       <span className="font-mono text-[0.75rem] text-ink-3">{fromPrice(s.pricebookId)}</span>
                     </div>
-                    <h3 className="mt-6 text-[1.5rem] font-semibold tracking-tight">{s.name}</h3>
+                    <h3 className="mt-5 text-[1.375rem] font-semibold tracking-tight md:mt-6 md:text-[1.5rem]">{s.name}</h3>
                     <p className="mt-2 max-w-md text-ink-2">{s.short}</p>
-                    {visual ? <div className="mt-8 flex flex-1 items-end"><ServiceVisual slug={slug} /></div> : null}
-                    {slug === 'automation' ? <MiniFlow /> : null}
-                    {slug === 'trading-bots' ? <MiniCandles /> : null}
+                    {visual ? <div className="mt-8 hidden flex-1 items-end md:flex"><ServiceVisual slug={slug} /></div> : null}
+                    {slug === 'automation' ? <div className="max-md:hidden"><MiniFlow /></div> : null}
+                    {slug === 'trading-bots' ? <div className="max-md:hidden"><MiniCandles /></div> : null}
                     <span className="mt-auto inline-flex items-center gap-1.5 pt-6 text-[0.9375rem] font-medium text-teal-700">Explore <Icon name="arrowRight" size={16} className="transition-transform group-hover:translate-x-1" /></span>
                   </Link>
                 </Spotlight>
               )
             })}
-          </ul>
+          </SwipeRail>
+          <Link href="/services/" className="btn btn-secondary mt-6 w-full md:hidden">All services <Icon name="arrowRight" size={16} /></Link>
         </div>
       </section>
 
       {/* ── Live price ───────────────────────────────────────────────────── */}
       <section className="section canvas-tint border-y border-line/60">
         <LiquidField blobs={[{ tone: 'teal', top: '20%', left: '55%', size: 560 }, { tone: 'sun', top: '-20%', left: '5%', size: 380 }]} />
-        <div className="container-site grid items-center gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+        <div className="container-site grid gap-6 lg:grid-cols-12 lg:gap-x-12 lg:gap-y-0">
+          <div className="lg:col-span-5 lg:self-end">
             <p className="eyebrow">Instant pricing</p>
             <h2 className={`mt-4 ${H2}`}>Know your price <span className="accent-serif text-teal-700">in seconds.</span></h2>
-            <p className="lede mt-5">No “contact us for pricing”. Pick what you are building, drag the size, and see an honest range in rand. The full quote adds extras and emails you a PDF.</p>
-            <ul className="mt-7 grid gap-2.5 text-[0.9375rem] text-ink-2">
+          </div>
+          <div className="lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:self-center"><MiniQuote /></div>
+          <div className="lg:col-span-5 lg:self-start">
+            <p className="lede lg:mt-5">No “contact us for pricing”. Pick what you are building, drag the size, and see an honest range in rand. The full quote adds extras and emails you a PDF.</p>
+            <ul className="mt-5 grid gap-2.5 text-[0.9375rem] text-ink-2 lg:mt-7">
               {['Same price book as our written quotes', 'No VAT added, ever', '50% deposit only on projects over R3 000'].map((t) => <li key={t} className="flex gap-2.5"><Icon name="check" size={18} className="mt-0.5 text-teal-700" />{t}</li>)}
             </ul>
           </div>
-          <div className="lg:col-span-7"><MiniQuote /></div>
         </div>
       </section>
 
@@ -169,30 +183,35 @@ export default function HomePage() {
             <div className="max-w-2xl">
               <p className="eyebrow">Selected work</p>
               <h2 className={`mt-4 ${H2}`}>Real businesses. <span className="accent-serif text-teal-500">Real screens.</span></h2>
-              <p className="mt-5 text-[1.125rem] text-white/65">Client work, shown with permission. No templates, no stock mock-ups.</p>
+              <p className="mt-4 text-[1.0625rem] text-white/65 sm:mt-5 sm:text-[1.125rem]">Client work, shown with permission. No templates, no stock mock-ups.</p>
             </div>
-            <Link href="/work/" className="btn btn-on-dark flex-none">All projects <Icon name="arrowRight" size={16} /></Link>
+            <Link href="/work/" className="btn btn-on-dark flex-none max-md:hidden">All projects <Icon name="arrowRight" size={16} /></Link>
           </div>
-          <ul className="mt-14 grid gap-6 md:grid-cols-2">
+          <SwipeRail label="Selected projects" grid="md" itemWidth="78%" className="mt-8 md:mt-14 md:grid-cols-2 md:gap-6">
             {featured.map((p, i) => (
               <li key={p.slug} className={`reveal ${i === 0 ? 'md:col-span-2' : ''}`}>
-                <Link href={`/work/${p.slug}/`} className="glass group block rounded-[24px] p-3 transition-colors hover:border-teal-500/50">
-                  <div className="overflow-hidden rounded-[16px]">
+                <Link href={`/work/${p.slug}/`} className="device-rise glass group block h-full rounded-[24px] p-2.5 transition-colors hover:border-teal-500/50 md:p-3">
+                  <div className="aspect-[4/5] overflow-hidden rounded-[18px] bg-navy-900 md:hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-optimised WebP */}
+                    <img src={(p.mobile ?? p.desktop)!.src} alt={(p.mobile ?? p.desktop)!.alt} width={(p.mobile ?? p.desktop)!.width} height={(p.mobile ?? p.desktop)!.height} loading="lazy" decoding="async" className="h-full w-full object-cover object-left-top" />
+                  </div>
+                  <div className="hidden overflow-hidden rounded-[16px] md:block">
                     <div className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.025]">
                       <BrowserFrame src={p.desktop!.src} alt={p.desktop!.alt} width={p.desktop!.width} height={p.desktop!.height} url={p.live} />
                     </div>
                   </div>
-                  <div className="flex items-center justify-between gap-6 px-3 pb-2 pt-5">
-                    <div>
-                      <h3 className="text-[1.25rem] font-semibold">{p.client}</h3>
-                      <p className="mt-1 text-[0.9375rem] text-white/60">{p.summary}</p>
+                  <div className="flex items-center justify-between gap-4 px-2 pb-1.5 pt-4 md:gap-6 md:px-3 md:pb-2 md:pt-5">
+                    <div className="min-w-0">
+                      <h3 className="text-[1.125rem] font-semibold md:text-[1.25rem]">{p.client}</h3>
+                      <p className="mt-1 line-clamp-2 text-[0.875rem] text-white/60 md:line-clamp-none md:text-[0.9375rem]">{p.summary}</p>
                     </div>
                     <span className="glass-inset inline-flex h-11 w-11 flex-none items-center justify-center rounded-full transition-colors group-hover:border-teal-500 group-hover:bg-teal-500 group-hover:text-navy-950"><Icon name="arrowUpRight" size={18} /></span>
                   </div>
                 </Link>
               </li>
             ))}
-          </ul>
+          </SwipeRail>
+          <Link href="/work/" className="btn btn-on-dark mt-6 w-full md:hidden">All projects <Icon name="arrowRight" size={16} /></Link>
         </div>
       </section>
 
@@ -205,27 +224,28 @@ export default function HomePage() {
             <div className="max-w-2xl">
               <p className="eyebrow">Learn · Knowledge Hub</p>
               <h2 className="mt-4 text-[clamp(2.5rem,5vw+1rem,4.75rem)] font-semibold leading-[0.96] tracking-[-0.045em]">Learn. Build. <span className="accent-serif text-teal-500">Earn.</span></h2>
-              <p className="mt-6 max-w-xl text-[1.125rem] leading-relaxed text-white/70">TshedzaWebDev builds. Knowledge Hub teaches. A free community where young South Africans learn the skills we use on real client work, from zero to launch-ready.</p>
+              <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/70 sm:mt-6 sm:text-[1.125rem]">TshedzaWebDev builds. Knowledge Hub teaches. A free community where young South Africans learn the skills we use on real client work, from zero to launch-ready.</p>
             </div>
-            <Link href="/learn/" className="btn btn-on-dark flex-none">Everything on Learn <Icon name="arrowRight" size={16} /></Link>
+            <Link href="/learn/" className="btn btn-on-dark flex-none max-md:hidden">Everything on Learn <Icon name="arrowRight" size={16} /></Link>
           </div>
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-12">
-            <div className="grid gap-4 sm:grid-cols-2 lg:col-span-7">
+          <div className="mt-8 grid gap-6 sm:mt-14 lg:grid-cols-12">
+            <div className="min-w-0 lg:col-span-7">
+            <SwipeRail label="Knowledge Hub programmes" grid="sm" className="sm:grid-cols-2 sm:gap-4">
               {[
                 { t: 'Build & Launch Challenge', d: 'From an empty laptop to your own live website.', n: '9 lessons', icon: 'monitor' as IconName },
                 { t: 'Automate & Earn Challenge', d: 'WhatsApp-first automation local businesses actually pay for.', n: '12 lessons', icon: 'zap' as IconName },
               ].map((c) => (
-                <Spotlight key={c.t} className="glass reveal flex flex-col rounded-[24px] p-7">
+                <Spotlight as="li" key={c.t} className="glass reveal flex flex-col rounded-[24px] p-6 sm:p-7">
                   <div className="flex items-center justify-between gap-3">
                     <span className="glass-inset inline-flex h-12 w-12 flex-none items-center justify-center rounded-[14px] text-teal-500"><Icon name={c.icon} size={22} /></span>
                     <span className="rounded-full bg-teal-500/15 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-teal-500">Free · {c.n}</span>
                   </div>
-                  <h3 className="mt-6 text-[1.375rem] font-semibold tracking-tight">{c.t}</h3>
+                  <h3 className="mt-5 text-[1.25rem] font-semibold tracking-tight sm:mt-6 sm:text-[1.375rem]">{c.t}</h3>
                   <p className="mt-2 text-white/65">{c.d}</p>
                 </Spotlight>
               ))}
-              <Spotlight className="glass reveal flex flex-col gap-6 rounded-[24px] p-7 sm:col-span-2 md:flex-row md:items-center">
+              <Spotlight as="li" className="glass reveal flex flex-col gap-5 rounded-[24px] p-6 sm:col-span-2 sm:p-7 md:flex-row md:items-center md:gap-6">
                 <div className="flex-1">
                   <span className="rounded-full bg-white/10 px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white/75">Coaching</span>
                   <h3 className="mt-4 text-[1.375rem] font-semibold tracking-tight">AI Agency Builder</h3>
@@ -239,12 +259,13 @@ export default function HomePage() {
                   ))}
                 </ul>
               </Spotlight>
-              <div className="flex flex-wrap gap-3 pt-2 sm:col-span-2">
-                <a href={SITE.knowledgeHub.whatsappCommunity} className="btn btn-accent glow-border" rel="noopener"><Icon name="whatsapp" size={18} /> Join the community</a>
-                <Link href="/learn/#coaching" className="btn btn-on-dark">Coaching details</Link>
+            </SwipeRail>
+              <div className="mt-6 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:gap-3">
+                <a href={SITE.knowledgeHub.whatsappCommunity} className="btn btn-accent glow-border px-4" rel="noopener"><Icon name="whatsapp" size={18} /> Join<span className="max-sm:hidden"> the community</span></a>
+                <Link href="/learn/" className="btn btn-on-dark px-4"><span className="max-sm:hidden">Coaching &amp; </span>details</Link>
               </div>
             </div>
-            <div className="relative lg:col-span-5">
+            <div className="relative hidden md:block lg:col-span-5">
               <div className="glass rounded-[30px] p-3"><CommunityChat /></div>
               <span className="glass float-slow absolute -top-5 left-6 hidden rounded-full px-4 py-2 text-[0.8125rem] font-medium text-white/85 sm:inline-flex">Made for phones &amp; mobile data</span>
               <span className="glass float-slower absolute -bottom-5 right-6 hidden rounded-full px-4 py-2 text-[0.8125rem] font-medium text-white/85 sm:inline-flex">Real tasks, reviewed together</span>
@@ -259,7 +280,7 @@ export default function HomePage() {
         <div className="container-site"><WallTeaser /></div>
       </section>
 
-      {/* ── Standards + process ──────────────────────────────────────────── */}
+      {/* ── Standards ────────────────────────────────────────────────────── */}
       <section className="section canvas-tint">
         <LiquidField blobs={[{ tone: 'teal', top: '30%', left: '-12%', size: 500 }, { tone: 'mint', top: '65%', left: '70%', size: 460 }]} />
         <div className="container-site">
@@ -267,35 +288,42 @@ export default function HomePage() {
             <p className="eyebrow">Our standard</p>
             <h2 className={`mt-4 ${H2}`}>The details most people <span className="accent-serif text-teal-700">never see</span>, done properly.</h2>
           </div>
-          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="stagger mt-8 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4">
             {STANDARDS.map((s) => (
-              <Spotlight as="li" key={s.title} className="reveal glass-light rounded-[24px] p-7">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-teal-100 text-teal-700"><Icon name={s.icon} size={22} /></span>
-                <h3 className="mt-5 text-[1.125rem] font-semibold">{s.title}</h3>
-                <p className="mt-2 text-[0.9375rem] text-ink-2">{s.body}</p>
+              <Spotlight as="li" key={s.title} className="reveal glass-light rounded-[20px] p-4 sm:rounded-[24px] sm:p-7">
+                <StandardArt kind={s.art} />
+                <h3 className="mt-3 text-[0.9375rem] font-semibold leading-snug sm:mt-5 sm:text-[1.125rem]">{s.title}</h3>
+                <p className="mt-1.5 text-[0.8125rem] leading-snug text-ink-2 sm:mt-2 sm:text-[0.9375rem] sm:leading-normal">{s.body}</p>
               </Spotlight>
             ))}
           </ul>
-          <div className="glass-light mt-20 rounded-[28px] p-8 lg:p-12">
+        </div>
+      </section>
+
+      {/* ── How it works: a scroll story ─────────────────────────────────── */}
+      {/* overflow-x-clip, not hidden: a hidden overflow would break the pinned device. */}
+      <section aria-labelledby="how-h" className="section overflow-x-clip border-t border-line/60 bg-paper">
+        <div className="container-site">
+          <div className="max-w-2xl">
             <p className="eyebrow">How it works</p>
-            <h3 className="mt-3 text-[1.75rem] font-semibold tracking-tight">From first message to live, in four steps.</h3>
-            <div className="mt-10"><ProcessDiagram steps={STEPS} /></div>
+            <h2 id="how-h" className={`mt-4 ${H2}`}>From first message to <span className="accent-serif text-teal-700">live</span>, in four steps.</h2>
           </div>
+          <div className="mt-8 sm:mt-12"><BuildStory steps={STEPS} /></div>
         </div>
       </section>
 
       {/* ── Founder + final CTA ──────────────────────────────────────────── */}
-      <section className="container-site pb-24">
-        <div className="hero-dark noise relative overflow-hidden rounded-[28px] px-7 py-16 sm:px-14 lg:py-24">
+      <section className="container-site pb-16 sm:pb-24">
+        <div className="hero-dark noise relative overflow-hidden rounded-[24px] px-6 py-12 sm:rounded-[28px] sm:px-14 sm:py-16 lg:py-24">
           <div className="aurora aurora-1" aria-hidden="true" />
           <div className="grid items-center gap-12 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <p className="eyebrow">Who you will work with</p>
-              <blockquote className="mt-5"><p className="accent-serif text-[clamp(1.75rem,2.8vw+1rem,3rem)] leading-[1.12]">“I build every project as if my name is on it, because it is.”</p></blockquote>
+              <blockquote className="mt-4 sm:mt-5"><p className="quote-in accent-serif text-[clamp(1.875rem,2.8vw+1rem,3rem)] leading-[1.1]">“I build every project as if my name is on it, because it is.”</p></blockquote>
               <p className="mt-6 max-w-2xl text-white/70">{SITE.founder}, founder. A small studio by design: you speak to the person who writes your code. Grateful for every client, and determined to earn that trust in the details.</p>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-7">Start with an instant quote <Icon name="arrowRight" size={18} /></Link>
-                <a href={whatsappLink('Hi Tshedza, I found you on your website and would like to chat about a project.')} className="btn btn-on-dark h-[52px] px-7" rel="noopener"><Icon name="whatsapp" size={18} /> Chat on WhatsApp</a>
+              <div className="mt-8 flex flex-wrap gap-3 sm:mt-9">
+                <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-7 max-sm:w-full">Start with an instant quote <Icon name="arrowRight" size={18} /></Link>
+                <a href={whatsappLink('Hi Tshedza, I found you on your website and would like to chat about a project.')} className="btn btn-on-dark h-[52px] px-7 max-sm:w-full" rel="noopener"><Icon name="whatsapp" size={18} /> Chat on WhatsApp</a>
               </div>
             </div>
             <div className="hidden lg:col-span-4 lg:block">
@@ -308,6 +336,44 @@ export default function HomePage() {
         </div>
       </section>
     </>
+  )
+}
+
+/** Tiny scroll-played visuals for "Our standard" (their final frame is also the static one). */
+function StandardArt({ kind }: { kind: 'speed' | 'secure' | 'access' | 'docs' }) {
+  return (
+    <span aria-hidden="true" className="inline-flex h-11 w-[60px] items-center justify-center rounded-[12px] bg-teal-100 text-teal-700 sm:h-12 sm:w-16">
+      <svg width="44" height="32" viewBox="0 0 56 40" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        {kind === 'speed' ? (
+          <>
+            <path d="M8 30a20 20 0 0 1 40 0" strokeOpacity="0.3" />
+            <path d="M8 30a20 20 0 0 1 11-17.9" stroke="#b45d2c" strokeOpacity="0.55" />
+            <path d="M40 13.6A20 20 0 0 1 48 30" stroke="#12805c" />
+            <line className="art art-needle" x1="28" y1="30" x2="28" y2="14" stroke="#0a1b2e" strokeWidth="2.6" />
+            <circle cx="28" cy="30" r="3" fill="#0a1b2e" stroke="none" />
+          </>
+        ) : kind === 'secure' ? (
+          <>
+            <path d="M28 4l15 6v9c0 8.5-6.3 14.6-15 17-8.7-2.4-15-8.5-15-17v-9z" strokeOpacity="0.45" />
+            <path className="art art-draw" d="M21 20l5 5 9.5-10" stroke="#0a1b2e" strokeWidth="2.6" />
+          </>
+        ) : kind === 'access' ? (
+          <>
+            <rect x="4" y="15" width="12" height="10" rx="5" fill="currentColor" fillOpacity="0.25" stroke="none" />
+            <rect x="23" y="15" width="12" height="10" rx="5" fill="currentColor" fillOpacity="0.25" stroke="none" />
+            <rect x="42" y="15" width="12" height="10" rx="5" fill="currentColor" fillOpacity="0.25" stroke="none" />
+            <rect className="art art-focus" x="1.5" y="12.5" width="17" height="15" rx="7.5" stroke="#0a1b2e" strokeWidth="2" />
+          </>
+        ) : (
+          <>
+            <path d="M17 4h16l8 8v24H17z" strokeOpacity="0.45" />
+            <rect className="art art-line" x="22" y="16" width="14" height="2.4" rx="1.2" fill="#0a1b2e" stroke="none" />
+            <rect className="art art-line" x="22" y="22" width="14" height="2.4" rx="1.2" fill="#0a1b2e" stroke="none" />
+            <rect className="art art-line" x="22" y="28" width="9" height="2.4" rx="1.2" fill="#0a1b2e" stroke="none" />
+          </>
+        )}
+      </svg>
+    </span>
   )
 }
 
