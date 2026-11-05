@@ -34,10 +34,10 @@ Rounding: to the nearest R50. Display: `R 6 500` (en-ZA, no cents). VAT is never
 **Acceptance examples (pinned in tests):**
 | Selection | One-off | Range | Deposit | Weeks |
 |---|---|---|---|---|
-| Website · Business site · 5 pages, nothing else | R 4 500 | R 4 050 – R 5 200 | R 2 050 | 2 |
-| Website · Business site · 8 pages + booking + care | R 7 850 + R 350/mo | R 7 050 – R 9 050 | R 3 550 | 3 |
+| Website · Business site · 5 pages, nothing else | R 3 500 | R 3 150 – R 4 050 | R 1 600 | 2 |
+| Website · Business site · 8 pages + booking + care | R 6 700 + R 350/mo | R 6 050 – R 7 700 | R 3 050 | 3 |
 | Online store · Growth store · 60 products | R 6 500 | R 5 850 – R 7 500 | R 2 950 | 3 |
-| Website · Landing page, priority | R 3 000 | R 2 700 – R 3 450 | R 0 (≤ R 3 000 threshold) | 1 |
+| Website · Starter site, priority | R 2 400 | R 2 150 – R 2 750 | R 0 (under the R 3 000 threshold) | 1 |
 
 ## 4. Architecture
 - **Front end** (static Next.js): `lib/quote/engine.ts` (a pure function), `lib/quote/schema.ts` (Zod) and `pricebook.json` imported at build. Results are instant with no network call.

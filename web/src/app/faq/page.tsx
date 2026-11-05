@@ -15,7 +15,7 @@ const GROUPS: { title: string; items: { q: string; a: string }[] }[] = [
   {
     title: 'Pricing & payment',
     items: [
-      { q: 'How much does a website cost?', a: 'A landing page starts from R2 500 and a five-page business site from R4 500. Online stores start from R4 500. The instant quote gives you a range based on exactly what you need.' },
+      { q: 'How much does a website cost?', a: 'A starter site of up to three pages starts from R2 000, and our recommended five-page business site from R3 500. Online stores start from R4 500. The instant quote gives you a range based on exactly what you need.' },
       { q: 'Do I need to pay a deposit?', a: 'Yes, for projects over R3 000 a 50% deposit secures your slot and starts the work. The balance is due on hand-over, as agreed in your quote.' },
       { q: 'Is the instant quote the final price?', a: 'It is an honest estimate range. After a short chat about your project we send a written quote with a fixed price, and that is the price you pay.' },
     ],
@@ -23,7 +23,7 @@ const GROUPS: { title: string; items: { q: string; a: string }[] }[] = [
   {
     title: 'Process & timelines',
     items: [
-      { q: 'How long does a project take?', a: 'A landing page is usually live within a week, and a typical business site in about two weeks once we have your content. The instant quote shows an estimated timeline for your selection.' },
+      { q: 'How long does a project take?', a: 'A starter site is usually live within a week, and a typical business site in about two weeks once we have your content. The instant quote shows an estimated timeline for your selection.' },
       { q: 'What do you need from me?', a: 'Your logo (or we can make one), the words and photos you want to use, and access to your domain if you have one. We send a simple checklist after you accept the quote.' },
       { q: 'How do we communicate?', a: 'Mostly WhatsApp and email, with video calls when a conversation is easier. You always talk to the person building your project.' },
     ],

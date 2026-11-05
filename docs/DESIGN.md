@@ -179,9 +179,11 @@ The cookie sheet slides in at 1.6 s (`.consent-in`) so it doesn't cover the land
 | `.art-*` | the "Our standard" micro-visuals |
 | `.quote-in` | founder quote writes in |
 
-**`<BuildStory>`** ("How it works" on home) pins a device with `position: sticky` while the four steps scroll past:
-- message → quote (real price book numbers) → blueprint wiped away to the finished design (scroll-linked `--wipe`) → live;
-- its section must use `overflow-x-clip`, never `overflow-hidden`, which breaks sticky.
+**`<BuildStory>`** ("How it works" on home) shows the four steps: message → quote (real price book numbers) → blueprint wiped away to the finished design (`--wipe`) → live.
+- **Phones (< lg): one device card per step, text directly underneath, nothing pinned.** A pinned device was tried and rejected on 5 Nov 2026. With the header and the bottom dock, a phone leaves about 390 px for text, so the text drifted out of sync with the device, had dead zones, and the device overlapped the next section (found by scrolling it in 40 px steps). Each card plays its step when it scrolls in. Step 3 wipes by CSS scroll timeline (`.wipe-scroll`, `@property --wipe`; it shows the finished design without support or under reduced motion).
+- **Desktop (lg+):** the device is pinned with `position: sticky` beside the steps. The current step is the title nearest the middle of the screen, so the device always matches what you are reading (verified with 0 mismatches over 39 pinned positions).
+- Its section must use `overflow-x-clip`, never `overflow-hidden`, which breaks sticky.
+- **Test scroll scenes by scrolling continuously, not by jumping to fixed positions.**
 
 **Rules:**
 - transform, opacity and clip-path only;
@@ -189,3 +191,20 @@ The cookie sheet slides in at 1.6 s (`.consent-in`) so it doesn't cover the land
 - everything renders final under `prefers-reduced-motion: reduce` (verified: no text left at opacity 0).
 
 Measured on the production build on a 4× CPU-throttled phone: CLS 0 and LCP under 0.7 s locally on all ten main pages.
+
+### 3.10 Phones: smooth over pretty (5 Nov 2026)
+
+Frame times were measured on a 4× CPU-throttled 390 px phone, switching one effect off at a time. The costs were the blurred, animated auroras, the panning hero grid and backdrop blur on large panels: standing still the page ran at 38 ms a frame with 40% of frames stuttering. Rules below `lg` (1024 px), all in one `@media (max-width: 1023px)` block at the end of `globals.css`:
+- auroras and liquid blobs are static gradients (no `filter` animation, no drift); the hero grid powers on once and does not pan;
+- `.glass`, `.glass-light`, `.card`, the liquid buttons and quote tiles have **no backdrop blur**: near-solid panes with the same rims and sheen. Only the navbar pill and the bottom dock keep real blur (they are small);
+- the body colour wash and `background-attachment: fixed` are off;
+- the rotating CTA glow is static; the hero word swap has no blur;
+- scroll reveals finish by 16% entry (headings 20%), so nothing is still fading in when the reader reaches it.
+
+Result: 17 ms a frame standing still (0.6% stuttering) and 25 ms while scrolling (10%). Re-measure with the same method after adding any effect; never add `filter`, `backdrop-filter` or `border-radius` animations on phones.
+
+**Mobile navbar:** one liquid-glass pill (translucent navy, blur, specular sheen, bright rim), identical on load, after scroll and over every section. It never switches style. Desktop keeps the transparent-bar-to-pill behaviour.
+
+**Portfolio devices (`DeviceDuo`, `PhoneFrame`, `BrowserFrame`):** every project shows the real desktop screenshot in a browser with the real phone version in front. Given a tall capture (`mobileTall`, 390 × 2 800), the phone's screen scrolls through the site as the page scrolls (`.screen-scroll` on a named view timeline from `.phone-screen`; without support or under reduced motion it shows the top of the site). The frame has a metallic bezel, side buttons and a screen glare: realism as hints, never heavy.
+
+**Capturing portfolio screenshots:** scroll the live site first so its reveals have played, hide `position: fixed` bars below the header, then capture 1 200 × 750 desktop and 390 × 2 800 phone as WebP under 100 KB. Scripts: `scratchpad/twd/clientshots.cjs` and `tallshots.cjs`.

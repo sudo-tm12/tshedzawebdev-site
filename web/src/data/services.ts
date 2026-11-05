@@ -46,7 +46,7 @@ export const SERVICES: Service[] = [
     included: ['Mobile-first design', 'Contact and WhatsApp click-to-chat', 'On-page SEO foundations', 'Speed optimisation', 'Privacy policy page (POPIA)', 'Launch support'],
     process: PROCESS_BUILD,
     faq: [
-      { q: 'How long does a website take?', a: 'A landing page is usually live within a week. A typical five-page business site takes about two weeks once we have your content.' },
+      { q: 'How long does a website take?', a: 'A starter site is usually live within a week. A typical five-page business site takes about two weeks once we have your content.' },
       { q: 'Do I need to write the content?', a: 'You know your business best, so we start with your words. If writing is not your thing, add copywriting to the quote and we write it with you.' },
       { q: 'Can I update the site myself?', a: 'Yes. Add a blog/CMS if you want to edit pages yourself, or take the care plan and send us changes on WhatsApp.' },
     ],

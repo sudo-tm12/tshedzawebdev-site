@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { PageHero } from '@/components/PageHero'
 import { Icon } from '@/components/Icon'
-import { BrowserFrame, CtaBand } from '@/components/ui'
+import { CtaBand, DeviceDuo } from '@/components/ui'
 import { WORK } from '@/data/work'
 import { pageMeta } from '@/lib/meta'
 
@@ -28,14 +28,9 @@ export default function WorkPage() {
           {withShots.map((p, i) => (
             <li key={p.slug} className={`reveal ${i === 0 ? 'md:col-span-2' : ''}`}>
               <Link href={`/work/${p.slug}/`} className="group block">
-                {/* Phones: the site's own phone screen (or the top of its desktop page), big enough to read. */}
-                <div className="aspect-[4/3] overflow-hidden rounded-[20px] border border-line bg-navy-900 shadow-[var(--shadow-md)] md:hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-optimised WebP */}
-                  <img src={(p.mobile ?? p.desktop)!.src} alt={(p.mobile ?? p.desktop)!.alt} width={(p.mobile ?? p.desktop)!.width} height={(p.mobile ?? p.desktop)!.height} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" className={`${i === 0 ? '' : 'settle'} h-full w-full object-cover object-left-top`} />
-                </div>
-                <div className="hidden md:block">
-                  <BrowserFrame src={p.desktop!.src} alt={p.desktop!.alt} width={p.desktop!.width} height={p.desktop!.height} url={p.live} priority={i === 0} rise={i !== 0} />
-                </div>
+                {/* The real site in a browser, with its phone version in front. The phone's screen
+                    scrolls through the site as you scroll the page (tall capture). */}
+                <DeviceDuo desktop={p.desktop!} phone={p.mobileTall ?? p.mobile} url={p.live} priority={i === 0} rise={i !== 0} />
                 <div className="mt-4 flex flex-wrap items-start justify-between gap-3 sm:mt-5 sm:gap-4">
                   <div>
                     <h2 className="h3 group-hover:text-teal-700">{p.client}</h2>

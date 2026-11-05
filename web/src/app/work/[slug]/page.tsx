@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { PageHero } from '@/components/PageHero'
 import { notFound } from 'next/navigation'
 import { Icon } from '@/components/Icon'
-import { BrowserFrame, Checklist, CtaBand, PhoneFrame } from '@/components/ui'
+import { Checklist, CtaBand, DeviceDuo } from '@/components/ui'
 import { WORK, getProject } from '@/data/work'
 import { pageMeta } from '@/lib/meta'
 
@@ -44,12 +44,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {p.desktop ? (
         <section className="container-site pb-16">
-          <div className="grid items-end gap-8 lg:grid-cols-12">
-            <div className={p.mobile ? 'lg:col-span-9' : 'lg:col-span-12'}>
-              <BrowserFrame src={p.desktop.src} alt={p.desktop.alt} width={p.desktop.width} height={p.desktop.height} url={p.live} priority />
-            </div>
-            {p.mobile ? <div className="mx-auto w-48 lg:col-span-3 lg:w-full lg:max-w-[230px]"><PhoneFrame src={p.mobile.src} alt={p.mobile.alt} width={p.mobile.width} height={p.mobile.height} /></div> : null}
-          </div>
+          {/* The real site in a browser with its phone version in front; the phone screen
+              scrolls through the site as you scroll (tall capture). */}
+          <DeviceDuo desktop={p.desktop} phone={p.mobileTall ?? p.mobile} url={p.live} priority />
         </section>
       ) : (
         <section className="container-site pb-16">

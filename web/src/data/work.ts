@@ -19,6 +19,8 @@ export interface Project {
   status: string
   desktop?: Shot
   mobile?: Shot
+  /** A tall phone capture (390 wide) that scrolls inside the phone frame as you scroll. */
+  mobileTall?: Shot
   accent: string // a typographic card colour when there is no screenshot
 }
 
@@ -41,6 +43,7 @@ export const WORK: Project[] = [
     status: 'Live',
     desktop: { src: asset('/work/blr-desktop.webp'), width: 1200, height: 750, alt: 'BLR Tutoring homepage: a large STUDY headline over a classroom chalkboard full of equations' },
     mobile: { src: asset('/work/blr-mobile.webp'), width: 390, height: 844, alt: 'BLR Tutoring homepage on a phone' },
+    mobileTall: { src: asset('/work/blr-mobile-tall.webp'), width: 390, height: 2800, alt: 'BLR Tutoring on a phone: the STUDY hero, why learners choose BLR, and the Maths and Physical Sciences courses' },
     accent: '#0E2238',
   },
   {
@@ -61,6 +64,7 @@ export const WORK: Project[] = [
     status: 'Delivered',
     desktop: { src: asset('/work/tnb-desktop.webp'), width: 1200, height: 750, alt: 'TNB Environmental Solutions homepage: “Understanding what lies beneath” on deep green, with a borehole log of soil layers' },
     mobile: { src: asset('/work/tnb-mobile.webp'), width: 390, height: 844, alt: 'TNB Environmental Solutions homepage on a phone, with soil layers along the bottom' },
+    mobileTall: { src: asset('/work/tnb-mobile-tall.webp'), width: 390, height: 2800, alt: 'TNB Environmental Solutions on a phone: the hero, the soil layers, who they are, and their three disciplines' },
     accent: '#10281A',
   },
   {
@@ -80,6 +84,7 @@ export const WORK: Project[] = [
     status: 'In review',
     desktop: { src: asset('/work/homeco-desktop.webp'), width: 1200, height: 750, alt: 'HomeCo homepage: “Every guest walks into a home that’s ready”, beside a sample turnover checklist' },
     mobile: { src: asset('/work/homeco-mobile.webp'), width: 390, height: 844, alt: 'HomeCo homepage on a phone' },
+    mobileTall: { src: asset('/work/homeco-mobile-tall.webp'), width: 390, height: 2800, alt: 'HomeCo on a phone: the hero, the sample turnover checklist reaching Ready, and the everyday juggle' },
     accent: '#0A2A4A',
   },
   {

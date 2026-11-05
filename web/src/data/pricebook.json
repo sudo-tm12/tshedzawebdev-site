@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-29-draft",
+  "version": "2026-11-05-draft",
   "status": "DRAFT, awaiting owner approval. Not live until approved.",
   "currency": "ZAR",
   "rules": {
@@ -18,8 +18,8 @@
       "blurb": "Fast, mobile-first business websites.",
       "unit": { "name": "page", "plural": "pages", "min": 1, "max": 30, "default": 5 },
       "tiers": [
-        { "id": "landing", "name": "Landing page", "base": 2500, "includedUnits": 1, "perUnit": 0, "weeks": 1, "note": "One focused page: offer, proof, contact." },
-        { "id": "business", "name": "Business site", "base": 4500, "includedUnits": 5, "perUnit": 450, "weeks": 2, "note": "Up to 5 pages; extra pages priced per page." },
+        { "id": "landing", "name": "Starter site", "base": 2000, "includedUnits": 3, "perUnit": 450, "weeks": 1, "note": "Up to 3 pages: home, about and contact. Enough to look real and get enquiries." },
+        { "id": "business", "name": "Business site", "base": 3500, "includedUnits": 5, "perUnit": 400, "weeks": 2, "note": "Up to 5 pages, WhatsApp chat and the SEO basics. Our most popular package." },
         { "id": "custom", "name": "Custom design site", "base": 8500, "includedUnits": 6, "perUnit": 650, "weeks": 4, "note": "Bespoke design system, motion and content strategy." }
       ],
       "addons": [

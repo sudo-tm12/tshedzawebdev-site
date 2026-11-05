@@ -7,7 +7,7 @@ import { Packages } from '@/components/Packages'
 import { StudioConsole } from '@/components/motion/StudioConsole'
 import { Spotlight, WordCycle, WordSwap } from '@/components/motion/basics'
 import { SwipeRail } from '@/components/SwipeRail'
-import { BrowserFrame, LiquidField } from '@/components/ui'
+import { DeviceDuo, LiquidField } from '@/components/ui'
 import { WallTeaser } from '@/components/wall/WallTeaser'
 import { PRICEBOOK_COACHING } from '@/lib/coaching'
 import { rand } from '@/lib/quote/engine'
@@ -180,14 +180,8 @@ export default function HomePage() {
             {featured.map((p, i) => (
               <li key={p.slug} className={`reveal ${i === 0 ? 'md:col-span-2' : ''}`}>
                 <Link href={`/work/${p.slug}/`} className="device-rise glass group block h-full rounded-[24px] p-2.5 transition-colors hover:border-teal-500/50 md:p-3">
-                  <div className="aspect-[4/5] overflow-hidden rounded-[18px] bg-navy-900 md:hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- static export, pre-optimised WebP */}
-                    <img src={(p.mobile ?? p.desktop)!.src} alt={(p.mobile ?? p.desktop)!.alt} width={(p.mobile ?? p.desktop)!.width} height={(p.mobile ?? p.desktop)!.height} loading="lazy" decoding="async" className="h-full w-full object-cover object-left-top" />
-                  </div>
-                  <div className="hidden overflow-hidden rounded-[16px] md:block">
-                    <div className="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.025]">
-                      <BrowserFrame src={p.desktop!.src} alt={p.desktop!.alt} width={p.desktop!.width} height={p.desktop!.height} url={p.live} />
-                    </div>
+                  <div className="transition-transform duration-700 ease-[var(--ease-out-soft)] md:group-hover:scale-[1.02]">
+                    <DeviceDuo desktop={p.desktop!} phone={p.mobileTall ?? p.mobile} url={p.live} />
                   </div>
                   <div className="flex items-center justify-between gap-4 px-2 pb-1.5 pt-4 md:gap-6 md:px-3 md:pb-2 md:pt-5">
                     <div className="min-w-0">

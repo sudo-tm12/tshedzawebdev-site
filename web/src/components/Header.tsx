@@ -22,6 +22,7 @@ export function Header() {
     let raf = 0
     const probe = () => {
       raf = 0
+      if (window.innerWidth < 1024) return // phones: the pill never changes, so there is nothing to probe
       setScrolled(window.scrollY > 8)
       // Only page content counts (not overlays, banners or the dev-tools badge).
       const under = document.elementsFromPoint(window.innerWidth / 2, 36).find((el) => el.closest('main, footer, #mobile-menu'))

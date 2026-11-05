@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { SERVICES } from '@/data/services'
-import { PRICEBOOK, rand } from '@/lib/quote/engine'
+import { PRICEBOOK, computeEstimate, rand } from '@/lib/quote/engine'
 import { whatsappLink } from '@/lib/site'
 import { Icon, type IconName } from './Icon'
 import { SwipeRail } from './SwipeRail'
@@ -47,16 +47,21 @@ export function Packages() {
             const picked = tier.id === t.pick
             const scope = unitLine(tier.includedUnits, book.unit)
             const extra = tier.perUnit && book.unit ? `Extra ${book.unit.plural} from ${rand(tier.perUnit)} each` : null
+            // The same engine as /quote, so the deposit line can never drift from the written quote.
+            const est = computeEstimate({ service: book.id, tier: tier.id, units: tier.includedUnits ?? 1, addons: {}, monthly: [], priority: false })
+            const pay = est.deposit ? `Start with ${rand(est.deposit)}, the rest at hand-over` : 'No deposit · pay at hand-over'
             const message = `Hi Tshedza, I’d like to start the ${tier.name} package (${t.label}, from ${rand(tier.base ?? 0)}). Here’s a bit about my business: `
             return (
-              <li key={tier.id} className={`rise-in relative flex flex-col rounded-[24px] p-6 sm:p-7 ${picked ? 'on-dark bg-navy-900 text-white shadow-[0_40px_90px_-40px_rgba(10,27,46,0.8)]' : 'glass-light'}`} style={{ animationDelay: `${i * 90}ms` }}>
-                {picked ? <span className="absolute -top-3 left-6 rounded-full bg-teal-500 px-3 py-1 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-navy-950">Recommended</span> : null}
-                <p className={`font-mono text-[0.75rem] uppercase tracking-[0.12em] ${picked ? 'text-teal-500' : 'text-teal-700'}`}>{t.label}</p>
+              <li key={tier.id} className={`rise-in flex flex-col rounded-[24px] p-6 sm:p-7 ${picked ? 'on-dark bg-navy-900 text-white shadow-[0_40px_90px_-40px_rgba(10,27,46,0.8)] ring-1 ring-teal-500/40' : 'glass-light'}`} style={{ animationDelay: `${i * 90}ms` }}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className={`font-mono text-[0.75rem] uppercase tracking-[0.12em] ${picked ? 'text-teal-500' : 'text-teal-700'}`}>{t.label}</p>
+                  {picked ? <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-500 px-2.5 py-1 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.1em] text-navy-950"><Icon name="sparkle" size={11} />Recommended</span> : null}
+                </div>
                 <h3 className="mt-2 text-[1.375rem] font-semibold tracking-tight">{tier.name}</h3>
                 <p className="mt-4 flex items-baseline gap-2"><span className={`text-[0.875rem] ${picked ? 'text-white/60' : 'text-ink-3'}`}>from</span><span className="text-[2.25rem] font-semibold leading-none tracking-[-0.03em] tabular-nums">{rand(tier.base ?? 0)}</span></p>
                 <p className={`mt-3 text-[0.9375rem] ${picked ? 'text-white/70' : 'text-ink-2'}`}>{tier.note}</p>
                 <ul className={`mt-5 grid gap-2.5 border-t pt-5 text-[0.9375rem] ${picked ? 'border-white/10' : 'border-line'}`}>
-                  {[scope, `Live in about ${tier.weeks} week${tier.weeks === 1 ? '' : 's'}`, extra].filter(Boolean).map((line) => (
+                  {[scope, `Live in about ${tier.weeks} week${tier.weeks === 1 ? '' : 's'}`, extra, pay].filter(Boolean).map((line) => (
                     <li key={line} className="flex gap-2.5"><Icon name="check" size={18} className={`mt-0.5 flex-none ${picked ? 'text-teal-500' : 'text-teal-700'}`} />{line}</li>
                   ))}
                 </ul>
