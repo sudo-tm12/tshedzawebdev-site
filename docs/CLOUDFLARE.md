@@ -56,11 +56,25 @@ Records as of 8 Nov 2026 (public lookup):
 | `MX` | 0 `mail.tshedzawebdev.co.za` |
 | `TXT` (SPF) | `v=spf1 +a +mx +ip4:164.160.91.57 include:spf.zamailgate.com ~all` |
 
+**Done 8 Nov 2026.** Zone added (Free plan, all 26 records imported). The import marked the cPanel
+hostnames as Proxied; `mail`, `webmail`, `cpanel`, `whm`, `webdisk`, `ftp`, `autoconfig`, `autodiscover`,
+`cpcalendars` and `cpcontacts` were set to **DNS only** (mail and FTP can't go through the proxy).
+Nameservers changed at Elitehost to `lochlan` / `veda.ns.cloudflare.com` (the old ones were
+`ns3` / `ns5.za-dns.com`); the .co.za registry published them at 22:21 UTC and the zone went active.
+
 ## 4. Switch the website and API (Claude, once the zone is active)
 1. **Website:** in `web/wrangler.toml`, uncomment the `routes` for `tshedzawebdev.co.za` and `www`, then deploy. Cloudflare replaces the old `A` records.
 2. **API:** in `worker/wrangler.toml`, uncomment the `routes` line for `api.tshedzawebdev.co.za` and push. Wrangler creates the DNS record.
 3. **Sending email:** in resend.com, add the domain and create the DKIM, SPF and return-path records it asks for, in Cloudflare.
 4. **Privacy Policy:** update the "Who processes it for us" list: Cloudflare (hosting, API and database), Resend (email delivery), PostHog and Tidio (with consent).
+
+**Done 8–9 Nov 2026.**
+- Site and API are Workers custom domains. `workers_dev = true` keeps both workers.dev addresses as a fallback (wrangler turns them off when `routes` exist). In `web/wrangler.toml`, `routes` must sit above `[assets]`.
+- Wrangler can't replace existing records: the old apex `A` and `www` `CNAME` had to be deleted in the dashboard before the site deploy could attach the domains.
+- **Always Use HTTPS** is on (SSL/TLS → Edge Certificates); SSL mode is Full.
+- Resend: domain verified, region Ireland, open and click tracking off. Records in Cloudflare: `resend._domainkey` TXT, plus `send` and `rsend` CNAMEs. Resend's optional receiving MX was not added. The API key (`RESEND_API_KEY` Worker secret) has sending access only. It covers all domains, because Resend only allows a domain restriction once the domain is verified.
+- Until step 5, owner emails (`OWNER_EMAIL`: lead alerts, wall approvals) go straight to tshedzamay@gmail.com.
+- Privacy Policy updated 9 Nov 2026. After step 5, drop "our email host for info@" from the list, since Cloudflare then handles that address.
 
 ## 5. Switch email (owner chooses, Claude sets up)
 - **Inbound:** Cloudflare Email Routing forwards `info@tshedzawebdev.co.za` to an inbox you already use. It's free.
