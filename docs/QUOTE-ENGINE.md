@@ -58,6 +58,7 @@ Rounding: to the nearest R50. Display: `R 6 500` (en-ZA, no cents). VAT is never
   - no PII in logs
   - prepared statements
   - SMTP send from `info@tshedzawebdev.co.za` (SPF/DKIM-aligned); the visitor only ever goes in Reply-To
+- **Email retries** (Worker, `worker/src/retry.ts`): if an email fails, the visitor is told "we'll email it to you shortly", and a cron every 15 minutes re-sends whatever didn't go out (client estimate, owner copy, contact message, wall approval) for up to 3 days. The PDF is rebuilt with the original date; if prices changed in between, it is not re-sent (flag set to -1) and the lead waits for a personal follow-up.
 
 ## 5. Lead record (MySQL `leads`)
 `id, ref, created_at, name, email, phone, business, notes, service_id, selection_json, one_off, monthly, low, high, deposit, weeks, pricebook_version, consent_at, consent_text_version, ip_hash, email_client_sent, email_owner_sent`

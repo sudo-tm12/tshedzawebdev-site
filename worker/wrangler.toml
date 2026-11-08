@@ -36,9 +36,10 @@ MAIL_TRANSPORT = "resend"
 
 # Secrets (never in this file): npx wrangler secret put IP_SALT | WALL_SECRET | RESEND_API_KEY
 
-# Daily housekeeping: 24-month lead retention, old rate events, unpublished wall notes.
+# Daily housekeeping (24-month lead retention, old rate events, unpublished wall notes), and
+# every 15 minutes a retry of any email that didn't go out (src/retry.ts; index.ts matches on it).
 [triggers]
-crons = ["17 3 * * *"]
+crons = ["17 3 * * *", "*/15 * * * *"]
 
 [observability]
 enabled = true

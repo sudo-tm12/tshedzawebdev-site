@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --port 4730",
+    "dev": "wrangler dev --port 4730 --test-scheduled",
     "db:local": "wrangler d1 migrations apply tshedzawebdev --local",
     "db:remote": "wrangler d1 migrations apply tshedzawebdev --remote",
     "typecheck": "tsc --noEmit",

@@ -2,12 +2,15 @@
 //   node --experimental-strip-types test/e2e.ts [pdfOutDir]
 // Emails (with the PDF) are read back from the local D1 outbox table via wrangler.
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { computeEstimate, defaultSelection, type Selection } from '../../web/src/lib/quote/engine.ts'
 
 const API = process.env.API ?? 'http://127.0.0.1:4730'
 const ORIGIN = 'http://localhost:4711'
 const pdfDir = process.argv[2]
+// The owner address the Worker uses locally (.dev.vars overrides wrangler.toml).
+const cfg = (k: string) => ['.dev.vars', 'wrangler.toml'].map((f) => { try { return readFileSync(f, 'utf8').match(new RegExp(`^${k}\\s*=\\s*"?([^"\\r\\n]+)"?`, 'm'))?.[1] } catch { return undefined } }).find(Boolean)
+const OWNER = cfg('OWNER_EMAIL')!
 let pass = 0, fail = 0
 const ok = (c: boolean, label: string, extra = '') => { c ? pass++ : fail++; console.log(`${c ? 'PASS' : 'FAIL'}  ${label}${extra ? '  · ' + extra : ''}`) }
 const post = async (path: string, body: unknown, origin = ORIGIN) => {
@@ -22,6 +25,8 @@ const sql = (q: string) => {
   const out = execFileSync(process.execPath, ['node_modules/wrangler/bin/wrangler.js', 'd1', 'execute', 'tshedzawebdev', '--local', '--json', '--command', q], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
   return (JSON.parse(out)[0]?.results ?? []) as Record<string, string>[]
 }
+// Local database only: start with a clean rate-limit log so the suite can be re-run within the hour.
+sql('DELETE FROM rate_events')
 
 // ── Instant quote ──
 const web: Selection = { ...defaultSelection('website'), tier: 'business', units: 8, addons: { booking: 1, copy: 1 }, monthly: ['care'], priority: false }
@@ -45,14 +50,14 @@ ok(r.status === 403, 'request from another website rejected', String(r.status))
 
 const mails = sql(`SELECT to_addr, reply_to, subject, attachment_name, attachment_b64 FROM outbox WHERE subject LIKE '%${ref1}%' OR subject LIKE '%${ref2}%' OR subject LIKE '%${ref3}%'`)
 const client = mails.find((m) => m.to_addr === 'thandi@example.com')
-const owner = mails.find((m) => m.to_addr === 'info@tshedzawebdev.co.za' && m.subject.includes(ref1))
-ok(!!client && client.reply_to === 'info@tshedzawebdev.co.za' && client.attachment_name === `TshedzaWebDev-estimate-${ref1}.pdf`, 'client emailed with the PDF, replies go to you', client?.subject)
+const owner = mails.find((m) => m.to_addr === OWNER && m.subject.includes(ref1))
+ok(!!client && client.reply_to === OWNER && client.attachment_name === `TshedzaWebDev-estimate-${ref1}.pdf`, 'client emailed with the PDF, replies go to you', client?.subject)
 ok(!!owner && owner.reply_to === 'thandi@example.com' && !!owner.attachment_b64, 'you get a copy with the PDF, replies go to the client', owner?.subject)
 const pdf = Buffer.from(client?.attachment_b64 ?? '', 'base64')
 ok(pdf.subarray(0, 5).toString() === '%PDF-' && pdf.length > 3000, 'the attachment is a real PDF', `${pdf.length} bytes`)
 if (pdfDir) {
   mkdirSync(pdfDir, { recursive: true })
-  for (const m of mails.filter((x) => x.to_addr !== 'info@tshedzawebdev.co.za')) writeFileSync(`${pdfDir}/${m.attachment_name}`, Buffer.from(m.attachment_b64, 'base64'))
+  for (const m of mails.filter((x) => x.to_addr !== OWNER)) writeFileSync(`${pdfDir}/${m.attachment_name}`, Buffer.from(m.attachment_b64, 'base64'))
 }
 
 // ── Contact form ──
@@ -88,6 +93,27 @@ hh = await post('/wall/heart', { id, on: true })
 ok(hh.data.hearts === 1, 'the same visitor cannot double-count', JSON.stringify(hh.data))
 hh = await post('/wall/heart', { id, on: false })
 ok(hh.data.hearts === 0, 'heart removed', JSON.stringify(hh.data))
+
+// ── Email retry (cron) ──
+// Local Explorer API of wrangler dev (needs --test-scheduled): runs the Worker's scheduled handler.
+const runCron = () => fetch(`${API}/cdn-cgi/local/explorer/api/local/scheduled?worker=tshedzawebdev-api`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ cron: '*/15 * * * *' }) })
+// Pretend the first send failed 10 minutes ago, then run the retry cron (wrangler dev --test-scheduled).
+const tenMinAgo = new Date(Date.now() - 10 * 60000).toISOString().slice(0, 19).replace('T', ' ')
+sql(`UPDATE leads SET email_client_sent = 0, created_at = '${tenMinAgo}' WHERE ref = '${ref2}'; DELETE FROM outbox WHERE subject LIKE '%${ref2}%'`)
+r = await post('/wall', { message: `Retry check (${tag}).`, consent: true, website: '' })
+const retryNote = Number(r.data.id)
+sql(`UPDATE wall_notes SET owner_notified = 0, created_at = '${tenMinAgo}' WHERE id = ${retryNote}; DELETE FROM outbox WHERE text LIKE '%Retry check (${tag})%'`)
+const cron = await runCron()
+ok(cron.ok, 'retry cron ran', String(cron.status))
+const again = sql(`SELECT to_addr, attachment_name FROM outbox WHERE subject LIKE '%${ref2}%'`)
+ok(again.length === 1 && again[0]!.to_addr === 'sipho@example.com' && again[0]!.attachment_name === `TshedzaWebDev-estimate-${ref2}.pdf`, 'a failed estimate email is re-sent with its PDF (only the missing one)', JSON.stringify(again.map((m) => m.to_addr)))
+const flags = sql(`SELECT email_client_sent AS c, email_owner_sent AS o FROM leads WHERE ref = '${ref2}'`)[0]
+ok(Number(flags?.c) === 1 && Number(flags?.o) === 1, 'the lead is marked as emailed', JSON.stringify(flags))
+const noteMail = sql(`SELECT to_addr, text FROM outbox WHERE text LIKE '%Retry check (${tag})%'`)
+ok(noteMail.length === 1 && noteMail[0]!.to_addr === OWNER && /Approve: \S+/.test(noteMail[0]!.text), 'a missed wall approval email is re-sent', String(noteMail.length))
+await runCron()
+const total = Number(sql(`SELECT COUNT(*) AS n FROM outbox WHERE subject LIKE '%${ref2}%' OR text LIKE '%Retry check (${tag})%'`)[0]?.n)
+ok(total === 2, 'running the cron again sends nothing twice', `${total} emails`)
 
 console.log(`\n${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

@@ -2,11 +2,15 @@
 //   POST /quote/send : verify the estimate, store the lead, email the PDF to client + owner
 //   POST /contact    : store the message, email the owner
 //   /wall...         : community wall (wall.ts)
-// Plus a daily cron for retention (leads 24 months, unpublished wall notes 30 days).
+// Plus two crons (wrangler.toml): emails that failed are retried every 15 minutes (retry.ts), and a
+// daily clean-up enforces retention (leads 24 months, unpublished wall notes 30 days).
 import type { Env } from './env'
 import { HttpError, allowedOrigins, corsHeaders, json, nowSql } from './http'
 import { handleContact, handleQuote } from './quote'
+import { retryEmails } from './retry'
 import { handleWallHeart, handleWallList, handleWallModerate, handleWallPost } from './wall'
+
+const RETRY_CRON = '*/15 * * * *'   // must match wrangler.toml [triggers]
 
 async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const path = new URL(req.url).pathname.replace(/\/+$/, '') || '/'
@@ -42,7 +46,8 @@ export default {
     return new Response(res.body, { status: res.status, headers })
   },
 
-  async scheduled(_event: ScheduledController, env: Env): Promise<void> {
+  async scheduled(event: ScheduledController, env: Env): Promise<void> {
+    if (event.cron === RETRY_CRON) return retryEmails(env)
     const ago = (ms: number) => nowSql(new Date(Date.now() - ms))
     await env.DB.batch([
       env.DB.prepare('DELETE FROM leads WHERE created_at < ?').bind(ago(730 * 86400000)),

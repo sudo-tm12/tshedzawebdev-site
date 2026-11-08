@@ -1,15 +1,66 @@
 // POST /quote/send and POST /contact.
 // The estimate is recomputed with the same engine the website uses (web/src/lib/quote),
 // so a tampered price can never be emailed: any mismatch returns 409.
-import { PRICEBOOK, QuoteError, computeEstimate, rand, type Selection } from '../../web/src/lib/quote/engine'
+import { PRICEBOOK, QuoteError, computeEstimate, rand, type Estimate, type Selection, type ServiceBook, type Tier } from '../../web/src/lib/quote/engine'
 import type { Env } from './env'
 import { HttpError, cleanText, h, ipHash, isEmail, json, nowSql, oneLine, rateLimited, readJson } from './http'
-import { emailLayout, p, sendMail } from './mail'
+import { emailLayout, p, sendMail, type Mail } from './mail'
 import { buildEstimatePdf } from './pdf'
 
 const CONSENT_VERSIONS = ['2026-10-29']
 
-interface Contact { name: string; email: string; phone: string; business: string; notes: string }
+export interface Contact { name: string; email: string; phone: string; business: string; notes: string }
+
+export interface EstimateMailInput {
+  ref: string; contact: Contact; service: ServiceBook; tier: Tier; est: Estimate
+  stamp: string; consentVersion: string; pdf: Uint8Array
+}
+
+/** The two estimate emails (client + owner copy), both with the PDF. Also used by the retry cron. */
+export function estimateMails(env: Env, x: EstimateMailInput): { client: Mail; owner: Mail } {
+  const { ref, contact, service, tier, est } = x
+  const attachment = { name: `TshedzaWebDev-estimate-${ref}.pdf`, data: x.pdf }
+  const range = est.oneOff > 0 ? `${rand(est.low)} – ${rand(est.high)}` : ''
+  const monthly = est.monthly > 0 ? `${rand(est.monthly)}/month` : ''
+  const headline = [range, monthly].filter(Boolean).join(' + ')
+  const weeks = `${est.weeks} week${est.weeks === 1 ? '' : 's'}`
+  const client: Mail = {
+    to: contact.email,
+    subject: `Your TshedzaWebDev estimate ${ref}`,
+    html: emailLayout(`Your estimate ${ref}`,
+      p(`Hi ${h(contact.name)},`)
+      + p(`Thank you for using our instant quote. Your estimate for <strong>${h(`${service.name}: ${tier.name}`)}</strong> is <strong>${h(headline)}</strong>, with an estimated timeline of about ${weeks}.`)
+      + p('The full breakdown is attached as a PDF. We will be in touch to talk it through. Or reply to this email or WhatsApp us on 069 951 3836 any time.')
+      + p('Grateful for the chance to help,<br>Tshedza · TshedzaWebDev', 'margin:0')),
+    text: `Hi ${contact.name},\n\nYour estimate ${ref} for ${service.name}: ${tier.name} is ${headline}, about ${weeks}.\nThe full breakdown is attached.\n\nGrateful for the chance to help,\nTshedza · TshedzaWebDev\nWhatsApp 069 951 3836`,
+    replyTo: env.OWNER_EMAIL,
+    attachment,
+  }
+  const owner: Mail = {
+    to: env.OWNER_EMAIL,
+    subject: `New estimate ${ref}: ${contact.name} (${service.name})`,
+    html: emailLayout(`New estimate ${ref}`,
+      p(`<strong>${h(contact.name)}</strong>${contact.business ? ` · ${h(contact.business)}` : ''}<br>${h(contact.email)}${contact.phone ? ` · ${h(contact.phone)}` : ''}`)
+      + p(`${h(`${service.name}: ${tier.name}`)}<br><strong>${h(headline)}</strong> · deposit ${h(rand(est.deposit))} · ${est.weeks} wk`)
+      + (contact.notes ? p(h(contact.notes), 'white-space:pre-wrap') : '')
+      + p(`Consent recorded ${h(x.stamp)} UTC (v${h(x.consentVersion)}). PDF attached.`, 'color:#5f6b7a;font-size:12px;margin:0')),
+    text: `${contact.name}${contact.business ? ` · ${contact.business}` : ''}\n${contact.email} ${contact.phone}\n\n${service.name}: ${tier.name}\n${headline} · deposit ${rand(est.deposit)} · ${est.weeks} wk`,
+    replyTo: contact.email,
+    attachment,
+  }
+  return { client, owner }
+}
+
+/** The owner's email for a contact-form message. Also used by the retry cron. */
+export function contactMail(env: Env, c: Pick<Contact, 'name' | 'email' | 'phone' | 'notes'>): Mail {
+  return {
+    to: env.OWNER_EMAIL,
+    subject: `Website message from ${c.name}`,
+    html: emailLayout('New website message', p(`<strong>${h(c.name)}</strong><br>${h(c.email)}${c.phone ? ` · ${h(c.phone)}` : ''}`) + p(h(c.notes), 'white-space:pre-wrap;margin:0')),
+    text: `${c.name} <${c.email}> ${c.phone}\n\n${c.notes}`,
+    replyTo: c.email,
+  }
+}
 
 function validateContact(c: Record<string, unknown>, needsMessage: boolean): Contact {
   const out: Contact = {
@@ -74,39 +125,10 @@ export async function handleQuote(req: Request, env: Env, ctx: ExecutionContext)
   const ref = row!.ref
 
   const pdf = await buildEstimatePdf(ref, contact, service, tier, est, PRICEBOOK, sel, now)
-  const attachment = { name: `TshedzaWebDev-estimate-${ref}.pdf`, data: pdf }
-  const range = est.oneOff > 0 ? `${rand(est.low)} – ${rand(est.high)}` : ''
-  const monthly = est.monthly > 0 ? `${rand(est.monthly)}/month` : ''
-  const headline = [range, monthly].filter(Boolean).join(' + ')
-  const weeks = `${est.weeks} week${est.weeks === 1 ? '' : 's'}`
-
-  const clientMail = sendMail(env, {
-    to: contact.email,
-    subject: `Your TshedzaWebDev estimate ${ref}`,
-    html: emailLayout(`Your estimate ${ref}`,
-      p(`Hi ${h(contact.name)},`)
-      + p(`Thank you for using our instant quote. Your estimate for <strong>${h(`${service.name}: ${tier.name}`)}</strong> is <strong>${h(headline)}</strong>, with an estimated timeline of about ${weeks}.`)
-      + p('The full breakdown is attached as a PDF. We will be in touch to talk it through. Or reply to this email or WhatsApp us on 069 951 3836 any time.')
-      + p('Grateful for the chance to help,<br>Tshedza · TshedzaWebDev', 'margin:0')),
-    text: `Hi ${contact.name},\n\nYour estimate ${ref} for ${service.name}: ${tier.name} is ${headline}, about ${weeks}.\nThe full breakdown is attached.\n\nGrateful for the chance to help,\nTshedza · TshedzaWebDev\nWhatsApp 069 951 3836`,
-    replyTo: env.OWNER_EMAIL,
-    attachment,
-  })
-  const ownerHtml = emailLayout(`New estimate ${ref}`,
-    p(`<strong>${h(contact.name)}</strong>${contact.business ? ` · ${h(contact.business)}` : ''}<br>${h(contact.email)}${contact.phone ? ` · ${h(contact.phone)}` : ''}`)
-    + p(`${h(`${service.name}: ${tier.name}`)}<br><strong>${h(headline)}</strong> · deposit ${h(rand(est.deposit))} · ${est.weeks} wk`)
-    + (contact.notes ? p(h(contact.notes), 'white-space:pre-wrap') : '')
-    + p(`Consent recorded ${h(stamp)} UTC (v${h(String(body.consentVersion))}). PDF attached.`, 'color:#5f6b7a;font-size:12px;margin:0'))
-  const ownerMail = sendMail(env, {
-    to: env.OWNER_EMAIL,
-    subject: `New estimate ${ref}: ${contact.name} (${service.name})`,
-    html: ownerHtml,
-    text: `${contact.name}${contact.business ? ` · ${contact.business}` : ''}\n${contact.email} ${contact.phone}\n\n${service.name}: ${tier.name}\n${headline} · deposit ${rand(est.deposit)} · ${est.weeks} wk`,
-    replyTo: contact.email,
-    attachment,
-  })
+  const mails = estimateMails(env, { ref, contact, service, tier, est, stamp, consentVersion: String(body.consentVersion), pdf })
   // Both emails go out together; the bookkeeping update runs after the response.
-  const [sentClient, sentOwner] = await Promise.all([clientMail, ownerMail])
+  // Anything that fails is retried by the cron (retry.ts), so "we'll email it shortly" holds.
+  const [sentClient, sentOwner] = await Promise.all([sendMail(env, mails.client), sendMail(env, mails.owner)])
   ctx.waitUntil(env.DB.prepare('UPDATE leads SET email_client_sent = ?, email_owner_sent = ? WHERE ref = ?').bind(sentClient ? 1 : 0, sentOwner ? 1 : 0, ref).run())
   if (!sentClient) console.error(`[api] client email failed for ${ref}`)
   return json(200, { ref, emailed: sentClient })
@@ -123,13 +145,7 @@ export async function handleContact(req: Request, env: Env): Promise<Response> {
   const ref = `MSG-${stamp.replace(/\D/g, '')}-${crypto.getRandomValues(new Uint8Array(2)).reduce((s, b) => s + b.toString(16).padStart(2, '0'), '')}`
   await env.DB.prepare("INSERT INTO leads (ref, kind, created_at, name, email, phone, message, consent_at, consent_version, ip_hash) VALUES (?, 'contact', ?, ?, ?, ?, ?, ?, ?, ?)")
     .bind(ref, stamp, c.name, c.email, c.phone || null, c.notes, stamp, CONSENT_VERSIONS[0], ip).run()
-  const sent = await sendMail(env, {
-    to: env.OWNER_EMAIL,
-    subject: `Website message from ${c.name}`,
-    html: emailLayout('New website message', p(`<strong>${h(c.name)}</strong><br>${h(c.email)}${c.phone ? ` · ${h(c.phone)}` : ''}`) + p(h(c.notes), 'white-space:pre-wrap;margin:0')),
-    text: `${c.name} <${c.email}> ${c.phone}\n\n${c.notes}`,
-    replyTo: c.email,
-  })
+  const sent = await sendMail(env, contactMail(env, c))
   await env.DB.prepare('UPDATE leads SET email_owner_sent = ? WHERE ref = ?').bind(sent ? 1 : 0, ref).run()
   return json(200, { ok: true })
 }

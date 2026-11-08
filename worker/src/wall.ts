@@ -6,7 +6,7 @@
 //   POST /wall/moderate     so mail scanners that prefetch links cannot approve anything)
 import type { Env } from './env'
 import { HttpError, cleanText, h, hmacHex, ipHash, json, nowSql, oneLine, rateLimited, readJson, safeEqual } from './http'
-import { emailLayout, p, sendMail } from './mail'
+import { emailLayout, p, sendMail, type Mail } from './mail'
 
 const KINDS: Record<string, string> = { thanks: 'Thank you', encourage: 'Encouragement', idea: 'Idea', shoutout: 'Shout-out' }
 const COLOURS = ['sun', 'mint', 'sky', 'rose', 'lilac']
@@ -49,21 +49,29 @@ export async function handleWallPost(req: Request, env: Env): Promise<Response> 
     .bind(nowSql(), name || null, place || null, message, kind, colour, ip).run()
   const id = Number(res.meta.last_row_id)
 
+  // If this email fails, the cron retries it (retry.ts) until owner_notified is set.
+  if (await sendMail(env, await wallNoteMail(env, { id, name: name || null, place: place || null, message, kind }))) {
+    await env.DB.prepare('UPDATE wall_notes SET owner_notified = 1 WHERE id = ?').bind(id).run()
+  }
+  return json(200, { ok: true, id })
+}
+
+/** The owner's email for a new note, with signed Approve / Reject links. Also used by the retry cron. */
+export async function wallNoteMail(env: Env, n: Pick<NoteRow, 'id' | 'name' | 'place' | 'message' | 'kind'>): Promise<Mail> {
   const base = env.API_PUBLIC_URL.replace(/\/$/, '')
-  const link = async (a: string) => `${base}/wall/moderate?id=${id}&a=${a}&t=${await token(env, id, a)}`
+  const link = async (a: string) => `${base}/wall/moderate?id=${n.id}&a=${a}&t=${await token(env, n.id, a)}`
   const [approve, reject] = [await link('approve'), await link('reject')]
-  const who = `${name || 'Anonymous'}${place ? `, ${place}` : ''}`
-  await sendMail(env, {
+  const who = `${n.name || 'Anonymous'}${n.place ? `, ${n.place}` : ''}`
+  return {
     to: env.OWNER_EMAIL,
     subject: `Wall note from ${who}`,
     html: emailLayout('New note for the wall',
-      p(`${h(KINDS[kind]!)} · from ${h(who)}`, 'margin:0 0 8px;color:#5f6b7a')
-      + p(h(message), 'margin:0 0 20px;font-size:18px;white-space:pre-wrap')
+      p(`${h(KINDS[n.kind] ?? 'Note')} · from ${h(who)}`, 'margin:0 0 8px;color:#5f6b7a')
+      + p(h(n.message), 'margin:0 0 20px;font-size:18px;white-space:pre-wrap')
       + `<p style="margin:0"><a href="${h(approve)}" style="display:inline-block;background:#0a1b2e;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600">Approve</a> `
       + `&nbsp; <a href="${h(reject)}" style="display:inline-block;color:#b42318;padding:12px 8px;text-decoration:none;font-weight:600">Reject</a></p>`),
-    text: `${who} wrote:\n\n${message}\n\nApprove: ${approve}\nReject: ${reject}`,
-  })
-  return json(200, { ok: true, id })
+    text: `${who} wrote:\n\n${n.message}\n\nApprove: ${approve}\nReject: ${reject}`,
+  }
 }
 
 export async function handleWallHeart(req: Request, env: Env): Promise<Response> {
