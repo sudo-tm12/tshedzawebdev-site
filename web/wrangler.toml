@@ -9,8 +9,11 @@ directory = "./out"
 not_found_handling = "404-page"
 html_handling = "auto-trailing-slash"
 
-# Served at the real domain once its DNS is on Cloudflare (wrangler then creates the records).
-# routes = [
-#   { pattern = "tshedzawebdev.co.za", custom_domain = true },
-#   { pattern = "www.tshedzawebdev.co.za", custom_domain = true },
-# ]
+# Served at the real domain (Workers custom domains: wrangler creates the DNS records and certificates,
+# replacing the old cPanel A/CNAME records for these two names).
+routes = [
+  { pattern = "tshedzawebdev.co.za", custom_domain = true },
+  { pattern = "www.tshedzawebdev.co.za", custom_domain = true },
+]
+# Keep the workers.dev address as well (wrangler turns it off when routes exist).
+workers_dev = true

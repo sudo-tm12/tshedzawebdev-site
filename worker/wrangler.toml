@@ -5,9 +5,11 @@ name = "tshedzawebdev-api"
 main = "src/index.ts"
 compatibility_date = "2026-10-01"
 
-# Served at api.tshedzawebdev.co.za once the domain's DNS is on Cloudflare.
-# Uncomment after the zone is active (wrangler then creates the DNS record itself).
-# routes = [{ pattern = "api.tshedzawebdev.co.za", custom_domain = true }]
+# Served at api.tshedzawebdev.co.za (Workers custom domain: wrangler creates the DNS record and certificate).
+routes = [{ pattern = "api.tshedzawebdev.co.za", custom_domain = true }]
+# Keep the workers.dev address too (wrangler turns it off when routes exist): older builds and
+# tests use it, and it is a fallback if the custom domain ever has trouble.
+workers_dev = true
 
 # Run next to the database (Western Europe) rather than near each visitor: a quote makes
 # several database calls, so one visitor round trip beats six SA↔EU database round trips.
