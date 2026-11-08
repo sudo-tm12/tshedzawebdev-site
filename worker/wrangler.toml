@@ -24,7 +24,9 @@ migrations_dir = "migrations"
 [vars]
 # The site's workers.dev address is ours too, so it can be tested before the domain moves.
 ALLOWED_ORIGINS = "https://tshedzawebdev.co.za,https://www.tshedzawebdev.co.za,https://tshedzawebdev.tshedzawebdev.workers.dev"
-OWNER_EMAIL = "info@tshedzawebdev.co.za"
+# Lead alerts and wall approvals. Straight to Gmail until info@ is forwarded there by Cloudflare
+# Email Routing (docs/CLOUDFLARE.md step 5); then this can go back to info@tshedzawebdev.co.za.
+OWNER_EMAIL = "tshedzamay@gmail.com"
 MAIL_FROM = "TshedzaWebDev <info@tshedzawebdev.co.za>"
 API_PUBLIC_URL = "https://api.tshedzawebdev.co.za"
 # "resend" in production; "outbox" keeps emails in the database (local testing).
