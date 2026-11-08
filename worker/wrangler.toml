@@ -1,0 +1,34 @@
+# TshedzaWebDev API on Cloudflare Workers (replaces the PHP API in ../api).
+#   Local:  npx wrangler dev           (local D1 + emails kept in the outbox table)
+#   Deploy: npx wrangler deploy        (see README.md → Cloudflare)
+name = "tshedzawebdev-api"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+# Served at api.tshedzawebdev.co.za once the domain's DNS is on Cloudflare.
+# Uncomment after the zone is active (wrangler then creates the DNS record itself).
+# routes = [{ pattern = "api.tshedzawebdev.co.za", custom_domain = true }]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tshedzawebdev"
+# Replace with the id printed by `npx wrangler d1 create tshedzawebdev`.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[vars]
+ALLOWED_ORIGINS = "https://tshedzawebdev.co.za,https://www.tshedzawebdev.co.za"
+OWNER_EMAIL = "info@tshedzawebdev.co.za"
+MAIL_FROM = "TshedzaWebDev <info@tshedzawebdev.co.za>"
+API_PUBLIC_URL = "https://api.tshedzawebdev.co.za"
+# "resend" in production; "outbox" keeps emails in the database (local testing).
+MAIL_TRANSPORT = "resend"
+
+# Secrets (never in this file): npx wrangler secret put IP_SALT | WALL_SECRET | RESEND_API_KEY
+
+# Daily housekeeping: 24-month lead retention, old rate events, unpublished wall notes.
+[triggers]
+crons = ["17 3 * * *"]
+
+[observability]
+enabled = true

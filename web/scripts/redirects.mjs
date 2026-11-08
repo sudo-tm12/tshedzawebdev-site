@@ -1,5 +1,6 @@
-// Static redirect stubs for the old site's URLs (GitHub Pages / Cloudflare Pages
-// have no server-side redirects). Each stub: canonical + meta refresh + JS + a link.
+// Redirects for the old site's URLs. Cloudflare Pages reads _redirects (real 301s, best
+// for Google); the HTML stubs (canonical + meta refresh + JS + a link) cover GitHub Pages,
+// which has no server-side redirects.
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 
@@ -21,7 +22,10 @@ for (const [from, path] of Object.entries(MAP)) {
   mkdirSync(dirname(file), { recursive: true })
   writeFileSync(file, html)
 }
-// Custom domain only for the real-domain build; the sub-folder preview must not claim it.
-if (!BASE) writeFileSync('out/CNAME', 'tshedzawebdev.co.za\n')
+// Real-domain build only: Cloudflare Pages redirects, and the GitHub Pages custom domain.
+if (!BASE) {
+  writeFileSync('out/_redirects', Object.entries(MAP).map(([from, path]) => `/${from} ${path} 301`).join('\n') + '\n')
+  writeFileSync('out/CNAME', 'tshedzawebdev.co.za\n')
+}
 writeFileSync('out/.nojekyll', '')                    // let GitHub Pages serve the _next folder
 console.log(`redirect stubs written${BASE ? ` (base ${BASE})` : ' + CNAME'}`)

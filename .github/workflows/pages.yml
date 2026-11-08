@@ -23,6 +23,8 @@ env:
 
 jobs:
   build:
+    # Retired once the site deploys to Cloudflare (repository variable CLOUDFLARE_READY=true).
+    if: vars.CLOUDFLARE_READY != 'true'
     runs-on: ubuntu-latest
     defaults:
       run:

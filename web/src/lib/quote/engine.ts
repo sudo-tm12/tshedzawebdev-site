@@ -94,7 +94,7 @@ export function computeEstimate(sel: Selection, book: Pricebook = PRICEBOOK): Es
   const extraUnits = service.unit && tier.includedUnits !== undefined ? Math.max(0, units - tier.includedUnits) : 0
   const extraCost = extraUnits * (tier.perUnit ?? 0)
   if (extraCost > 0 && service.unit) {
-    lines.push({ label: `${extraUnits} extra ${extraUnits === 1 ? service.unit.name : service.unit.plural}`, detail: `R${tier.perUnit} each beyond ${tier.includedUnits} included`, amount: extraCost })
+    lines.push({ label: `${extraUnits} extra ${extraUnits === 1 ? service.unit.name : service.unit.plural}`, detail: `${rand(tier.perUnit ?? 0)} each beyond the ${tier.includedUnits} included`, amount: extraCost })
     oneOff += extraCost
   }
   const buildCost = (tier.base ?? 0) + extraCost
@@ -106,11 +106,11 @@ export function computeEstimate(sel: Selection, book: Pricebook = PRICEBOOK): Es
     let detail: string | undefined
     if (addon.priceRate !== undefined) {
       amount = Math.round(buildCost * addon.priceRate)
-      detail = `${Math.round(addon.priceRate * 100)}% of build`
+      detail = `${Math.round(addon.priceRate * 100)}% of the build`
     } else if (addon.per) {
       const q = addon.per === service.unit?.name ? units : Math.max(1, Math.round(qty))
       amount = q * (addon.price ?? 0)
-      detail = `${q} × R${addon.price}`
+      detail = `${q} × ${rand(addon.price ?? 0)}`
     } else {
       amount = addon.price ?? 0
     }
@@ -133,7 +133,7 @@ export function computeEstimate(sel: Selection, book: Pricebook = PRICEBOOK): Es
   if (sel.priority && oneOff > 0) {
     const before = oneOff
     oneOff = Math.round(oneOff * r.rush.multiplier)
-    lines.push({ label: 'Priority delivery', detail: `+${Math.round((r.rush.multiplier - 1) * 100)}%`, amount: oneOff - before })
+    lines.push({ label: 'Priority delivery', detail: `+${Math.round((r.rush.multiplier - 1) * 100)}% for a faster start and finish`, amount: oneOff - before })
   }
 
   const low = roundTo(oneOff * r.rangeLow, r.roundTo)

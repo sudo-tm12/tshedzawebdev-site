@@ -38,7 +38,11 @@ npm run typecheck && npm run lint
 2. **Give the API its own new database and user.** Do not reuse the old site's database user.
 3. Decide what happens to the old client portal (`login.php` etc.). Once the domain points to the new static host, those PHP pages stop being reachable at `tshedzawebdev.co.za`. Options: move them to `portal.tshedzawebdev.co.za` on cPanel, or retire them until the Knowledge Hub platform replaces them.
 
-## Deploy (outline)
+## Hosting: moving to Cloudflare (8 Nov 2026)
+
+The site moves to **Cloudflare Pages** and the API to a **Cloudflare Worker** (`worker/`, replacing the PHP `api/`), with DNS and email on Cloudflare; the cPanel hosting is then cancelled. The step-by-step runbook is in [docs/CLOUDFLARE.md](docs/CLOUDFLARE.md).
+
+## Deploy (outline) (original cPanel plan, superseded)
 1. **API** (cPanel):
    - create the subdomain `api.tshedzawebdev.co.za` with its document root at `…/api/public`
    - create a new MySQL DB and user, then run `api/schema.sql`

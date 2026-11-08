@@ -1,0 +1,69 @@
+# Deploys the website (Cloudflare Pages) and the API (Cloudflare Worker + D1) on every push
+# to main. Switched off until Cloudflare is connected: set the repository variable
+# CLOUDFLARE_READY=true and add the secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
+# (README → Cloudflare). Optional variable API_BASE overrides the API URL the site calls.
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare
+  cancel-in-progress: false
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  api:
+    if: vars.CLOUDFLARE_READY == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Sync the price book (the API prices quotes with the website's engine)
+        working-directory: web
+        run: node scripts/sync-pricebook.mjs
+      - name: Install
+        working-directory: worker
+        run: npm ci
+      - name: Typecheck
+        working-directory: worker
+        run: npm run typecheck
+      - name: Database migrations
+        working-directory: worker
+        run: npx wrangler d1 migrations apply tshedzawebdev --remote
+      - name: Deploy the Worker
+        working-directory: worker
+        run: npx wrangler deploy
+
+  site:
+    if: vars.CLOUDFLARE_READY == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build   # postbuild writes redirects and fails on any broken internal link
+        env:
+          NEXT_PUBLIC_API_BASE: ${{ vars.API_BASE || 'https://api.tshedzawebdev.co.za' }}
+      - name: Deploy to Cloudflare Pages
+        run: npx --yes wrangler@4 pages deploy out --project-name=tshedzawebdev --branch=main
