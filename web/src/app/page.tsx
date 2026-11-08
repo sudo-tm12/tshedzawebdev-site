@@ -3,6 +3,7 @@ import { Icon, type IconName } from '@/components/Icon'
 import { BuildStory } from '@/components/motion/BuildStory'
 import { CommunityChat } from '@/components/motion/CommunityChat'
 import { HeroPhone } from '@/components/motion/HeroPhone'
+import { HeroShowcase } from '@/components/motion/HeroShowcase'
 import { Packages } from '@/components/Packages'
 import { StudioConsole } from '@/components/motion/StudioConsole'
 import { Spotlight, WordCycle, WordSwap } from '@/components/motion/basics'
@@ -82,13 +83,15 @@ export default function HomePage() {
         <div className="aurora aurora-1" aria-hidden="true" />
         <div className="aurora aurora-2" aria-hidden="true" />
         <div className="hero-grid" aria-hidden="true" />
-        {/* Landing: the grid powers on, the headline rises line by line, then the phone
-            builds whatever the rotating word says. Phones: text → phone → facts. */}
+        {/* Landing: the grid powers on, the headline rises line by line, then the visual
+            builds whatever the rotating word says. Desktop: console + phone mock-up.
+            Phones: no device inside a device; the interface floats free (HeroShowcase),
+            and its tabs drive the headline word. Order on phones: text → showcase → facts. */}
         <WordCycle count={HERO_WORDS.length} watch="#hero">
           <div className="hero-exit container-site grid items-center pb-12 pt-8 sm:pb-16 sm:pt-14 lg:min-h-[calc(100svh-64px)] lg:grid-cols-12 lg:gap-x-10 lg:pb-24 lg:pt-10">
             <div className="max-lg:contents lg:col-span-6">
               <p style={d(80)} className="enter glass inline-flex items-center gap-2.5 justify-self-start rounded-full px-3.5 py-1.5 font-mono text-[0.75rem] tracking-[0.08em] text-white/80">
-                <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> WEB STUDIO · PRETORIA, SOUTH AFRICA
+                <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> <span>WEB STUDIO · PRETORIA<span className="max-[379px]:hidden">, SOUTH AFRICA</span></span>
               </p>
               <h1 className="mt-6 text-[clamp(2.625rem,6.4vw+0.5rem,5.75rem)] font-semibold leading-[0.98] tracking-[-0.04em] sm:mt-7">
                 <span className="line-mask"><span style={d(170)}>We build <WordSwap words={HERO_WORDS} wordClassName="text-gradient" /></span></span>
@@ -97,7 +100,7 @@ export default function HomePage() {
               <p style={d(460)} className="enter mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/70 sm:mt-7 sm:text-[1.1875rem]">
                 {SITE.tagline}<span className="max-sm:hidden">: designed for the phone in your customer’s hand, engineered to load fast, and priced honestly in rand</span><span className="sm:hidden">. Built for phones, priced honestly in rand</span>.
               </p>
-              <div style={d(560)} className="enter mt-7 grid grid-cols-[1fr_auto] gap-2.5 sm:mt-9 sm:flex sm:flex-wrap sm:gap-3">
+              <div style={d(560)} className="enter mt-7 grid grid-cols-1 gap-2.5 min-[380px]:grid-cols-[1fr_auto] sm:mt-9 sm:flex sm:flex-wrap sm:gap-3">
                 <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-5 text-[1rem] sm:px-7">Get an instant quote <Icon name="arrowRight" size={18} /></Link>
                 <Link href="/work/" className="btn btn-on-dark h-[52px] px-5 text-[1rem] sm:px-7"><span className="max-sm:hidden">See our </span><span className="sm:hidden">Our </span>work</Link>
               </div>
@@ -107,9 +110,10 @@ export default function HomePage() {
                 ))}
               </dl>
             </div>
-            <div style={d(420)} className="enter relative min-w-0 max-lg:order-1 max-lg:mt-12 lg:col-span-6">
+            <div style={d(420)} className="enter relative min-w-0 max-lg:order-1 max-lg:mt-10 lg:col-span-6">
               <div className="hidden lg:block lg:pr-16"><StudioConsole /></div>
-              <HeroPhone className="mx-auto lg:absolute lg:-bottom-24 lg:-right-4 lg:mx-0 lg:origin-bottom-right lg:scale-[0.72]" />
+              <HeroPhone className="hidden lg:absolute lg:-bottom-24 lg:-right-4 lg:block lg:origin-bottom-right lg:scale-[0.72]" />
+              <HeroShowcase className="lg:hidden" />
             </div>
           </div>
         </WordCycle>

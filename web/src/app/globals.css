@@ -892,3 +892,34 @@
     .word-swap > span { filter: none !important; }
   }
 }
+
+/* ───────────── Hero showcase (phones): the interface outside the device ───────────── */
+@layer components {
+  .tab-progress { position: absolute; left: 22%; right: 22%; bottom: 3px; height: 2px; border-radius: 2px; background: var(--color-teal-500);
+    transform-origin: left; animation: tab-fill linear both; }
+  .tab-progress-full { animation: none; opacity: 0.55; }
+  @keyframes tab-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* A soft light pool and dot grid under the floating pieces, fading at the edges. */
+  .showcase-stage::before { content: ''; position: absolute; inset: -6% -4%; z-index: 0; pointer-events: none; border-radius: 32px;
+    background:
+      radial-gradient(60% 55% at 50% 50%, rgba(29,161,194,0.20), transparent 70%),
+      radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1.2px) 0 0 / 16px 16px;
+    mask-image: radial-gradient(75% 70% at 50% 50%, #000 40%, transparent 100%); }
+
+  .gauge-arc { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: gauge-fill 1400ms var(--ease-out-soft) forwards; animation-delay: var(--d, 0ms); }
+  @keyframes gauge-fill { to { stroke-dashoffset: var(--to, 0); } }
+
+  .flow-dot { top: 0; animation: flow-dot 2600ms var(--ease-out-soft) 400ms infinite both; }
+  @keyframes flow-dot { 0% { top: 0; opacity: 0; } 8% { opacity: 1; } 88% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+  .lit { animation: lit 500ms ease both; animation-delay: var(--d, 0ms); }
+  @keyframes lit { from { border-color: rgba(255,255,255,0.13); } to { border-color: #1da1c2; box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 1px #1da1c2, 0 12px 30px -12px rgba(29,161,194,0.9); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab-progress, .flow-dot, .lit { animation: none !important; }
+    .gauge-arc { animation: none !important; stroke-dashoffset: var(--to, 0); }
+    .lit { border-color: #1da1c2; }
+    .flow-dot { display: none; }
+  }
+}

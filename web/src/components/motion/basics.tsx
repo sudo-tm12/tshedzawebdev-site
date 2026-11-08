@@ -20,21 +20,46 @@ export function useWordIndex(): number | null {
   return useContext(WordIndex)
 }
 
+/** Lets pieces inside a <WordCycle> pick the word themselves (e.g. the hero's tabs). */
+export interface WordControl {
+  /** Show word `k` now and hold it for a while before auto-advancing again. */
+  select: (k: number) => void
+  /** Milliseconds between automatic changes. */
+  interval: number
+  /** True while an automatic change is counting down (not held, on screen, motion allowed). */
+  running: boolean
+  /** Changes every time a fresh countdown starts: key a progress bar on it. */
+  lap: number
+}
+const WordControlContext = createContext<WordControl | null>(null)
+export function useWordControl(): WordControl | null {
+  return useContext(WordControlContext)
+}
+
 /**
  * Drives a word index for everything inside it. It only ticks while `watch` (a CSS
  * selector) is on screen and the tab is visible, so an off-screen hero costs nothing.
+ * A manual `select()` holds the chosen word for `holdMs` before the cycle resumes.
  */
-export function WordCycle({ count, interval = 3200, startDelay = 1400, watch, children }: { count: number; interval?: number; startDelay?: number; watch: string; children: React.ReactNode }) {
+export function WordCycle({ count, interval = 3200, startDelay = 1400, holdMs = 9000, watch, children }: { count: number; interval?: number; startDelay?: number; holdMs?: number; watch: string; children: React.ReactNode }) {
   const [i, setI] = useState(0)
+  const [held, setHeld] = useState(false)
+  const [holdKey, setHoldKey] = useState(0)
+  const [ticking, setTicking] = useState(false)
+  const [lap, setLap] = useState(0)
   const reduced = useReducedMotion()
   useEffect(() => {
-    if (reduced || count < 2) return
+    if (reduced || count < 2 || held) return
     const target = document.querySelector(watch)
     let visible = true
     let t: ReturnType<typeof setInterval> | undefined
     const run = () => {
       clearInterval(t)
-      if (visible && document.visibilityState === 'visible') t = setInterval(() => setI((v) => (v + 1) % count), interval)
+      const on = visible && document.visibilityState === 'visible'
+      setTicking(on)
+      if (!on) return
+      setLap((n) => n + 1)
+      t = setInterval(() => { setI((v) => (v + 1) % count); setLap((n) => n + 1) }, interval)
     }
     const io = target && 'IntersectionObserver' in window
       ? new IntersectionObserver(([e]) => { visible = !!e?.isIntersecting; run() }, { threshold: 0.15 })
@@ -42,11 +67,27 @@ export function WordCycle({ count, interval = 3200, startDelay = 1400, watch, ch
     if (target && io) io.observe(target)
     const onVis = () => run()
     document.addEventListener('visibilitychange', onVis)
-    // Let the landing choreography finish before the first change.
+    // Let the landing choreography (or a held word) settle before the first change.
     const start = setTimeout(run, startDelay)
     return () => { clearTimeout(start); clearInterval(t); io?.disconnect(); document.removeEventListener('visibilitychange', onVis) }
-  }, [reduced, count, interval, startDelay, watch])
-  return <WordIndex.Provider value={i}>{children}</WordIndex.Provider>
+  }, [reduced, count, interval, startDelay, watch, held])
+  // Release a held word after a while; every new pick restarts the wait.
+  useEffect(() => {
+    if (!held) return
+    const t = setTimeout(() => setHeld(false), holdMs)
+    return () => clearTimeout(t)
+  }, [held, holdKey, holdMs])
+  const control: WordControl = {
+    select: (k) => { setI(((k % count) + count) % count); setHeld(true); setHoldKey((n) => n + 1) },
+    interval,
+    running: ticking && !held && !reduced,
+    lap,
+  }
+  return (
+    <WordIndex.Provider value={i}>
+      <WordControlContext.Provider value={control}>{children}</WordControlContext.Provider>
+    </WordIndex.Provider>
+  )
 }
 
 /** Cycles through words in place (accessible: the full list is read once). Inside a <WordCycle> it follows that index. */
