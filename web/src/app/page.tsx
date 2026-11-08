@@ -40,6 +40,14 @@ const STANDARDS: { art: 'speed' | 'secure' | 'access' | 'docs'; title: string; b
 // Knowledge Hub on the home page: what's inside, one line each. Coaching shows its
 // starting price from the price book; the tiers themselves live on /learn.
 const COACHING_FROM = Math.min(...PRICEBOOK_COACHING.tiers.map((t) => t.monthly))
+// The hero's trust strip. Words, not numbers: real local clients (named in "Trusted by"),
+// the full range of services, and ownership of everything we build.
+const TRUST: { icon: IconName; title: string; body: string }[] = [
+  { icon: 'users', title: 'Trusted in SA', body: 'By local businesses' },
+  { icon: 'layers', title: 'Full service', body: 'Sites to automation' },
+  { icon: 'shield', title: '100% yours', body: 'Code, domain, content' },
+]
+
 const LEARN: { icon: IconName; tag: string; t: string; d: string; href: string }[] = [
   { icon: 'monitor', tag: 'Free · 9 lessons', t: 'Build & Launch Challenge', d: 'From an empty laptop to your own live website.', href: '/learn/' },
   { icon: 'zap', tag: 'Free · 12 lessons', t: 'Automate & Earn Challenge', d: 'WhatsApp-first automation local businesses pay for.', href: '/learn/' },
@@ -91,7 +99,7 @@ export default function HomePage() {
           <div className="hero-exit container-site grid items-center pb-12 pt-8 sm:pb-16 sm:pt-14 lg:min-h-[calc(100svh-64px)] lg:grid-cols-12 lg:gap-x-10 lg:pb-24 lg:pt-10">
             <div className="max-lg:contents lg:col-span-6">
               <p style={d(80)} className="enter glass inline-flex items-center gap-2.5 justify-self-start rounded-full px-3.5 py-1.5 font-mono text-[0.75rem] tracking-[0.08em] text-white/80">
-                <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> <span>WEB STUDIO · PRETORIA<span className="max-[379px]:hidden">, SOUTH AFRICA</span></span>
+                <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> YOUR COMPLETE DIGITAL PARTNER
               </p>
               <h1 className="mt-6 text-[clamp(2.625rem,6.4vw+0.5rem,5.75rem)] font-semibold leading-[0.98] tracking-[-0.04em] sm:mt-7">
                 <span className="line-mask"><span style={d(170)}>We build <WordSwap words={HERO_WORDS} wordClassName="text-gradient" /></span></span>
@@ -104,11 +112,18 @@ export default function HomePage() {
                 <Link href="/quote/" className="btn btn-accent glow-border h-[52px] px-5 text-[1rem] sm:px-7">Get an instant quote <Icon name="arrowRight" size={18} /></Link>
                 <Link href="/work/" className="btn btn-on-dark h-[52px] px-5 text-[1rem] sm:px-7"><span className="max-sm:hidden">See our </span><span className="sm:hidden">Our </span>work</Link>
               </div>
-              <dl style={d(700)} className="enter glass mt-10 grid max-w-lg grid-cols-3 gap-4 rounded-[20px] px-5 py-4 max-lg:order-2 sm:gap-6 sm:px-6 sm:py-5 lg:mt-12">
-                {[['7', 'services, one studio'], ['1', 'person, start to finish'], ['100%', 'yours to own']].map(([k, v]) => (
-                  <div key={v}><dt className="sr-only">{v}</dt><dd><span className="block text-[1.5rem] font-semibold tracking-tight sm:text-[1.75rem]">{k}</span><span className="block text-[0.75rem] leading-snug text-white/55 sm:text-[0.8125rem]">{v}</span></dd></div>
+              {/* Trust, not a scoreboard: three equal points, no headline numbers to compare. */}
+              <ul style={d(700)} aria-label="Why work with us" className="enter glass trust-strip mt-10 grid max-w-xl grid-cols-3 rounded-[22px] max-lg:order-2 lg:mt-12">
+                {TRUST.map((t) => (
+                  <li key={t.title} className="flex flex-col items-start gap-2.5 px-2.5 py-4 min-[380px]:px-3.5 sm:px-5 sm:py-5 [&+li]:border-l [&+li]:border-white/10">
+                    <span className="trust-icon"><Icon name={t.icon} size={17} /></span>
+                    <span>
+                      <span className="block text-balance text-[0.875rem] font-semibold leading-tight tracking-[-0.01em] text-white sm:text-[1rem]">{t.title}</span>
+                      <span className="mt-1 block text-[0.6875rem] leading-snug text-white/55 sm:text-[0.8125rem]">{t.body}</span>
+                    </span>
+                  </li>
                 ))}
-              </dl>
+              </ul>
             </div>
             <div style={d(420)} className="enter relative min-w-0 max-lg:order-1 max-lg:mt-10 lg:col-span-6">
               <div className="hidden lg:block lg:pr-16"><StudioConsole /></div>
