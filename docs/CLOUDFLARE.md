@@ -22,6 +22,11 @@ The order matters: nothing visitors use goes down at any point.
 ## 2. Connect Cloudflare (owner + Claude)
 0. **Prerequisites:** Cloudflare refuses to run Workers until the account email (tshedzamay@gmail.com) is **verified** and a **workers.dev subdomain** is chosen (Workers & Pages → Subdomain).
    - Done on 8 Nov 2026: wrangler login, and the D1 database `tshedzawebdev` created and migrated (id in `worker/wrangler.toml`).
+   - **Step 2 completed 8 Nov 2026.**
+     - API live at https://tshedzawebdev-api.tshedzawebdev.workers.dev (secrets IP_SALT and WALL_SECRET set; RESEND_API_KEY still to come).
+     - Website live at https://tshedzawebdev.tshedzawebdev.workers.dev.
+     - GitHub has CLOUDFLARE_API_TOKEN (token "GitHub deploy (tshedzawebdev)"), CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_READY=true and API_BASE (the workers.dev API; delete API_BASE at the domain switch).
+     - Every push to main now deploys both, and the GitHub Pages preview has stopped updating.
 1. Run `npx wrangler login` in `worker/` and approve it in the browser.
 2. Create the database, then put its id in `worker/wrangler.toml`:
    - `npx wrangler d1 create tshedzawebdev`
