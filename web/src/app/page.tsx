@@ -98,10 +98,8 @@ export default function HomePage() {
         <WordCycle count={HERO_WORDS.length} watch="#hero">
           <div className="hero-exit container-site grid items-center pb-12 pt-8 sm:pb-16 sm:pt-14 lg:min-h-[calc(100svh-64px)] lg:grid-cols-12 lg:gap-x-10 lg:pb-24 lg:pt-10">
             <div className="max-lg:contents lg:col-span-6">
-              <p style={d(80)} className="enter glass inline-flex items-center gap-2.5 justify-self-start rounded-full px-3.5 py-1.5 font-mono text-[0.75rem] tracking-[0.08em] text-white/80">
-                <span className="pulse-dot h-2 w-2 rounded-full bg-teal-500" /> YOUR COMPLETE DIGITAL PARTNER
-              </p>
-              <h1 className="mt-6 text-[clamp(2.625rem,6.4vw+0.5rem,5.75rem)] font-semibold leading-[0.98] tracking-[-0.04em] sm:mt-7">
+              {/* No eyebrow chip: the headline opens the page, so the showcase sits higher on landing. */}
+              <h1 className="text-[clamp(2.625rem,6.4vw+0.5rem,5.75rem)] font-semibold leading-[0.98] tracking-[-0.04em]">
                 <span className="line-mask"><span style={d(170)}>We build <WordSwap words={HERO_WORDS} wordClassName="text-gradient" /></span></span>
                 <span className="line-mask"><span style={d(290)}>that grow your <span className="accent-serif text-teal-500">business.</span></span></span>
               </h1>

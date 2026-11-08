@@ -1,7 +1,7 @@
 <?php
 return [
     'db_dsn' => 'sqlite:' . __DIR__ . '/../storage/test.sqlite',
-    'allowed_origins' => ['http://localhost:4711', 'https://tshedzawebdev.co.za'],
+    'allowed_origins' => ['http://localhost:4711', 'http://localhost:4713', 'https://tshedzawebdev.co.za'],
     'ip_salt' => 'test-salt',
     'mail_transport' => 'outbox',
     'mail_from' => 'info@tshedzawebdev.co.za',

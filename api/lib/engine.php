@@ -13,7 +13,8 @@ function twd_round_to(float $n, int $step): int
 
 /**
  * @param array{service:string,tier:string,units:int|float,addons:array<string,int|float>,monthly:list<string>,priority:bool} $sel
- * @return array{lines:list<array{label:string,amount:int}>,monthlyLines:list<array{label:string,amount:int}>,oneOff:int,monthly:int,low:int,high:int,deposit:int,weeks:int,pricebookVersion:string}
+ * Each line may carry a 'detail' (how it was worked out), shown on the estimate PDF; amounts are what's verified.
+ * @return array{lines:list<array{label:string,amount:int,detail?:string}>,monthlyLines:list<array{label:string,amount:int,detail?:string}>,oneOff:int,monthly:int,low:int,high:int,deposit:int,weeks:int,pricebookVersion:string}
  */
 function twd_compute_estimate(array $sel, array $book): array
 {
@@ -33,13 +34,14 @@ function twd_compute_estimate(array $sel, array $book): array
     $weeks = (float) $tier['weeks'];
 
     if (isset($tier['base'])) {
-        $lines[] = ['label' => $tier['name'], 'amount' => (int) $tier['base']];
+        $lines[] = ['label' => $tier['name'], 'amount' => (int) $tier['base'], 'detail' => (string) ($tier['note'] ?? '')];
         $oneOff += (int) $tier['base'];
     }
     $extraUnits = ($unit && isset($tier['includedUnits'])) ? max(0, $units - (int) $tier['includedUnits']) : 0;
     $extraCost = $extraUnits * (int) ($tier['perUnit'] ?? 0);
     if ($extraCost > 0 && $unit) {
-        $lines[] = ['label' => $extraUnits . ' extra ' . ($extraUnits === 1 ? $unit['name'] : $unit['plural']), 'amount' => $extraCost];
+        $lines[] = ['label' => $extraUnits . ' extra ' . ($extraUnits === 1 ? $unit['name'] : $unit['plural']), 'amount' => $extraCost,
+            'detail' => twd_rand((int) $tier['perUnit']) . ' each beyond the ' . (int) $tier['includedUnits'] . ' included'];
         $oneOff += $extraCost;
     }
     $buildCost = (int) ($tier['base'] ?? 0) + $extraCost;
@@ -47,22 +49,25 @@ function twd_compute_estimate(array $sel, array $book): array
     foreach ($service['addons'] as $addon) {
         $qty = $sel['addons'][$addon['id']] ?? 0;
         if (!$qty || $qty <= 0) continue;
+        $detail = '';
         if (isset($addon['priceRate'])) {
             $amount = (int) round($buildCost * $addon['priceRate']);
+            $detail = round($addon['priceRate'] * 100) . '% of the build';
         } elseif (isset($addon['per'])) {
             $q = ($unit && $addon['per'] === $unit['name']) ? $units : max(1, (int) round((float) $qty));
             $amount = $q * (int) ($addon['price'] ?? 0);
+            $detail = $q . ' × ' . twd_rand((int) ($addon['price'] ?? 0));
         } else {
             $amount = (int) ($addon['price'] ?? 0);
         }
-        $lines[] = ['label' => $addon['name'], 'amount' => $amount];
+        $lines[] = ['label' => $addon['name'], 'amount' => $amount, 'detail' => $detail];
         $oneOff += $amount;
         $weeks += (float) $addon['weeks'];
     }
 
     $monthly = 0;
     if (isset($tier['monthlyBase'])) {
-        $monthlyLines[] = ['label' => $tier['name'] . ' package', 'amount' => (int) $tier['monthlyBase']];
+        $monthlyLines[] = ['label' => $tier['name'] . ' package', 'amount' => (int) $tier['monthlyBase'], 'detail' => (string) ($tier['note'] ?? '')];
         $monthly += (int) $tier['monthlyBase'];
     }
     foreach ($service['monthly'] as $m) {
@@ -74,7 +79,7 @@ function twd_compute_estimate(array $sel, array $book): array
     if ($sel['priority'] && $oneOff > 0) {
         $before = $oneOff;
         $oneOff = (int) round($oneOff * $r['rush']['multiplier']);
-        $lines[] = ['label' => 'Priority delivery', 'amount' => $oneOff - $before];
+        $lines[] = ['label' => 'Priority delivery', 'amount' => $oneOff - $before, 'detail' => '+' . round(($r['rush']['multiplier'] - 1) * 100) . '% for a faster start and finish'];
     }
 
     $low = twd_round_to($oneOff * $r['rangeLow'], (int) $r['roundTo']);

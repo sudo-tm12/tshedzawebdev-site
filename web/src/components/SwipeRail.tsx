@@ -5,6 +5,8 @@ import { Children, useEffect, useRef, useState } from 'react'
 // Phones: a snapping horizontal row of cards with progress dots (the next card peeks in).
 // From `grid` breakpoint up: a normal grid, using the grid classes passed in `className`.
 // Children are the list items themselves (<li>, or <Spotlight as="li">).
+// The card in view is marked data-rail-on="true" (full strength); its neighbours recede a
+// little on phones as a swipe cue (CSS, below each grid breakpoint only).
 
 interface SwipeRailProps {
   children: React.ReactNode
@@ -26,8 +28,15 @@ export function SwipeRail({ children, label, grid = 'md', className = '', itemWi
   const [active, setActive] = useState(initial)
   const count = Children.count(children)
 
+  const mark = (i: number) => {
+    const el = ref.current
+    if (!el) return
+    Array.from(el.children).forEach((c, k) => { (c as HTMLElement).dataset.railOn = String(k === i) })
+  }
+
   // Phones only (the rail scrolls); from the grid breakpoint up there is nothing to scroll.
   useEffect(() => {
+    mark(initial)
     const el = ref.current
     const item = el?.children[initial] as HTMLElement | undefined
     if (!el || !item || initial === 0 || el.scrollWidth <= el.clientWidth) return
@@ -39,7 +48,9 @@ export function SwipeRail({ children, label, grid = 'md', className = '', itemWi
     const first = el?.firstElementChild as HTMLElement | null
     if (!el || !first) return
     const step = first.offsetWidth + 12
-    setActive(Math.min(count - 1, Math.round(el.scrollLeft / step)))
+    const i = Math.min(count - 1, Math.round(el.scrollLeft / step))
+    setActive(i)
+    mark(i)
   }
   const go = (i: number) => {
     const el = ref.current

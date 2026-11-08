@@ -97,7 +97,7 @@ function handle_quote(): never
         $sel['service'], json_encode($sel), $est['oneOff'], $est['monthly'], $est['low'], $est['high'], $est['deposit'], $est['weeks'], $est['pricebookVersion'],
         $now, (string) $in['consentVersion'], ip_hash()]);
 
-    $pdfData = build_estimate_pdf($ref, $contact, $service, $tier, $est, $book);
+    $pdfData = build_estimate_pdf($ref, $contact, $service, $tier, $est, $book, $sel);
     $range = $est['oneOff'] > 0 ? twd_rand($est['low']) . ' – ' . twd_rand($est['high']) : '';
     $monthly = $est['monthly'] > 0 ? twd_rand($est['monthly']) . '/month' : '';
     $headline = trim($range . ($range && $monthly ? ' + ' : '') . $monthly);

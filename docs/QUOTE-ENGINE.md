@@ -64,7 +64,14 @@ Rounding: to the nearest R50. Display: `R 6 500` (en-ZA, no cents). VAT is never
 Retention: 24 months, then purged (documented in the Privacy Policy). Data-subject requests go to info@tshedzawebdev.co.za.
 
 ## 6. PDF estimate (A4, our brand)
-Header: logo, "Project estimate", ref, date, valid for 30 days. Client block. A line-item table (description · qty · amount). Range box. Monthly items. Timeline. Deposit and payment terms ("50% deposit for projects over R3 000 · Banking details on the formal quote"). "What happens next" (a discovery call → a formal quote → the deposit → kickoff). Footer: contact, address region (Pretoria), POPIA line.
+Redesigned 8 Nov 2026 (`api/lib/pdf.php`, class `TwdPdf` over FPDF). One A4 page for typical estimates; long ones flow onto page 2, with the footer on every page.
+- **Header band:** the wordmark only ("Tshedza" white + "WebDev" teal; there is no icon mark) and the tagline. On the right: the "Project estimate" label, the ref, "Issued … · Valid until …" (a real date, `estimateValidDays` ahead).
+- **Two cards.** *Prepared for*: name, business, email, WhatsApp. *Your project*: service · package, the page/product/screen count, the timeline (with "priority delivery" when chosen).
+- **Investment panel** (navy): the range, with the monthly amount and deposit to the right. Monthly packages (e.g. social media) lead with the monthly price and show any once-off setup as the secondary figure.
+- **Line items** with their workings from the engine's `detail` (e.g. "8 × R 350", "R 400 each beyond the 5 included"), a once-off total, then monthly items.
+- **What happens next:** four numbered steps (a call → a written quote → the 50% deposit, or "you say go" when none is needed → design, build, launch).
+- **Close:** a "Ready to go ahead?" panel, a one-line disclaimer, and a footer with contact details, the POPIA line and "Page x of y".
+- **Not shown:** the price-book version (it's stored on the lead record, so "draft" never reaches a client) and VAT (the site no longer mentions it).
 
 ## 7. Done when
 - [ ] The engine's TS and PHP outputs match for every acceptance example and 500 random selections (a parity test)

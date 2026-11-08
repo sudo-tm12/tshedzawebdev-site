@@ -54,7 +54,7 @@ function h(string $s): string
 /** A simple, robust HTML email layout in our brand. */
 function email_layout(string $title, string $inner): string
 {
-    return '<!doctype html><html><body style="margin:0;background:#fafaf7;font-family:Segoe UI,Arial,sans-serif;color:#0a1b2e">'
+    return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;background:#fafaf7;font-family:Segoe UI,Arial,sans-serif;color:#0a1b2e">'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">'
         . '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#fff;border:1px solid #e4e7ec;border-radius:14px">'
         . '<tr><td style="background:#0a1b2e;border-radius:14px 14px 0 0;padding:20px 28px;color:#fff;font-weight:600;font-size:16px">Tshedza<span style="color:#1da1c2">WebDev</span></td></tr>'

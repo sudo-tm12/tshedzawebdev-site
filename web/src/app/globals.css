@@ -805,11 +805,6 @@
       .settle { animation: settle linear both; animation-timeline: view(); animation-range: entry 0% cover 55%; }
       @keyframes settle { from { transform: scale(1.18) translateY(4%); } to { transform: none; } }
 
-      /* Phone swipe rails: the card in the middle is full size, its neighbours recede. */
-      @keyframes rail-depth { 0%, 100% { transform: scale(0.9); opacity: 0.55; } 38%, 62% { transform: none; opacity: 1; } }
-      @media (max-width: 639px) { .rail.rail-grid-sm > * { animation: rail-depth linear both !important; animation-timeline: view(inline) !important; } }
-      @media (max-width: 767px) { .rail.rail-grid-md > * { animation: rail-depth linear both !important; animation-timeline: view(inline) !important; } }
-      @media (max-width: 1023px) { .rail.rail-grid-lg > * { animation: rail-depth linear both !important; animation-timeline: view(inline) !important; } }
 
       /* "Our standard" micro-visuals play as each card scrolls in. */
       .art { animation-timeline: view(); animation-range: entry 25% cover 55%; animation-fill-mode: both; animation-timing-function: linear; animation-duration: auto; }
@@ -935,4 +930,15 @@
     background: linear-gradient(145deg, rgba(29,161,194,0.30), rgba(29,161,194,0.06));
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 1px rgba(29,161,194,0.38), 0 10px 22px -10px rgba(29,161,194,0.85); }
   @media (prefers-reduced-motion: reduce) { .trust-strip::after { animation: none; opacity: 0; } }
+}
+
+/* Phone swipe rails: the card in view is always full strength; its neighbours recede a
+   little as a swipe cue. <SwipeRail> marks the card in view (data-rail-on). This replaced a
+   scroll-driven view(inline) effect that left every card, the one in view included, dimmed. */
+@layer components {
+  .rail > * { transition: opacity 320ms ease, transform 420ms var(--ease-out-soft); }
+  @media (max-width: 639px) { .rail.rail-grid-sm > [data-rail-on='false'] { opacity: 0.7; transform: scale(0.96); } }
+  @media (max-width: 767px) { .rail.rail-grid-md > [data-rail-on='false'] { opacity: 0.7; transform: scale(0.96); } }
+  @media (max-width: 1023px) { .rail.rail-grid-lg > [data-rail-on='false'] { opacity: 0.7; transform: scale(0.96); } }
+  @media (prefers-reduced-motion: reduce) { .rail > * { transition: none; } }
 }
