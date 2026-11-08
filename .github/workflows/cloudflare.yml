@@ -1,4 +1,5 @@
-# Deploys the website (Cloudflare Pages) and the API (Cloudflare Worker + D1) on every push
+# Deploys the website (a static-assets Worker, Cloudflare's successor to Pages) and the API
+# (Cloudflare Worker + D1) on every push
 # to main. Switched off until Cloudflare is connected: set the repository variable
 # CLOUDFLARE_READY=true and add the secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
 # (README → Cloudflare). Optional variable API_BASE overrides the API URL the site calls.
@@ -65,5 +66,5 @@ jobs:
       - run: npm run build   # postbuild writes redirects and fails on any broken internal link
         env:
           NEXT_PUBLIC_API_BASE: ${{ vars.API_BASE || 'https://api.tshedzawebdev.co.za' }}
-      - name: Deploy to Cloudflare Pages
-        run: npx --yes wrangler@4 pages deploy out --project-name=tshedzawebdev --branch=main
+      - name: Deploy the website (web/wrangler.toml)
+        run: npx --yes wrangler@4 deploy

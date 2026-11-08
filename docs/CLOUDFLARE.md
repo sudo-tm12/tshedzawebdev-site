@@ -5,7 +5,7 @@
 | Part | Before | After |
 |---|---|---|
 | Code | GitHub | GitHub (unchanged) |
-| Website | GitHub Pages preview / cPanel | **Cloudflare Pages**, deployed by `.github/workflows/cloudflare.yml` |
+| Website | GitHub Pages preview / cPanel | **Cloudflare** static-assets Worker `tshedzawebdev` (`web/wrangler.toml`; Pages is now part of Workers), deployed by `.github/workflows/cloudflare.yml` |
 | API (quotes, PDFs, contact, wall) | PHP on cPanel (never deployed) | **Cloudflare Worker** `worker/` + **D1** database |
 | Emails the site sends | cPanel `mail()` | **Resend** (free tier), sending as info@tshedzawebdev.co.za |
 | DNS | Hosting provider (`ns3/ns5.za-dns.com`) | **Cloudflare** |
@@ -20,6 +20,8 @@ The order matters: nothing visitors use goes down at any point.
 - Keep the backup somewhere other than the hosting account.
 
 ## 2. Connect Cloudflare (owner + Claude)
+0. **Prerequisites:** Cloudflare refuses to run Workers until the account email (tshedzamay@gmail.com) is **verified** and a **workers.dev subdomain** is chosen (Workers & Pages → Subdomain).
+   - Done on 8 Nov 2026: wrangler login, and the D1 database `tshedzawebdev` created and migrated (id in `worker/wrangler.toml`).
 1. Run `npx wrangler login` in `worker/` and approve it in the browser.
 2. Create the database, then put its id in `worker/wrangler.toml`:
    - `npx wrangler d1 create tshedzawebdev`
@@ -27,7 +29,7 @@ The order matters: nothing visitors use goes down at any point.
 3. Set the API's secrets:
    - `npx wrangler secret put IP_SALT` and `npx wrangler secret put WALL_SECRET` (random 64 characters each)
    - `npx wrangler secret put RESEND_API_KEY` (from resend.com, step 4)
-4. Create the website project: `npx wrangler pages project create tshedzawebdev --production-branch main`.
+4. **Website:** nothing to create in advance. The first `wrangler deploy` from `web/` (after a build) creates the `tshedzawebdev` Worker. Run wrangler for the site from `web/` and for the API from `worker/`: each folder has its own `wrangler.toml`.
 5. In GitHub → Settings → Secrets and variables → Actions:
    - **Secrets:** `CLOUDFLARE_API_TOKEN` (a token with Workers Scripts, D1, Cloudflare Pages and Workers Routes: Edit) and `CLOUDFLARE_ACCOUNT_ID`.
    - **Variable:** `CLOUDFLARE_READY = true`.
@@ -50,7 +52,7 @@ Records as of 8 Nov 2026 (public lookup):
 | `TXT` (SPF) | `v=spf1 +a +mx +ip4:164.160.91.57 include:spf.zamailgate.com ~all` |
 
 ## 4. Switch the website and API (Claude, once the zone is active)
-1. **Website:** in Pages → Custom domains, add `tshedzawebdev.co.za` and `www.tshedzawebdev.co.za`. Cloudflare replaces the old `A` records.
+1. **Website:** in `web/wrangler.toml`, uncomment the `routes` for `tshedzawebdev.co.za` and `www`, then deploy. Cloudflare replaces the old `A` records.
 2. **API:** in `worker/wrangler.toml`, uncomment the `routes` line for `api.tshedzawebdev.co.za` and push. Wrangler creates the DNS record.
 3. **Sending email:** in resend.com, add the domain and create the DKIM, SPF and return-path records it asks for, in Cloudflare.
 4. **Privacy Policy:** update the "Who processes it for us" list: Cloudflare (hosting, API and database), Resend (email delivery), PostHog and Tidio (with consent).

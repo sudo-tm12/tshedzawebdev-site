@@ -12,12 +12,13 @@ compatibility_date = "2026-10-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "tshedzawebdev"
-# Replace with the id printed by `npx wrangler d1 create tshedzawebdev`.
-database_id = "00000000-0000-0000-0000-000000000000"
+# Created 8 Nov 2026 (region WEUR, Western Europe).
+database_id = "ddaf41d6-e525-491f-a8b0-229c7e668346"
 migrations_dir = "migrations"
 
 [vars]
-ALLOWED_ORIGINS = "https://tshedzawebdev.co.za,https://www.tshedzawebdev.co.za"
+# The site's workers.dev address is ours too, so it can be tested before the domain moves.
+ALLOWED_ORIGINS = "https://tshedzawebdev.co.za,https://www.tshedzawebdev.co.za,https://tshedzawebdev.tshedzawebdev.workers.dev"
 OWNER_EMAIL = "info@tshedzawebdev.co.za"
 MAIL_FROM = "TshedzaWebDev <info@tshedzawebdev.co.za>"
 API_PUBLIC_URL = "https://api.tshedzawebdev.co.za"
