@@ -9,6 +9,11 @@ compatibility_date = "2026-10-01"
 # Uncomment after the zone is active (wrangler then creates the DNS record itself).
 # routes = [{ pattern = "api.tshedzawebdev.co.za", custom_domain = true }]
 
+# Run next to the database (Western Europe) rather than near each visitor: a quote makes
+# several database calls, so one visitor round trip beats six SA↔EU database round trips.
+[placement]
+mode = "smart"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "tshedzawebdev"

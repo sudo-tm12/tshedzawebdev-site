@@ -78,11 +78,12 @@ export function safeEqual(a: string, b: string): boolean {
   return diff === 0
 }
 
-/** Sliding-window rate limit per hashed IP and action. */
+/** Sliding-window rate limit per hashed IP and action: one statement, one round trip
+ *  (the event is only recorded while under the limit, so a blocked visitor's window isn't extended). */
 export async function rateLimited(env: Env, ip: string, action: string, max: number, windowSeconds: number): Promise<boolean> {
   const since = nowSql(new Date(Date.now() - windowSeconds * 1000))
-  const row = await env.DB.prepare('SELECT COUNT(*) AS n FROM rate_events WHERE action = ? AND ip_hash = ? AND created_at > ?').bind(action, ip, since).first<{ n: number }>()
-  if ((row?.n ?? 0) >= max) return true
-  await env.DB.prepare('INSERT INTO rate_events (action, ip_hash, created_at) VALUES (?, ?, ?)').bind(action, ip, nowSql()).run()
-  return false
+  const res = await env.DB.prepare(`INSERT INTO rate_events (action, ip_hash, created_at)
+    SELECT ?1, ?2, ?3 WHERE (SELECT COUNT(*) FROM rate_events WHERE action = ?1 AND ip_hash = ?2 AND created_at > ?4) < ?5`)
+    .bind(action, ip, nowSql(), since, max).run()
+  return res.meta.changes === 0
 }

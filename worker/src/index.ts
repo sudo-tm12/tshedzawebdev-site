@@ -8,7 +8,7 @@ import { HttpError, allowedOrigins, corsHeaders, json, nowSql } from './http'
 import { handleContact, handleQuote } from './quote'
 import { handleWallHeart, handleWallList, handleWallModerate, handleWallPost } from './wall'
 
-async function route(req: Request, env: Env): Promise<Response> {
+async function route(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const path = new URL(req.url).pathname.replace(/\/+$/, '') || '/'
   // Opened from the owner's email, not from the site, so it sits before the origin check.
   if (path === '/wall/moderate' && (req.method === 'GET' || req.method === 'POST')) return handleWallModerate(req, env)
@@ -18,7 +18,7 @@ async function route(req: Request, env: Env): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204 })
   if (req.method === 'GET' && path === '/wall') return handleWallList(env)
   if (req.method !== 'POST') return json(405, { error: 'Method not allowed' })
-  if (path === '/quote/send') return handleQuote(req, env)
+  if (path === '/quote/send') return handleQuote(req, env, ctx)
   if (path === '/contact') return handleContact(req, env)
   if (path === '/wall/heart') return handleWallHeart(req, env)
   if (path === '/wall') return handleWallPost(req, env)
@@ -26,10 +26,10 @@ async function route(req: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(req: Request, env: Env): Promise<Response> {
+  async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     let res: Response
     try {
-      res = await route(req, env)
+      res = await route(req, env, ctx)
     } catch (e) {
       if (e instanceof HttpError) res = json(e.status, { error: e.message })
       else {

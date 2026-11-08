@@ -41,13 +41,7 @@ function readSelection(s: Record<string, unknown>): Selection {
   }
 }
 
-async function nextRef(env: Env, year: string): Promise<string> {
-  const row = await env.DB.prepare('SELECT ref FROM leads WHERE ref LIKE ? ORDER BY ref DESC LIMIT 1').bind(`EST-${year}-%`).first<{ ref: string }>()
-  const last = row ? Number(row.ref.slice(-4)) : 0
-  return `EST-${year}-${String(last + 1).padStart(4, '0')}`
-}
-
-export async function handleQuote(req: Request, env: Env): Promise<Response> {
+export async function handleQuote(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const body = await readJson(req)
   if (body.website) return json(200, { ref: 'EST-0' })                                 // honeypot: pretend success
   if (body.consent !== true || !CONSENT_VERSIONS.includes(String(body.consentVersion))) throw new HttpError(422, 'Consent is required.')
@@ -69,11 +63,15 @@ export async function handleQuote(req: Request, env: Env): Promise<Response> {
   const tier = service.tiers.find((t) => t.id === sel.tier)!
   const now = new Date()
   const stamp = nowSql(now)
-  const ref = await nextRef(env, String(now.getUTCFullYear()))
-  await env.DB.prepare(`INSERT INTO leads (ref, kind, created_at, name, email, phone, business, message, service_id, selection_json, one_off, monthly, low, high, deposit, weeks, pricebook_version, consent_at, consent_version, ip_hash)
-    VALUES (?, 'estimate', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-    .bind(ref, stamp, contact.name, contact.email, contact.phone || null, contact.business || null, contact.notes || null, sel.service, JSON.stringify(sel),
-      est.oneOff, est.monthly, est.low, est.high, est.deposit, est.weeks, est.pricebookVersion, stamp, String(body.consentVersion), ip).run()
+  // The yearly reference (EST-2026-0001) is assigned inside the same INSERT: one round trip.
+  const prefix = `EST-${now.getUTCFullYear()}-`
+  const row = await env.DB.prepare(`INSERT INTO leads (ref, kind, created_at, name, email, phone, business, message, service_id, selection_json, one_off, monthly, low, high, deposit, weeks, pricebook_version, consent_at, consent_version, ip_hash)
+    VALUES (?1 || printf('%04d', (SELECT COALESCE(MAX(CAST(substr(ref, length(?1) + 1) AS INTEGER)), 0) + 1 FROM leads WHERE ref LIKE ?1 || '%')),
+      'estimate', ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19)
+    RETURNING ref`)
+    .bind(prefix, stamp, contact.name, contact.email, contact.phone || null, contact.business || null, contact.notes || null, sel.service, JSON.stringify(sel),
+      est.oneOff, est.monthly, est.low, est.high, est.deposit, est.weeks, est.pricebookVersion, stamp, String(body.consentVersion), ip).first<{ ref: string }>()
+  const ref = row!.ref
 
   const pdf = await buildEstimatePdf(ref, contact, service, tier, est, PRICEBOOK, sel, now)
   const attachment = { name: `TshedzaWebDev-estimate-${ref}.pdf`, data: pdf }
@@ -82,7 +80,7 @@ export async function handleQuote(req: Request, env: Env): Promise<Response> {
   const headline = [range, monthly].filter(Boolean).join(' + ')
   const weeks = `${est.weeks} week${est.weeks === 1 ? '' : 's'}`
 
-  const sentClient = await sendMail(env, {
+  const clientMail = sendMail(env, {
     to: contact.email,
     subject: `Your TshedzaWebDev estimate ${ref}`,
     html: emailLayout(`Your estimate ${ref}`,
@@ -99,7 +97,7 @@ export async function handleQuote(req: Request, env: Env): Promise<Response> {
     + p(`${h(`${service.name}: ${tier.name}`)}<br><strong>${h(headline)}</strong> · deposit ${h(rand(est.deposit))} · ${est.weeks} wk`)
     + (contact.notes ? p(h(contact.notes), 'white-space:pre-wrap') : '')
     + p(`Consent recorded ${h(stamp)} UTC (v${h(String(body.consentVersion))}). PDF attached.`, 'color:#5f6b7a;font-size:12px;margin:0'))
-  const sentOwner = await sendMail(env, {
+  const ownerMail = sendMail(env, {
     to: env.OWNER_EMAIL,
     subject: `New estimate ${ref}: ${contact.name} (${service.name})`,
     html: ownerHtml,
@@ -107,7 +105,9 @@ export async function handleQuote(req: Request, env: Env): Promise<Response> {
     replyTo: contact.email,
     attachment,
   })
-  await env.DB.prepare('UPDATE leads SET email_client_sent = ?, email_owner_sent = ? WHERE ref = ?').bind(sentClient ? 1 : 0, sentOwner ? 1 : 0, ref).run()
+  // Both emails go out together; the bookkeeping update runs after the response.
+  const [sentClient, sentOwner] = await Promise.all([clientMail, ownerMail])
+  ctx.waitUntil(env.DB.prepare('UPDATE leads SET email_client_sent = ?, email_owner_sent = ? WHERE ref = ?').bind(sentClient ? 1 : 0, sentOwner ? 1 : 0, ref).run())
   if (!sentClient) console.error(`[api] client email failed for ${ref}`)
   return json(200, { ref, emailed: sentClient })
 }
