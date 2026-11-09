@@ -40,6 +40,11 @@ export default function ContactPage() {
               <span><span className="block font-semibold">Based in</span><span className="text-ink-2">{SITE.city}, {SITE.region}. Working across South Africa.</span></span>
             </li>
           </ul>
+          <Link href="/check-up/" className="glass-light card-hover mt-3 flex items-center gap-4 rounded-[20px] border border-teal-500/30 p-5">
+            <span className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full bg-teal-500/15 text-teal-700"><Icon name="gauge" /></span>
+            <span><span className="block font-semibold">Already have a website?</span><span className="text-ink-2">Get a free, honest check-up.</span></span>
+            <Icon name="arrowRight" className="ml-auto text-teal-700" />
+          </Link>
           <p className="mt-8 text-ink-2">Want a price first? <Link href="/quote/" className="link font-medium">Get an instant quote</Link>.</p>
         </div>
         <div className="lg:col-span-7">

@@ -249,6 +249,9 @@ export function QuoteBuilder() {
                     )
                   })}
                 </div>
+                <p className="mt-4 text-[0.875rem] text-white/60 sm:mt-6">
+                  Already have a website? <Link href="/check-up/" className="font-medium text-teal-500 underline decoration-teal-500/40 underline-offset-4 hover:decoration-teal-500">Get a free check-up instead</Link>.
+                </p>
               </Question>
             ) : null}
 

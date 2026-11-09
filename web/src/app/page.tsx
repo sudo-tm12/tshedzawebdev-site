@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Icon, type IconName } from '@/components/Icon'
+import { CheckupReport } from '@/components/CheckupReport'
 import { BuildStory } from '@/components/motion/BuildStory'
 import { CommunityChat } from '@/components/motion/CommunityChat'
 import { HeroPhone } from '@/components/motion/HeroPhone'
@@ -59,6 +60,13 @@ const PAY: { icon: IconName; title: string; body: string }[] = [
   { icon: 'file', title: 'A fixed price in writing', body: 'After a short chat you get a written quote with the scope, price and timeline. Nothing to pay until you accept it.' },
   { icon: 'calendar', title: '50% to start', body: 'On projects over R3 000, a deposit secures your slot and the work begins.' },
   { icon: 'check', title: 'The rest at hand-over', body: 'You approve the design before any code. The balance is due when your site is handed over.' },
+]
+
+// The free check-up offer (home page section): what makes it worth a minute.
+const CHECKUP_POINTS = [
+  'Checked by a person, not an automated tool',
+  'Speed, phones, Google, trust and how easy you are to reach',
+  'Yours to keep, whether or not you work with us',
 ]
 
 const STEPS = [
@@ -221,6 +229,34 @@ export default function HomePage() {
             ))}
           </SwipeRail>
           <Link href="/work/" className="btn btn-on-dark mt-6 w-full md:hidden">All projects <Icon name="arrowRight" size={16} /></Link>
+        </div>
+      </section>
+
+      {/* ── Free check-up: for visitors who already have a website ───────── */}
+      {/* Right after the work, because "what about my site?" is the natural next question.
+          The report card shows exactly what they get (labelled as an example). */}
+      <section id="check-up" aria-labelledby="checkup-h" className="section canvas-tint scroll-mt-16">
+        <LiquidField blobs={[{ tone: 'teal', top: '12%', left: '58%', size: 560 }, { tone: 'mint', top: '62%', left: '-10%', size: 420 }]} />
+        <div className="container-site grid items-center gap-10 sm:gap-14 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-6">
+            <p className="eyebrow">Free · No obligation</p>
+            <h2 id="checkup-h" className={`mt-4 ${H2}`}>Already have a website? <span className="accent-serif text-teal-700">We’ll check it free.</span></h2>
+            <p className="lede mt-4 sm:mt-5">Send us your link and get a short, honest report: what’s working, what’s quietly costing you customers, and what to fix first.</p>
+            <ul className="mt-6 grid gap-3 sm:mt-8">
+              {CHECKUP_POINTS.map((t) => (
+                <li key={t} className="flex items-start gap-3 text-[1rem] text-ink-2">
+                  <span className="mt-0.5 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full bg-success-tint text-success"><Icon name="check" size={14} /></span>{t}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 sm:mt-10">
+              <Link href="/check-up/" className="btn btn-accent h-[52px] px-7 max-sm:w-full">Get my free check-up <Icon name="arrowRight" size={18} /></Link>
+              <span className="inline-flex items-center gap-2 text-[0.875rem] text-ink-3 max-sm:w-full max-sm:justify-center"><Icon name="clock" size={16} />Takes under a minute</span>
+            </div>
+          </div>
+          <div className="lg:col-span-6">
+            <CheckupReport className="reveal mx-auto max-w-[540px]" />
+          </div>
         </div>
       </section>
 

@@ -112,6 +112,18 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* The free check-up: a quiet link with a live dot (wide screens only, where it fits
+                without crowding the menu; phones get it in the menu sheet). */}
+            <Link
+              href="/check-up/"
+              aria-current={isActive('/check-up/') ? 'page' : undefined}
+              className={`hidden items-center gap-2 rounded-full px-3 py-2 text-[0.9375rem] font-medium transition-colors xl:inline-flex ${
+                dark ? 'text-white/85 hover:bg-white/10 hover:text-white' : 'text-ink hover:bg-navy-900/[0.05]'
+              } ${isActive('/check-up/') ? (dark ? 'bg-white/10' : 'bg-navy-900/[0.06]') : ''}`}
+            >
+              <span className="pulse-dot h-2 w-2 flex-none rounded-full bg-teal-500" aria-hidden="true" />
+              Free check-up
+            </Link>
             <Link href="/contact/" className="btn btn-sm btn-on-dark hidden md:inline-flex lg:hidden">Contact</Link>
             <Link href="/contact/" className={`btn btn-sm hidden lg:inline-flex ${dark ? 'btn-on-dark' : 'btn-secondary'}`}>Contact</Link>
             <Link href="/quote/" className="btn btn-accent btn-sm px-3.5 max-md:hidden sm:px-4">
@@ -156,6 +168,14 @@ export function Header() {
               </li>
             ))}
           </ul>
+          <Link href="/check-up/" className="glass group mt-6 flex items-center gap-4 rounded-[20px] p-4">
+            <span className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full bg-teal-500/15 text-teal-500"><Icon name="gauge" size={20} /></span>
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center gap-2 font-semibold text-white">Website check-up <span className="rounded-full bg-teal-500 px-2 py-0.5 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.08em] text-navy-950">Free</span></span>
+              <span className="mt-0.5 block text-[0.875rem] text-white/60">Already have a site? Get an honest report.</span>
+            </span>
+            <Icon name="arrowRight" size={18} className="flex-none text-teal-500 transition-transform group-hover:translate-x-1" />
+          </Link>
           <p className="eyebrow mt-8">Services</p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {SERVICES.map((sv) => (

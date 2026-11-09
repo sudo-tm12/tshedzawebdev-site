@@ -8,7 +8,7 @@ import { Logo } from './Logo'
 
 const GROUPS: { title: string; links: [string, string][] }[] = [
   { title: 'Services', links: SERVICES.map((s) => [`/services/${s.slug}/`, s.name]) },
-  { title: 'Studio', links: [['/work/', 'Work'], ['/about/', 'About'], ['/learn/', 'Learn'], ['/wall/', 'Community wall'], ['/quote/', 'Instant quote'], ['/faq/', 'FAQ'], ['/contact/', 'Contact']] },
+  { title: 'Studio', links: [['/work/', 'Work'], ['/about/', 'About'], ['/learn/', 'Learn'], ['/wall/', 'Community wall'], ['/quote/', 'Instant quote'], ['/check-up/', 'Free check-up'], ['/faq/', 'FAQ'], ['/contact/', 'Contact']] },
 ]
 
 export function Footer() {
