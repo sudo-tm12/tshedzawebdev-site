@@ -81,6 +81,8 @@ Nameservers changed at Elitehost to `lochlan` / `veda.ns.cloudflare.com` (the ol
 - **Replying as info@:** in Gmail → "Send mail as", use Resend's SMTP (`smtp.resend.com`).
 - **Before the switch:** replace the old `MX` and the old SPF with Cloudflare's, only after the mailbox export in step 1 is done.
 
+**Done 9 Nov 2026** (after the cPanel backup): Email Routing is on, with the rule `info@tshedzawebdev.co.za` → tshedzamay@gmail.com (the destination was verified automatically because it is the Cloudflare login). The old `MX` (`mail.tshedzawebdev.co.za`) and the old SPF were deleted; Cloudflare added `route1-3.mx.cloudflare.net`, `v=spf1 include:_spf.mx.cloudflare.net ~all` and its DKIM. Resend signs with its own DKIM (`resend._domainkey`) and uses `send.` for the return path, so the root SPF doesn't need it. `OWNER_EMAIL` stays on Gmail directly (one hop fewer than going through info@). Gmail "Send mail as" info@ via `smtp.resend.com` is optional and still to do.
+
 ## 6. Cancel the hosting (owner, after a week of everything working)
 - Check: site, quote PDF, contact form, wall approval email, inbound mail, and replies from info@.
 - Then cancel the hosting plan and keep the domain registration.

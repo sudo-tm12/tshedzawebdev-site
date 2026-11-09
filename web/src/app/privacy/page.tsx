@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           <p>Your choice is saved in your browser for 12 months. Change it at any time with <strong>“Cookie settings”</strong> in the footer. If you reject, we store only your choice itself.</p>
 
           <h2 id="sharing">Who processes it for us</h2>
-          <p>We use trusted operators who process information on our instructions: Cloudflare (hosts the website, runs the forms and stores what you send through them, in Western Europe), Resend (sends our emails, from Ireland), Google (our Gmail inbox, where your messages reach us), our email host for info@tshedzawebdev.co.za, PostHog (analytics, with consent) and Tidio (chat, with consent). Where an operator stores information outside South Africa, we rely on your consent and on the operator’s data-protection commitments, as POPIA section 72 allows.</p>
+          <p>We use trusted operators who process information on our instructions: Cloudflare (hosts the website, runs the forms and stores what you send through them, in Western Europe), Resend (sends our emails, from Ireland), Google (our Gmail inbox, where your messages reach us; Cloudflare forwards info@tshedzawebdev.co.za there), PostHog (analytics, with consent) and Tidio (chat, with consent). Where an operator stores information outside South Africa, we rely on your consent and on the operator’s data-protection commitments, as POPIA section 72 allows.</p>
 
           <h2 id="retention">How long we keep it</h2>
           <ul>
