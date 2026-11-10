@@ -1,7 +1,7 @@
 // Home page: Knowledge Hub. Phone-first, one idea per block:
 //   1. the promise (Learn. Build. Earn.) and the one action: join free on WhatsApp
 //   2. the hero object: the real group chat, in a phone
-//   3. three paths, as tall swipeable cards
+//   3. three ways to start, as a quiet typographic line-up
 //   4. three quiet facts
 // From lg up the opener and the phone sit side by side.
 import Link from 'next/link'
@@ -10,7 +10,6 @@ import { rand } from '@/lib/quote/engine'
 import { SITE } from '@/lib/site'
 import { Icon, type IconName } from './Icon'
 import { HubPhone } from './motion/HubPhone'
-import { SwipeRail } from './SwipeRail'
 
 const COACHING_FROM = Math.min(...PRICEBOOK_COACHING.tiers.map((t) => t.monthly))
 
@@ -67,35 +66,28 @@ export function KnowledgeHubSection() {
           </div>
         </div>
 
-        {/* 3. Three paths */}
-        <div className="mt-20 sm:mt-28">
-          <div className="mx-auto max-w-2xl text-center">
-            <h3 className="text-[clamp(1.75rem,2.4vw+1rem,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em]">Choose your path.</h3>
-            <p className="mt-3 text-[1.0625rem] text-white/65">Two free challenges to start, coaching when you are ready to grow.</p>
+        {/* 3. Three ways to start: a quiet, typographic line-up. The phone stays the hero, so no
+            heavy cards here: hairlines between rows (phones) or columns (md and up). */}
+        <div className="mt-20 border-t border-white/10 pt-12 sm:mt-28 sm:pt-16">
+          <div className="flex flex-col items-center gap-3 text-center md:flex-row md:items-end md:justify-between md:text-left">
+            <h3 className="text-[clamp(1.75rem,2.4vw+1rem,2.5rem)] font-semibold leading-[1.08] tracking-[-0.03em]">Three ways to start.</h3>
+            <Link href="/learn/" className="group inline-flex items-center gap-1 text-[1rem] font-medium text-teal-500">Everything on Learn <Icon name="arrowRight" size={16} className="transition-transform group-hover:translate-x-0.5" /></Link>
           </div>
-          <div className="mt-8 sm:mt-10">
-            <SwipeRail label="Knowledge Hub programmes" grid="md" itemWidth="82%" className="md:grid-cols-3 md:gap-5">
-              {PATHS.map((p) => (
-                <li key={p.title}>
-                  <Link href={p.href} className={`path-card path-${p.tone} group flex h-full min-h-[420px] flex-col overflow-hidden rounded-[30px] border border-white/10`}>
-                    {/* Art: a lit icon on a gradient with fine grid and orbit rings */}
-                    <span className="path-art relative flex h-[190px] items-center justify-center overflow-hidden">
-                      <span className="path-orbit" aria-hidden="true" />
-                      <span className="relative inline-flex h-20 w-20 items-center justify-center rounded-[24px] border border-white/20 bg-white/10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.6)] backdrop-blur-md transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
-                        <Icon name={p.icon} size={34} className="path-ico" />
-                      </span>
-                    </span>
-                    <span className="flex flex-1 flex-col p-6">
-                      <span className="path-tag self-start rounded-full px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.1em]">{p.tag}</span>
-                      <span className="mt-4 text-[1.5rem] font-semibold leading-tight tracking-[-0.03em]">{p.title}</span>
-                      <span className="mt-2 text-[0.9375rem] leading-snug text-white/65">{p.body}</span>
-                      <span className="path-cta mt-auto inline-flex items-center gap-1 pt-6 text-[0.9375rem] font-medium">{p.cta} <Icon name="arrowRight" size={16} className="transition-transform group-hover:translate-x-1" /></span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </SwipeRail>
-          </div>
+          <ul className="mt-6 divide-y divide-white/10 md:mt-12 md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
+            {PATHS.map((p) => (
+              <li key={p.title} className={`path-${p.tone} md:px-8 md:first:pl-0 md:last:pr-0`}>
+                <Link href={p.href} className="group flex items-start gap-4 py-6 md:flex-col md:gap-0 md:py-1">
+                  <span className="path-ico inline-flex h-11 w-11 flex-none items-center justify-center rounded-full border border-white/10 bg-white/[0.06]"><Icon name={p.icon} size={20} /></span>
+                  <span className="min-w-0 md:mt-6">
+                    <span className="path-tag block font-mono text-[0.6875rem] uppercase tracking-[0.12em]">{p.tag}</span>
+                    <span className="mt-1.5 block text-[1.25rem] font-semibold leading-snug tracking-[-0.025em] md:text-[1.375rem]">{p.title}</span>
+                    <span className="mt-1 block text-[0.9375rem] leading-snug text-white/60">{p.body}</span>
+                    <span className="path-cta mt-3 inline-flex items-center gap-1 text-[0.9375rem] font-medium md:mt-4">{p.cta} <Icon name="arrowRight" size={15} className="transition-transform group-hover:translate-x-1" /></span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

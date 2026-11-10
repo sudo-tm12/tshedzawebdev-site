@@ -7,119 +7,17 @@
 // The report is an example and says so: no real site, no invented scores.
 import Link from 'next/link'
 import { whatsappLink } from '@/lib/site'
-import { Icon, type IconName } from './Icon'
+import { CHECKS } from '@/data/checkup'
+import { Icon } from './Icon'
+import { ReportWidget } from './motion/ReportWidget'
 import { SwipeRail } from './SwipeRail'
 import { LiquidField } from './ui'
-
-type Status = 'good' | 'quick' | 'fix'
-
-interface Check {
-  icon: IconName
-  title: string
-  label: string
-  note: string
-  status: Status
-  /** How full the example ring is (0-1). */
-  fill: number
-  color: string
-  body: string
-  looks: string[]
-}
-
-// One colour per check, chosen to sit with the brand teal (no traffic-light rainbow).
-const CHECKS: Check[] = [
-  { icon: 'gauge', title: 'Speed', label: 'Speed on phones', note: 'Slow on mobile data', status: 'fix', fill: 0.3, color: '#1da1c2',
-    body: 'How fast it loads on mobile data, where most of your visitors are.', looks: ['Load time', 'Image sizes', 'Mobile data'] },
-  { icon: 'monitor', title: 'Phones', label: 'Works on phones', note: 'Buttons too small to tap', status: 'quick', fill: 0.62, color: '#5468ff',
-    body: 'Whether it is easy to read, tap and use on a small screen.', looks: ['Tap targets', 'Text size', 'Layout'] },
-  { icon: 'search', title: 'Google', label: 'Found on Google', note: 'Pages have no proper titles', status: 'fix', fill: 0.38, color: '#9a7cf0',
-    body: 'Whether people searching for what you do can actually find you.', looks: ['Page titles', 'Descriptions', 'Search Console'] },
-  { icon: 'shield', title: 'Trust', label: 'Feels trustworthy', note: 'Secure, privacy page in place', status: 'good', fill: 0.92, color: '#20b486',
-    body: 'The padlock, a privacy page and a first impression that says “we’re open”.', looks: ['HTTPS', 'Privacy page', 'Broken links'] },
-  { icon: 'whatsapp', title: 'Contact', label: 'Easy to contact', note: 'No WhatsApp button yet', status: 'quick', fill: 0.56, color: '#f2a93b',
-    body: 'How quickly a visitor can call, WhatsApp or book you.', looks: ['WhatsApp', 'Click-to-call', 'Forms'] },
-]
-
-const STATUS: Record<Status, { text: string; cls: string }> = {
-  good: { text: 'Good', cls: 'text-success' },
-  quick: { text: 'Quick win', cls: 'text-warn' },
-  fix: { text: 'Fix first', cls: 'text-danger' },
-}
 
 const STEPS = [
   { title: 'Send your link', body: 'Your website and how to reach you. Under a minute.' },
   { title: 'We review it', body: 'A real person checks it properly, on a real phone.' },
   { title: 'Get your report', body: 'A short, honest email: what works, what to fix first.' },
 ]
-
-/** Five concentric rings, outside in. They draw on scroll (CSS view timeline); static elsewhere. */
-function Rings() {
-  const size = 232
-  const stroke = 13
-  const gap = 5
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-[232px]">
-      <svg viewBox={`0 0 ${size} ${size}`} className="h-full w-full -rotate-90" aria-hidden="true">
-        {CHECKS.map((c, i) => {
-          const r = size / 2 - stroke / 2 - i * (stroke + gap)
-          const len = 2 * Math.PI * r
-          const off = len * (1 - c.fill)
-          return (
-            <g key={c.title}>
-              <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={c.color} strokeOpacity={0.14} strokeWidth={stroke} />
-              <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={c.color} strokeWidth={stroke} strokeLinecap="round"
-                strokeDasharray={len} strokeDashoffset={off} className="ring-draw"
-                style={{ '--c': len, '--off': off, animationRange: `entry ${15 + i * 6}% cover ${42 + i * 6}%` } as React.CSSProperties} />
-            </g>
-          )
-        })}
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-[2.25rem] font-semibold leading-none tracking-[-0.04em] tabular-nums">5</span>
-        <span className="mt-1 font-mono text-[0.625rem] uppercase tracking-[0.16em] text-ink-3">checks</span>
-      </div>
-    </div>
-  )
-}
-
-/** The hero object: an example report, presented like a widget. */
-function ReportWidget() {
-  return (
-    <figure className="checkup-widget rings relative mx-auto w-full max-w-[880px] overflow-hidden rounded-[32px] p-4 sm:rounded-[40px] sm:p-6 md:p-8" aria-label="Example of a website check-up report">
-      <span className="checkup-scan" aria-hidden="true" />
-      {/* Window bar */}
-      <div className="flex items-center gap-2.5">
-        <span className="inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[conic-gradient(from_200deg,#1da1c2,#5468ff,#9a7cf0,#20b486,#f2a93b,#1da1c2)] p-[2px]">
-          <span className="flex h-full w-full items-center justify-center rounded-full bg-card text-[0.75rem] font-bold text-ink">Y</span>
-        </span>
-        <span className="min-w-0 truncate font-mono text-[0.8125rem] text-ink-2">yourbusiness.co.za</span>
-        <span className="ml-auto flex-none rounded-full bg-line-2 px-2.5 py-1 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-ink-3">Example</span>
-      </div>
-
-      <div className="mt-6 grid items-center gap-7 md:mt-8 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-10">
-        <Rings />
-        {/* Grouped list, like a settings screen: one container, hairlines between rows */}
-        <ul className="divide-y divide-line overflow-hidden rounded-[20px] border border-line bg-card/85 backdrop-blur-sm">
-          {CHECKS.map((c) => (
-            <li key={c.title} className="flex items-center gap-3 px-4 py-3">
-              <span className="h-2.5 w-2.5 flex-none rounded-full" style={{ background: c.color }} />
-              <span className="min-w-0 flex-1">
-                <span className="block text-[0.9375rem] font-semibold leading-tight">{c.label}</span>
-                <span className="mt-0.5 block truncate text-[0.8125rem] text-ink-3">{c.note}</span>
-              </span>
-              <span className={`flex-none text-[0.8125rem] font-semibold ${STATUS[c.status].cls}`}>{STATUS[c.status].text}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <figcaption className="mt-4 flex items-start gap-3 rounded-[20px] bg-navy-900 p-4 text-white sm:mt-5 sm:items-center sm:p-5">
-        <span className="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full bg-teal-500/15 text-teal-500"><Icon name="sparkle" size={17} /></span>
-        <span className="text-[0.9375rem] leading-snug text-white/80"><span className="font-semibold text-white">Top priority: speed on phones.</span> Most visitors leave a slow site before it loads.</span>
-      </figcaption>
-    </figure>
-  )
-}
 
 export function CheckupSection({ headingClass }: { headingClass: string }) {
   return (

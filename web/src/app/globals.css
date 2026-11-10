@@ -1002,29 +1002,28 @@
   /* Short phones (e.g. iPhone SE): the mock-up should never be taller than the screen. */
   @media (max-width: 639px) and (max-height: 760px) { .hub-phone { transform: scale(0.84); transform-origin: top center; margin-bottom: -109px; } }
 
-  /* Knowledge Hub: three paths, each with its own lit artwork */
-  .path-card { background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03)); transition: border-color 300ms ease, transform 500ms var(--ease-out-soft); }
-  .path-card:hover { border-color: rgba(127,211,230,0.45); transform: translateY(-4px); }
-  .path-art {
-    background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px), var(--art);
-    background-size: 22px 22px, 22px 22px, 100% 100%;
-  }
-  .path-orbit { position: absolute; width: 230px; height: 230px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 0 0 38px rgba(255,255,255,0.035), 0 0 0 76px rgba(255,255,255,0.02); }
-  .path-teal { --art: radial-gradient(120% 120% at 30% 0%, #1da1c2 0%, #0d4f63 45%, #08202d 100%); --accent: #3fd0ee; }
-  .path-mint { --art: radial-gradient(120% 120% at 70% 0%, #20b486 0%, #0f5a49 45%, #082520 100%); --accent: #6fe3c1; }
-  .path-gold { --art: radial-gradient(120% 120% at 50% 0%, #f2a93b 0%, #6b4512 45%, #1f1608 100%); --accent: #f5c451; }
+  /* Knowledge Hub: three ways to start (accent colour per path) */
+  .path-teal { --accent: #3fd0ee; }
+  .path-mint { --accent: #6fe3c1; }
+  .path-gold { --accent: #f5c451; }
   .path-ico, .path-cta { color: var(--accent); }
-  .path-tag { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+  .path-tag { color: var(--accent); }
 
-  /* Motion: rings draw and chat messages pop in as each object scrolls into view.
+  /* Check-up report widget (ReportWidget.tsx): time-based, armed by an IntersectionObserver.
+     data-phase: rest (finished, also without JS / reduced motion) → armed (empty) → on (animating). */
+  .ring-cap { opacity: 0; }
+  [data-phase='on'] .ring-cap { animation: ring-cap 1500ms ease both; }
+  @keyframes ring-cap { 0% { opacity: 0; } 12% { opacity: 0.95; } 78% { opacity: 0.95; } 100% { opacity: 0; } }
+  .report-row, .report-priority { transition: opacity 600ms var(--ease-out-soft), transform 600ms var(--ease-out-soft); }
+  [data-phase='armed'] .report-row { opacity: 0; transform: translateX(16px); }
+  [data-phase='armed'] .report-priority { opacity: 0; transform: translateY(12px); }
+
+  /* Motion: chat messages pop in as the phone scrolls into view.
      Pure CSS view timelines; without support (or with reduced motion) everything is simply shown. */
-  @keyframes ring-draw { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: var(--off); } }
   @keyframes hub-pop { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }
   @keyframes hub-bar { from { width: 0; } to { width: 100%; } }
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      .rings { view-timeline: --rings block; }
-      .ring-draw { animation: ring-draw linear both; animation-timeline: --rings; }
       .hub-phone { view-timeline: --hub block; }
       .hub-msg { animation: hub-pop linear both; animation-timeline: --hub; transform-origin: 0% 100%; }
       .hub-bar { animation: hub-bar linear both; animation-timeline: --hub; animation-range: entry 22% cover 46%; }
