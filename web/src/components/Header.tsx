@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { SERVICES } from '@/data/services'
 import { NAV, SITE, whatsappLink } from '@/lib/site'
 import { Icon } from './Icon'
 import { Logo } from './Logo'
@@ -144,8 +143,9 @@ export function Header() {
         </div>
       </header>
 
-      {/* Phone menu: a dark sheet that continues the header. Big tap targets, services one tap
-          away, and the two money actions pinned to the bottom of the screen. */}
+      {/* Phone menu: a dark sheet that continues the header and fits ONE screen on every phone:
+          it never scrolls (either way). Link size and spacing follow the screen height (dvh), the
+          free check-up is one compact row, and the money actions sit pinned at the bottom. */}
       <div
         id="mobile-menu"
         ref={sheetRef}
@@ -153,44 +153,31 @@ export function Header() {
         aria-modal="true"
         aria-label="Menu"
         hidden={!open}
-        className="on-dark fixed inset-0 top-16 z-40 isolate overflow-y-auto bg-navy-950 text-white lg:hidden"
+        className="on-dark fixed inset-x-0 bottom-0 top-16 z-40 isolate overflow-hidden overscroll-contain bg-navy-950 text-white lg:hidden"
       >
-        <div className="aurora aurora-1 opacity-40" aria-hidden="true" />
-        <nav aria-label="Mobile" className="container-site relative flex min-h-full flex-col pb-[max(24px,env(safe-area-inset-bottom))] pt-3">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true"><div className="aurora aurora-1 opacity-40" /></div>
+        <nav aria-label="Mobile" className="menu-sheet container-site relative flex h-full flex-col pb-[max(16px,env(safe-area-inset-bottom))]">
           <ul className="menu-rise">
             {[...NAV, { href: '/contact/', label: 'Contact' }].map((item, i) => (
               <li key={item.href}>
                 <Link href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}
-                  className={`flex items-baseline gap-4 border-b border-white/10 py-3.5 text-[1.875rem] font-semibold tracking-[-0.03em] ${isActive(item.href) ? 'text-teal-500' : 'text-white'}`}>
-                  <span className="w-6 font-mono text-[0.75rem] font-normal tracking-normal text-white/40">0{i + 1}</span>
+                  className={`menu-link flex items-baseline gap-4 border-b border-white/10 font-semibold tracking-[-0.03em] ${isActive(item.href) ? 'text-teal-500' : 'text-white'}`}>
+                  <span className="w-6 flex-none font-mono text-[0.75rem] font-normal tracking-normal text-white/40">0{i + 1}</span>
                   {item.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <Link href="/check-up/" className="glass group mt-6 flex items-center gap-4 rounded-[20px] p-4">
-            <span className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-full bg-teal-500/15 text-teal-500"><Icon name="gauge" size={20} /></span>
-            <span className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 font-semibold text-white">Website check-up <span className="rounded-full bg-teal-500 px-2 py-0.5 font-mono text-[0.625rem] font-semibold uppercase tracking-[0.08em] text-navy-950">Free</span></span>
-              <span className="mt-0.5 block text-[0.875rem] text-white/60">Already have a site? Get an honest report.</span>
-            </span>
-            <Icon name="arrowRight" size={18} className="flex-none text-teal-500 transition-transform group-hover:translate-x-1" />
-          </Link>
-          <p className="eyebrow mt-8">Services</p>
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {SERVICES.map((sv) => (
-              <li key={sv.slug}>
-                <Link href={`/services/${sv.slug}/`} className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.875rem] text-white/85">
-                  <Icon name={sv.icon} size={15} className="text-teal-500" />{sv.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-auto grid gap-2.5 pt-10">
+          <div className="mt-auto grid gap-2.5 pt-4">
+            <Link href="/check-up/" className="glass group flex items-center gap-3 rounded-[16px] px-4 py-3">
+              <span className="inline-flex h-8 w-8 flex-none items-center justify-center rounded-full bg-teal-500/15 text-teal-500"><Icon name="gauge" size={16} /></span>
+              <span className="min-w-0 flex-1 truncate text-[0.9375rem] font-semibold">Free website check-up</span>
+              <Icon name="arrowRight" size={16} className="flex-none text-teal-500 transition-transform group-hover:translate-x-1" />
+            </Link>
             <Link href="/quote/" className="btn btn-accent glow-border h-[52px] w-full">Get an instant quote <Icon name="arrowRight" size={18} /></Link>
             <div className="grid grid-cols-2 gap-2.5">
-              <a href={whatsappLink('Hi Tshedza, I found you on your website.')} className="btn btn-on-dark w-full" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
-              <a href={`tel:${SITE.phoneIntl}`} className="btn btn-on-dark w-full"><Icon name="phone" size={18} /> Call</a>
+              <a href={whatsappLink('Hi Tshedza, I found you on your website.')} className="btn btn-on-dark h-12 w-full" rel="noopener"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+              <a href={`tel:${SITE.phoneIntl}`} className="btn btn-on-dark h-12 w-full"><Icon name="phone" size={18} /> Call</a>
             </div>
           </div>
         </nav>

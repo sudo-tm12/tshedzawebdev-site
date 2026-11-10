@@ -638,6 +638,9 @@
   /* Mobile menu sheet: items rise in one after another. */
   @keyframes menu-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   .menu-rise > * { animation: menu-rise 480ms var(--ease-out-soft) both; }
+  /* The phone menu fits one screen: link size and spacing follow the screen height (dvh). */
+  .menu-sheet { padding-top: clamp(2px, 0.8dvh, 10px); }
+  .menu-link { font-size: clamp(1.25rem, 4dvh, 1.875rem); line-height: 1.15; padding-block: clamp(6px, 1.3dvh, 14px); }
   .menu-rise > *:nth-child(2) { animation-delay: 40ms; } .menu-rise > *:nth-child(3) { animation-delay: 80ms; }
   .menu-rise > *:nth-child(4) { animation-delay: 120ms; } .menu-rise > *:nth-child(5) { animation-delay: 160ms; }
   .menu-rise > *:nth-child(6) { animation-delay: 200ms; } .menu-rise > *:nth-child(7) { animation-delay: 240ms; }
