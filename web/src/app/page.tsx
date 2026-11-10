@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { Icon, type IconName } from '@/components/Icon'
-import { CheckupReport } from '@/components/CheckupReport'
+import { CheckupSection } from '@/components/CheckupSection'
+import { KnowledgeHubSection } from '@/components/KnowledgeHubSection'
 import { BuildStory } from '@/components/motion/BuildStory'
-import { CommunityChat } from '@/components/motion/CommunityChat'
 import { HeroPhone } from '@/components/motion/HeroPhone'
 import { HeroShowcase } from '@/components/motion/HeroShowcase'
 import { Packages } from '@/components/Packages'
@@ -11,8 +11,6 @@ import { Spotlight, WordCycle, WordSwap } from '@/components/motion/basics'
 import { SwipeRail } from '@/components/SwipeRail'
 import { DeviceDuo, LiquidField } from '@/components/ui'
 import { WallTeaser } from '@/components/wall/WallTeaser'
-import { PRICEBOOK_COACHING } from '@/lib/coaching'
-import { rand } from '@/lib/quote/engine'
 import { ServiceVisual } from '@/components/visuals'
 import { SERVICES } from '@/data/services'
 import { WORK } from '@/data/work'
@@ -38,9 +36,6 @@ const STANDARDS: { art: 'speed' | 'secure' | 'access' | 'docs'; title: string; b
   { art: 'docs', title: 'Documented & yours', body: 'Written scope, hand-over notes, and you own everything.' },
 ]
 
-// Knowledge Hub on the home page: what's inside, one line each. Coaching shows its
-// starting price from the price book; the tiers themselves live on /learn.
-const COACHING_FROM = Math.min(...PRICEBOOK_COACHING.tiers.map((t) => t.monthly))
 // The hero's trust strip. Words, not numbers: real local clients (named in "Trusted by"),
 // the full range of services, and ownership of everything we build.
 const TRUST: { icon: IconName; title: string; body: string }[] = [
@@ -49,24 +44,11 @@ const TRUST: { icon: IconName; title: string; body: string }[] = [
   { icon: 'shield', title: '100% yours', body: 'Code, domain, content' },
 ]
 
-const LEARN: { icon: IconName; tag: string; t: string; d: string; href: string }[] = [
-  { icon: 'monitor', tag: 'Free · 9 lessons', t: 'Build & Launch Challenge', d: 'From an empty laptop to your own live website.', href: '/learn/' },
-  { icon: 'zap', tag: 'Free · 12 lessons', t: 'Automate & Earn Challenge', d: 'WhatsApp-first automation local businesses pay for.', href: '/learn/' },
-  { icon: 'users', tag: `Coaching · from ${rand(COACHING_FROM)}/month`, t: 'AI Agency Builder', d: 'Find clients, price, deliver and grow a service business.', href: '/learn/#coaching' },
-]
-
 // Payment terms exactly as the FAQ and written quotes promise them (nothing invented).
 const PAY: { icon: IconName; title: string; body: string }[] = [
   { icon: 'file', title: 'A fixed price in writing', body: 'After a short chat you get a written quote with the scope, price and timeline. Nothing to pay until you accept it.' },
   { icon: 'calendar', title: '50% to start', body: 'On projects over R3 000, a deposit secures your slot and the work begins.' },
   { icon: 'check', title: 'The rest at hand-over', body: 'You approve the design before any code. The balance is due when your site is handed over.' },
-]
-
-// The free check-up offer (home page section): what makes it worth a minute.
-const CHECKUP_POINTS = [
-  'Checked by a person, not an automated tool',
-  'Speed, phones, Google, trust and how easy you are to reach',
-  'Yours to keep, whether or not you work with us',
 ]
 
 const STEPS = [
@@ -232,33 +214,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Free check-up: for visitors who already have a website ───────── */}
-      {/* Right after the work, because "what about my site?" is the natural next question.
-          The report card shows exactly what they get (labelled as an example). */}
-      <section id="check-up" aria-labelledby="checkup-h" className="section canvas-tint scroll-mt-16">
-        <LiquidField blobs={[{ tone: 'teal', top: '12%', left: '58%', size: 560 }, { tone: 'mint', top: '62%', left: '-10%', size: 420 }]} />
-        <div className="container-site grid items-center gap-10 sm:gap-14 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-6">
-            <p className="eyebrow">Free · No obligation</p>
-            <h2 id="checkup-h" className={`mt-4 ${H2}`}>Already have a website? <span className="accent-serif text-teal-700">We’ll check it free.</span></h2>
-            <p className="lede mt-4 sm:mt-5">Send us your link and get a short, honest report: what’s working, what’s quietly costing you customers, and what to fix first.</p>
-            <ul className="mt-6 grid gap-3 sm:mt-8">
-              {CHECKUP_POINTS.map((t) => (
-                <li key={t} className="flex items-start gap-3 text-[1rem] text-ink-2">
-                  <span className="mt-0.5 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full bg-success-tint text-success"><Icon name="check" size={14} /></span>{t}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 sm:mt-10">
-              <Link href="/check-up/" className="btn btn-accent h-[52px] px-7 max-sm:w-full">Get my free check-up <Icon name="arrowRight" size={18} /></Link>
-              <span className="inline-flex items-center gap-2 text-[0.875rem] text-ink-3 max-sm:w-full max-sm:justify-center"><Icon name="clock" size={16} />Takes under a minute</span>
-            </div>
-          </div>
-          <div className="lg:col-span-6">
-            <CheckupReport className="reveal mx-auto max-w-[540px]" />
-          </div>
-        </div>
-      </section>
+      {/* ── Free check-up: for visitors who already have a website (CheckupSection) ── */}
+      <CheckupSection headingClass="reveal-h text-[clamp(2.375rem,4vw+1.25rem,4rem)] font-semibold leading-[1.02] tracking-[-0.04em]" />
 
       {/* ── How it works: a scroll story ─────────────────────────────────── */}
       {/* overflow-x-clip, not hidden: a hidden overflow would break the pinned device. */}
@@ -354,51 +311,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>      {/* ── Learn (Knowledge Hub + coaching) ─────────────────────────────── */}
-      <section id="learn" className="section on-dark relative scroll-mt-16 overflow-hidden bg-[linear-gradient(160deg,#06111f_0%,#0a2a3a_60%,#0f7590_130%)] text-white">
-        <div className="aurora aurora-1 opacity-60" aria-hidden="true" />
-        <div className="aurora aurora-2" aria-hidden="true" />
-        <div className="container-site">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div className="max-w-2xl">
-              <p className="eyebrow">Learn · Knowledge Hub</p>
-              <h2 className="mt-4 text-[clamp(2.5rem,5vw+1rem,4.75rem)] font-semibold leading-[0.96] tracking-[-0.045em]">Learn. Build. <span className="accent-serif text-teal-500">Earn.</span></h2>
-              <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/70 sm:mt-6 sm:text-[1.125rem]">TshedzaWebDev builds. Knowledge Hub teaches. A free community where young South Africans learn the skills we use on real client work, from zero to launch-ready.</p>
-            </div>
-            <Link href="/learn/" className="btn btn-on-dark flex-none max-md:hidden">Everything on Learn <Icon name="arrowRight" size={16} /></Link>
-          </div>
-
-          {/* Phones: the real group chat first (it shows what joining is like), then a compact
-              list of what's inside, then two clear actions. No stretched cards. */}
-          <div className="mt-8 grid gap-8 sm:mt-14 lg:grid-cols-12 lg:gap-12">
-            <div className="relative min-w-0 lg:order-2 lg:col-span-5">
-              <div className="glass rounded-[26px] p-2.5 sm:rounded-[30px] sm:p-3"><CommunityChat /></div>
-              <span className="glass float-slow absolute -top-5 left-6 hidden rounded-full px-4 py-2 text-[0.8125rem] font-medium text-white/85 sm:inline-flex">Made for phones &amp; mobile data</span>
-              <span className="glass float-slower absolute -bottom-5 right-6 hidden rounded-full px-4 py-2 text-[0.8125rem] font-medium text-white/85 sm:inline-flex">Real tasks, reviewed together</span>
-            </div>
-            <div className="min-w-0 lg:order-1 lg:col-span-7">
-              <ul className="stagger grid gap-2.5 sm:gap-3">
-                {LEARN.map((c) => (
-                  <li key={c.t} className="reveal">
-                    <Link href={c.href} className="group flex items-center gap-4 rounded-[18px] border border-white/10 bg-white/[0.06] p-4 transition-colors hover:border-teal-500/50 hover:bg-white/[0.09] sm:gap-5 sm:p-5">
-                      <span className="inline-flex h-12 w-12 flex-none items-center justify-center rounded-[14px] bg-teal-500/15 text-teal-500"><Icon name={c.icon} size={22} /></span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-teal-500">{c.tag}</span>
-                        <span className="mt-1 block text-[1.0625rem] font-semibold leading-snug tracking-tight sm:text-[1.1875rem]">{c.t}</span>
-                        <span className="mt-0.5 block text-[0.9375rem] leading-snug text-white/65">{c.d}</span>
-                      </span>
-                      <Icon name="arrowRight" size={18} className="flex-none text-white/40 transition-transform group-hover:translate-x-1 group-hover:text-white" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 grid gap-2.5 sm:flex sm:flex-wrap sm:gap-3">
-                <a href={SITE.knowledgeHub.whatsappCommunity} className="btn btn-accent glow-border h-[52px] px-6" rel="noopener"><Icon name="whatsapp" size={18} /> Join free on WhatsApp</a>
-                <Link href="/learn/" className="btn btn-on-dark h-[52px] px-6">See the programmes <Icon name="arrowRight" size={16} /></Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <KnowledgeHubSection />
 
       {/* ── Community wall ───────────────────────────────────────────────── */}
       <section id="wall" className="section canvas-tint wall-cork scroll-mt-16">

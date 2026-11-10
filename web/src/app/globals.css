@@ -349,7 +349,7 @@
   /* Free check-up report card (home page): a soft scan line passes over it every few seconds. */
   @keyframes checkup-scan { 0% { transform: translateY(-40px); opacity: 0; } 12% { opacity: 1; } 70% { opacity: 1; } 100% { transform: translateY(var(--scan-h, 560px)); opacity: 0; } }
   .checkup-scan { position: absolute; inset: 0 0 auto; height: 40px; pointer-events: none; z-index: 1;
-    background: linear-gradient(180deg, transparent, rgba(29,161,194,0.16) 70%, rgba(29,161,194,0.55) 96%, transparent);
+    background: linear-gradient(180deg, transparent, rgba(29,161,194,0.07) 70%, rgba(29,161,194,0.28) 96%, transparent);
     animation: checkup-scan 5.5s var(--ease-out-soft) infinite 1.2s; opacity: 0; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -946,4 +946,85 @@
   @media (max-width: 767px) { .rail.rail-grid-md > [data-rail-on='false'] { opacity: 0.7; transform: scale(0.96); } }
   @media (max-width: 1023px) { .rail.rail-grid-lg > [data-rail-on='false'] { opacity: 0.7; transform: scale(0.96); } }
   @media (prefers-reduced-motion: reduce) { .rail > * { transition: none; } }
+}
+
+/* ───────────── Home: free check-up + Knowledge Hub (phone-first, one idea per block) ───────────── */
+@layer components {
+  /* Check-up: the example report as a frosted widget */
+  .checkup-widget {
+    --scan-h: 980px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.76));
+    border: 1px solid rgba(255,255,255,0.9);
+    box-shadow: inset 0 1px 0 #fff, 0 50px 100px -50px rgba(10,27,46,0.38), 0 18px 36px -18px rgba(10,27,46,0.16);
+    backdrop-filter: blur(22px) saturate(1.4);
+  }
+  /* What we check: each tile tinted in its ring's colour */
+  .check-tile {
+    background:
+      radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--tint) 24%, transparent) 0%, transparent 62%),
+      linear-gradient(170deg, color-mix(in srgb, var(--tint) 11%, #fff) 0%, #fff 72%);
+    box-shadow: 0 30px 60px -42px rgba(10,27,46,0.35), inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+  .check-tag { background: color-mix(in srgb, var(--tint) 12%, #fff); color: color-mix(in srgb, var(--tint) 62%, #0a1b2e); }
+  .check-tile::after {
+    content: ''; position: absolute; right: -64px; top: -64px; width: 220px; height: 220px; border-radius: 50%;
+    border: 14px solid color-mix(in srgb, var(--tint) 15%, transparent); pointer-events: none;
+  }
+  /* How it works: a hairline joins the steps (down on phones, across from md) */
+  .steps .step::before {
+    content: ''; position: absolute; left: 21px; top: 44px; bottom: 0; width: 2px;
+    background: linear-gradient(var(--color-line), color-mix(in srgb, var(--color-line) 25%, transparent));
+  }
+  .steps .step:last-child::before { display: none; }
+  @media (min-width: 768px) {
+    .steps .step::before { left: calc(50% + 34px); right: calc(-50% + 2px); top: 21px; bottom: auto; width: auto; height: 2px; background: var(--color-line); }
+  }
+
+  /* Knowledge Hub: the phone */
+  .hub-frame {
+    background: linear-gradient(145deg, #6a7886 0%, #1c252e 28%, #0b1015 55%, #45515e 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 60px 120px -40px rgba(0,0,0,0.8), 0 0 90px -20px rgba(29,161,194,0.4);
+  }
+  .hub-glow {
+    position: absolute; left: 50%; top: 46%; width: min(560px, 140vw); aspect-ratio: 1; transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(29,161,194,0.32) 0%, transparent 62%); pointer-events: none;
+  }
+  .hub-wall { background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 14px 14px; }
+  .hub-bubble {
+    max-width: 88%; align-self: flex-start; border-radius: 12px 12px 12px 4px; background: #1f2c34;
+    padding: 8px 10px 6px; font-size: 0.8125rem; line-height: 1.4; color: rgba(255,255,255,0.88); box-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  }
+  .hub-time { margin-top: 3px; text-align: right; font-size: 0.625rem; color: rgba(255,255,255,0.4); }
+  .hub-bar { width: 100%; }
+  /* Short phones (e.g. iPhone SE): the mock-up should never be taller than the screen. */
+  @media (max-width: 639px) and (max-height: 760px) { .hub-phone { transform: scale(0.84); transform-origin: top center; margin-bottom: -109px; } }
+
+  /* Knowledge Hub: three paths, each with its own lit artwork */
+  .path-card { background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03)); transition: border-color 300ms ease, transform 500ms var(--ease-out-soft); }
+  .path-card:hover { border-color: rgba(127,211,230,0.45); transform: translateY(-4px); }
+  .path-art {
+    background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px), var(--art);
+    background-size: 22px 22px, 22px 22px, 100% 100%;
+  }
+  .path-orbit { position: absolute; width: 230px; height: 230px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 0 0 38px rgba(255,255,255,0.035), 0 0 0 76px rgba(255,255,255,0.02); }
+  .path-teal { --art: radial-gradient(120% 120% at 30% 0%, #1da1c2 0%, #0d4f63 45%, #08202d 100%); --accent: #3fd0ee; }
+  .path-mint { --art: radial-gradient(120% 120% at 70% 0%, #20b486 0%, #0f5a49 45%, #082520 100%); --accent: #6fe3c1; }
+  .path-gold { --art: radial-gradient(120% 120% at 50% 0%, #f2a93b 0%, #6b4512 45%, #1f1608 100%); --accent: #f5c451; }
+  .path-ico, .path-cta { color: var(--accent); }
+  .path-tag { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+
+  /* Motion: rings draw and chat messages pop in as each object scrolls into view.
+     Pure CSS view timelines; without support (or with reduced motion) everything is simply shown. */
+  @keyframes ring-draw { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: var(--off); } }
+  @keyframes hub-pop { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }
+  @keyframes hub-bar { from { width: 0; } to { width: 100%; } }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .rings { view-timeline: --rings block; }
+      .ring-draw { animation: ring-draw linear both; animation-timeline: --rings; }
+      .hub-phone { view-timeline: --hub block; }
+      .hub-msg { animation: hub-pop linear both; animation-timeline: --hub; transform-origin: 0% 100%; }
+      .hub-bar { animation: hub-bar linear both; animation-timeline: --hub; animation-range: entry 22% cover 46%; }
+    }
+  }
 }
