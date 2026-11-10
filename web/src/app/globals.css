@@ -997,10 +997,10 @@
     max-width: 88%; align-self: flex-start; border-radius: 12px 12px 12px 4px; background: #1f2c34;
     padding: 8px 10px 6px; font-size: 0.8125rem; line-height: 1.4; color: rgba(255,255,255,0.88); box-shadow: 0 1px 0 rgba(0,0,0,0.25);
   }
+  /* Phones: bubbles float on the section instead of sitting in a phone. */
+  .hub-bubble-free { max-width: 92%; border-radius: 20px 20px 20px 6px; background: rgba(31,44,52,0.92); border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 24px 50px -28px rgba(0,0,0,0.7); backdrop-filter: blur(10px); font-size: 0.9375rem; padding: 10px 12px 7px; }
   .hub-time { margin-top: 3px; text-align: right; font-size: 0.625rem; color: rgba(255,255,255,0.4); }
   .hub-bar { width: 100%; }
-  /* Short phones (e.g. iPhone SE): the mock-up should never be taller than the screen. */
-  @media (max-width: 639px) and (max-height: 760px) { .hub-phone { transform: scale(0.84); transform-origin: top center; margin-bottom: -109px; } }
 
   /* Knowledge Hub: three ways to start (accent colour per path) */
   .path-teal { --accent: #3fd0ee; }
@@ -1018,7 +1018,7 @@
   [data-phase='armed'] .report-row { opacity: 0; transform: translateX(16px); }
   [data-phase='armed'] .report-priority { opacity: 0; transform: translateY(12px); }
 
-  /* Motion: chat messages pop in as the phone scrolls into view.
+  /* Motion: chat messages pop in as the phone (desktop) or each bubble (phones) scrolls into view.
      Pure CSS view timelines; without support (or with reduced motion) everything is simply shown. */
   @keyframes hub-pop { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }
   @keyframes hub-bar { from { width: 0; } to { width: 100%; } }
@@ -1026,7 +1026,10 @@
     @media (prefers-reduced-motion: no-preference) {
       .hub-phone { view-timeline: --hub block; }
       .hub-msg { animation: hub-pop linear both; animation-timeline: --hub; transform-origin: 0% 100%; }
-      .hub-bar { animation: hub-bar linear both; animation-timeline: --hub; animation-range: entry 22% cover 46%; }
+      .hub-phone .hub-bar { animation: hub-bar linear both; animation-timeline: --hub; animation-range: entry 22% cover 46%; }
+      /* Phones (no device): each bubble pops in on its own as it scrolls into view. */
+      .hub-float { animation: hub-pop linear both; animation-timeline: view(); animation-range: entry 10% entry 90%; transform-origin: 0% 100%; }
+      .hub-convo .hub-bar { animation: hub-bar linear both; animation-timeline: view(); animation-range: entry 60% cover 45%; }
     }
   }
 }

@@ -1,6 +1,6 @@
 // Home page: Knowledge Hub. Phone-first, one idea per block:
 //   1. the promise (Learn. Build. Earn.) and the one action: join free on WhatsApp
-//   2. the hero object: the real group chat, in a phone
+//   2. the hero object: the real group chat (in a phone on desktop; floating free on phones)
 //   3. three ways to start, as a quiet typographic line-up
 //   4. three quiet facts
 // From lg up the opener and the phone sit side by side.
@@ -9,7 +9,7 @@ import { PRICEBOOK_COACHING } from '@/lib/coaching'
 import { rand } from '@/lib/quote/engine'
 import { SITE } from '@/lib/site'
 import { Icon, type IconName } from './Icon'
-import { HubPhone } from './motion/HubPhone'
+import { HubConversation, HubPhone } from './motion/HubPhone'
 
 const COACHING_FROM = Math.min(...PRICEBOOK_COACHING.tiers.map((t) => t.monthly))
 
@@ -57,7 +57,9 @@ export function KnowledgeHubSection() {
           {/* 2. The hero object */}
           <div className="relative lg:col-span-6">
             <div className="hub-glow" aria-hidden="true" />
-            <HubPhone />
+            {/* Desktop: the chat in a phone. Phones: no device inside the device, the conversation floats free. */}
+            <HubPhone className="hidden lg:block" />
+            <HubConversation className="lg:hidden" />
             <div className="mt-8 flex flex-wrap justify-center gap-2 lg:hidden">
               {FACTS.map((f) => (
                 <span key={f.text} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[0.8125rem] text-white/75"><Icon name={f.icon} size={13} className="text-teal-500" />{f.text}</span>
