@@ -1,6 +1,6 @@
 // Portfolio. Only projects the owner approved on 29 Oct 2026 (TNB and HomeCo added on 5 Nov 2026; BANZA Photography added
 // and featured first on 11 Nov 2026). Facts come from the project docs and VAULT client notes. One project is excluded
-// entirely (NDA).
+// entirely (NDA). Project URLs are not shown (owner's request, 11 Nov 2026): no address bar, no "Visit" link.
 // The Gourmet Chariot was removed on 5 Nov 2026 at the owner's request; do not re-add it.
 import { asset } from '@/lib/site'
 
@@ -40,7 +40,6 @@ export const WORK: Project[] = [
       'Added passwordless sign-in by email code, a client portal, model applications with photo uploads, and an admin dashboard that alerts the assistant to new requests.',
     ],
     delivered: ['Website + portfolio', 'Live booking calendar', 'Client portal (email-code sign-in)', 'Model applications', 'Admin dashboard'],
-    live: 'https://sudo-tm12.github.io/banza-photography/',
     status: 'Live',
     desktop: { src: asset('/work/banza-desktop.webp'), width: 1200, height: 750, alt: 'BANZA Photography homepage: a portrait in an emerald gown behind a glass panel reading “Capturing today. Creating tomorrow.”' },
     mobile: { src: asset('/work/banza-mobile.webp'), width: 390, height: 844, alt: 'BANZA Photography homepage on a phone, with the glass booking card and the bottom navigation dock' },
@@ -61,7 +60,6 @@ export const WORK: Project[] = [
       'Built an owner dashboard for students, payments, attendance and leads, so the practice runs from one place.',
     ],
     delivered: ['Marketing website', 'Owner dashboard', 'POPIA privacy page', 'Design system + documentation'],
-    live: 'https://blrtutoring.co.za',
     status: 'Live',
     desktop: { src: asset('/work/blr-desktop.webp'), width: 1200, height: 750, alt: 'BLR Tutoring homepage: a large STUDY headline over a classroom chalkboard full of equations' },
     mobile: { src: asset('/work/blr-mobile.webp'), width: 390, height: 844, alt: 'BLR Tutoring homepage on a phone' },
@@ -82,7 +80,6 @@ export const WORK: Project[] = [
       'Designed the phone layout separately, with call and enquiry buttons always in thumb reach.',
     ],
     delivered: ['One-page website', 'Company profile (PDF and editable Word)', 'Phone quick-contact bar'],
-    live: 'https://sudo-tm12.github.io/tnb-environmental/',
     status: 'Delivered',
     desktop: { src: asset('/work/tnb-desktop.webp'), width: 1200, height: 750, alt: 'TNB Environmental Solutions homepage: “Understanding what lies beneath” on deep green, with a borehole log of soil layers' },
     mobile: { src: asset('/work/tnb-mobile.webp'), width: 390, height: 844, alt: 'TNB Environmental Solutions homepage on a phone, with soil layers along the bottom' },
@@ -102,7 +99,6 @@ export const WORK: Project[] = [
       'Let owners tap through the three readiness outcomes to see exactly what they would be told.',
     ],
     delivered: ['One-page website', 'Company profile (PDF and editable Word)', 'Interactive owner-report preview'],
-    live: 'https://sudo-tm12.github.io/homeco-property-services/',
     status: 'In review',
     desktop: { src: asset('/work/homeco-desktop.webp'), width: 1200, height: 750, alt: 'HomeCo homepage: “Every guest walks into a home that’s ready”, beside a sample turnover checklist' },
     mobile: { src: asset('/work/homeco-mobile.webp'), width: 390, height: 844, alt: 'HomeCo homepage on a phone' },
@@ -140,7 +136,6 @@ export const WORK: Project[] = [
       'Delivered a production build, ready to deploy.',
     ],
     delivered: ['Company website (Next.js)', 'Animated hero + sections', 'Production build'],
-    live: 'https://ewallinnovations.co.za',
     status: 'Live',
     desktop: { src: asset('/work/ewall-desktop.webp'), width: 1200, height: 750, alt: 'E-Wall Innovations homepage: “We Are The Change.” on a dark starfield' },
     mobile: { src: asset('/work/ewall-mobile.webp'), width: 390, height: 844, alt: 'E-Wall Innovations homepage on a phone' },
