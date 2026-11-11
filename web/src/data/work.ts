@@ -1,5 +1,6 @@
-// Portfolio. Only projects the owner approved on 29 Oct 2026 (TNB and HomeCo added on 5 Nov 2026). Facts come from the
-// project docs and VAULT client notes. One project is excluded entirely (NDA).
+// Portfolio. Only projects the owner approved on 29 Oct 2026 (TNB and HomeCo added on 5 Nov 2026; BANZA Photography added
+// and featured first on 11 Nov 2026). Facts come from the project docs and VAULT client notes. One project is excluded
+// entirely (NDA).
 // The Gourmet Chariot was removed on 5 Nov 2026 at the owner's request; do not re-add it.
 import { asset } from '@/lib/site'
 
@@ -25,6 +26,27 @@ export interface Project {
 }
 
 export const WORK: Project[] = [
+  {
+    slug: 'banza-photography',
+    client: 'BANZA Photography',
+    sector: 'Photography',
+    year: '2026',
+    services: ['Website', 'Booking platform', 'Client portal', 'Admin dashboard'],
+    summary: 'A mobile-first website and booking platform for a portrait and events photographer, with a live availability calendar, a client portal and an admin dashboard.',
+    challenge: 'A busy photographer needed one place where people can see the work, check which dates are open and request a shoot, and where the studio’s assistant can manage every booking without it getting lost in DMs.',
+    approach: [
+      'Designed mobile-first in a liquid-glass style taken from the brand’s own black, chrome, maroon and gold, and let the photographs carry the page.',
+      'Built a booking flow on a live calendar of open dates, so clients request a real day instead of asking what is free.',
+      'Added passwordless sign-in by email code, a client portal, model applications with photo uploads, and an admin dashboard that alerts the assistant to new requests.',
+    ],
+    delivered: ['Website + portfolio', 'Live booking calendar', 'Client portal (email-code sign-in)', 'Model applications', 'Admin dashboard'],
+    live: 'https://sudo-tm12.github.io/banza-photography/',
+    status: 'Live',
+    desktop: { src: asset('/work/banza-desktop.webp'), width: 1200, height: 750, alt: 'BANZA Photography homepage: a portrait in an emerald gown behind a glass panel reading “Capturing today. Creating tomorrow.”' },
+    mobile: { src: asset('/work/banza-mobile.webp'), width: 390, height: 844, alt: 'BANZA Photography homepage on a phone, with the glass booking card and the bottom navigation dock' },
+    mobileTall: { src: asset('/work/banza-mobile-tall.webp'), width: 390, height: 2800, alt: 'BANZA Photography on a phone: the hero, the BP monogram, meet the photographer, and the services' },
+    accent: '#6E0F18',
+  },
   {
     slug: 'blr-tutoring',
     client: 'BLR Tutoring',
