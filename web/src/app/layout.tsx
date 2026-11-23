@@ -26,7 +26,10 @@ export const metadata: Metadata = {
     images: [{ url: '/og.png', width: 1200, height: 630, alt: `${SITE.name}: ${SITE.tagline}` }],
   },
   twitter: { card: 'summary_large_image' },
-  icons: { icon: asset('/icon.png'), apple: asset('/apple-touch-icon.png') },
+  icons: {
+    icon: [{ url: asset('/favicon.ico'), sizes: '48x48' }, { url: asset('/icon.png'), type: 'image/png', sizes: '512x512' }],
+    apple: asset('/apple-touch-icon.png'),
+  },
   formatDetection: { telephone: false },
 }
 
